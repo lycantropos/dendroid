@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  dendroid-pypy:
+    build:
+      context: .
+      args:
+      - PYTHON_IMAGE=${PYPY_IMAGE_NAME}
+      - PYTHON_IMAGE_VERSION=${PYPY_IMAGE_VERSION}
+    image: lycantropos/dendroid-pypy:0.0.0
+    volumes:
+      - ./dendroid/:/opt/dendroid/dendroid/
+      - ./tests/:/opt/dendroid/tests/
+      - ./README.md:/opt/dendroid/README.md
+      - ./requirements.txt:/opt/dendroid/requirements.txt
+      - ./requirements-tests.txt:/opt/dendroid/requirements-tests.txt
+      - ./setup.py:/opt/dendroid/setup.py
+      - ./setup.cfg:/opt/dendroid/setup.cfg
+    entrypoint: pytest
