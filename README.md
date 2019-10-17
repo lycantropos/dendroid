@@ -66,6 +66,35 @@ Install:
   pypy setup.py install
   ```
 
+Usage
+-----
+
+```python
+>>> from dendroid import binary
+>>> tree = binary.tree()
+>>> 1 in tree
+False
+>>> len(tree)
+0
+>>> list(tree)
+[]
+>>> tree.add(1)
+>>> 1 in tree
+True
+>>> len(tree)
+1
+>>> list(tree)
+[1]
+>>> tree.remove(1)
+>>> 1 in tree
+False
+>>> len(tree)
+0
+>>> list(tree)
+[]
+
+```
+
 Development
 -----------
 
