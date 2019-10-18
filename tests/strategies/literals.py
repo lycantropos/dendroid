@@ -11,7 +11,7 @@ totally_ordered_values_strategies = (
 totally_ordered_values = totally_ordered_values_strategies.flatmap(identity)
 totally_ordered_values_lists = (totally_ordered_values_strategies
                                 .flatmap(strategies.lists))
-non_empty_totally_ordered_values = (totally_ordered_values_strategies
-                                    .flatmap(partial(strategies.lists,
-                                                     min_size=1)))
+non_empty_totally_ordered_values_lists = (totally_ordered_values_strategies
+                                          .flatmap(partial(strategies.lists,
+                                                           min_size=1)))
 keys = strategies.sampled_from([identity, None])

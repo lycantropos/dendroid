@@ -32,7 +32,7 @@ def test_base_case(values: List[Domain], key: Optional[SortingKey]) -> None:
                for value in values)
 
 
-@given(strategies.non_empty_totally_ordered_values, strategies.keys)
+@given(strategies.non_empty_totally_ordered_values_lists, strategies.keys)
 def test_step(non_empty_values: List[Domain],
               key: Optional[SortingKey]) -> None:
     *values, value = non_empty_values
