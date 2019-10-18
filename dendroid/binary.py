@@ -155,7 +155,6 @@ class TreeBase(ABC, Generic[Domain]):
         """Returns intersection of the tree with given one."""
         if not isinstance(other, TreeBase):
             return NotImplemented
-        self._validate_key(other)
         return self.from_iterable((value for value in self if value in other),
                                   key=self.key)
 
@@ -164,7 +163,6 @@ class TreeBase(ABC, Generic[Domain]):
         """Returns union of the tree with given one."""
         if not isinstance(other, TreeBase):
             return NotImplemented
-        self._validate_key(other)
         return self.from_iterable(chain(self, other),
                                   key=self.key)
 
@@ -173,7 +171,6 @@ class TreeBase(ABC, Generic[Domain]):
         """Returns subtraction of the tree with given one."""
         if not isinstance(other, TreeBase):
             return NotImplemented
-        self._validate_key(other)
         return self.from_iterable((value
                                    for value in self
                                    if value not in other),
@@ -190,7 +187,6 @@ class TreeBase(ABC, Generic[Domain]):
         """Intersects tree with given objects in-place."""
         if not isinstance(other, TreeBase):
             return NotImplemented
-        self._validate_key(other)
         for value in self - other:
             self.discard(value)
         return self
@@ -200,7 +196,6 @@ class TreeBase(ABC, Generic[Domain]):
         """Unites the tree with given one in-place."""
         if not isinstance(other, TreeBase):
             return NotImplemented
-        self._validate_key(other)
         for value in other:
             self.add(value)
         return self
@@ -210,7 +205,6 @@ class TreeBase(ABC, Generic[Domain]):
         """Exclusively disjoins the tree with given one in-place."""
         if not isinstance(other, TreeBase):
             return NotImplemented
-        self._validate_key(other)
         if self == other:
             self.clear()
         else:
@@ -226,7 +220,6 @@ class TreeBase(ABC, Generic[Domain]):
         """Subtracts the tree with given one in-place."""
         if not isinstance(other, TreeBase):
             return NotImplemented
-        self._validate_key(other)
         if self == other:
             self.clear()
         else:
@@ -275,10 +268,6 @@ class TreeBase(ABC, Generic[Domain]):
         return (_are_disjoint(self, other)
                 if len(self) < len(other)
                 else _are_disjoint(other, self))
-
-    def _validate_key(self, other: 'TreeBase[OtherDomain]') -> None:
-        if self.key is not other.key:
-            raise ValueError('Trees should have the same keys.')
 
 
 class Tree(TreeBase[Domain]):
