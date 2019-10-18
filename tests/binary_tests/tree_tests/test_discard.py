@@ -19,7 +19,6 @@ def test_basic(tree: Tree, value: Domain) -> None:
 def test_base_case(tree: Tree, value: Domain) -> None:
     tree.discard(value)
 
-    assert not tree
     assert len(tree) == 0
     assert value not in tree
 
@@ -31,5 +30,5 @@ def test_step(tree_with_value: Tuple[Tree, Domain]) -> None:
 
     tree.discard(value)
 
-    assert len(tree) + (value in original) == len(original)
+    assert len(tree) == len(original) - (value in original)
     assert value not in tree
