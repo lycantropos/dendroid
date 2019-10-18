@@ -74,6 +74,47 @@ trees_pairs = strategies.builds(to_trees_pair,
                                 keys)
 
 
+def to_trees_triplet(values_lists_triplet: Tuple[List[Domain], List[Domain],
+                                                 List[Domain]],
+                     key: Optional[SortingKey]
+                     ) -> Tuple[binary.Tree, binary.Tree, binary.Tree]:
+    (first_values_list, second_values_list,
+     third_values_list) = values_lists_triplet
+    first_tree = binary.tree(*first_values_list,
+                             key=key)
+    second_tree = binary.tree(*second_values_list,
+                              key=key)
+    third_tree = binary.tree(*third_values_list,
+                             key=key)
+    return first_tree, second_tree, third_tree
+
+
+def to_values_lists_triplets(values: Strategy[Domain],
+                             *,
+                             first_min_size: int = 0,
+                             first_max_size: Optional[int] = None,
+                             second_min_size: int = 0,
+                             second_max_size: Optional[int] = None,
+                             third_min_size: int = 0,
+                             third_max_size: Optional[int] = None
+                             ) -> Strategy[Tuple[List[Domain], List[Domain]]]:
+    return strategies.tuples(strategies.lists(values,
+                                              min_size=first_min_size,
+                                              max_size=first_max_size),
+                             strategies.lists(values,
+                                              min_size=second_min_size,
+                                              max_size=second_max_size),
+                             strategies.lists(values,
+                                              min_size=third_min_size,
+                                              max_size=third_max_size))
+
+
+trees_triplets = strategies.builds(to_trees_triplet,
+                                   totally_ordered_values_strategies
+                                   .flatmap(to_values_lists_triplets),
+                                   keys)
+
+
 def to_trees_pair_with_totally_ordered_value(
         values_lists_pair: Tuple[List[Domain], List[Domain]],
         key: Optional[SortingKey]) -> Tuple[binary.Tree, binary.Tree, Domain]:
