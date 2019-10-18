@@ -25,6 +25,8 @@ def to_tree(values_list_with_key: Tuple[List[Domain], Optional[SortingKey]]
 
 
 trees = strategies.tuples(totally_ordered_values_lists, keys).map(to_tree)
+non_empty_trees = (strategies.tuples(non_empty_totally_ordered_values, keys)
+                   .map(to_tree))
 
 
 def to_tree_with_totally_ordered_value(
