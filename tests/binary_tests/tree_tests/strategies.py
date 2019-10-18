@@ -21,10 +21,10 @@ empty_trees = strategies.builds(binary.tree,
 
 trees = strategies.builds(binary.Tree.from_iterable,
                           totally_ordered_values_lists,
-                          keys=keys)
+                          key=keys)
 non_empty_trees = strategies.builds(binary.Tree.from_iterable,
                                     non_empty_totally_ordered_values_lists,
-                                    keys=keys)
+                                    key=keys)
 
 
 def to_tree_with_totally_ordered_value(values_list: List[Domain],
