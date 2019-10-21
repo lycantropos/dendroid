@@ -130,25 +130,29 @@ class TreeBase(ABC, Generic[Domain]):
         """Checks if the tree is a subset of given one."""
         if not isinstance(other, TreeBase):
             return NotImplemented
-        return all(value in other for value in self)
+        return (len(self) <= len(other)
+                and all(value in other for value in self))
 
     def __lt__(self, other: 'TreeBase[OtherDomain]') -> bool:
         """Checks if the tree is a strict subset of given one."""
         if not isinstance(other, TreeBase):
             return NotImplemented
-        return self <= other and self != other
+        return (len(self) < len(other)
+                and self <= other and self != other)
 
     def __gt__(self, other: 'TreeBase[OtherDomain]') -> bool:
         """Checks if the tree is a strict superset of given one."""
         if not isinstance(other, TreeBase):
             return NotImplemented
-        return self >= other and self != other
+        return (len(self) > len(other)
+                and self >= other and self != other)
 
     def __ge__(self, other: 'TreeBase[OtherDomain]') -> bool:
         """Checks if the tree is a superset of given one."""
         if not isinstance(other, TreeBase):
             return NotImplemented
-        return all(value in self for value in other)
+        return (len(self) >= len(other)
+                and all(value in self for value in other))
 
     def __and__(self, other: 'TreeBase[OtherDomain]'
                 ) -> 'TreeBase[Domain]':
