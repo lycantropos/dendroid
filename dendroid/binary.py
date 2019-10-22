@@ -154,8 +154,7 @@ class TreeBase(ABC, Generic[Domain]):
         return (len(self) >= len(other)
                 and all(value in self for value in other))
 
-    def __and__(self, other: 'TreeBase[OtherDomain]'
-                ) -> 'TreeBase[Domain]':
+    def __and__(self, other: 'TreeBase[OtherDomain]') -> 'TreeBase[Domain]':
         """Returns intersection of the tree with given one."""
         if not isinstance(other, TreeBase):
             return NotImplemented
@@ -170,8 +169,7 @@ class TreeBase(ABC, Generic[Domain]):
         return self.from_iterable(chain(self, other),
                                   key=self.key)
 
-    def __sub__(self, other: 'TreeBase[OtherDomain]'
-                ) -> 'TreeBase[Domain]':
+    def __sub__(self, other: 'TreeBase[OtherDomain]') -> 'TreeBase[Domain]':
         """Returns subtraction of the tree with given one."""
         if not isinstance(other, TreeBase):
             return NotImplemented
@@ -219,8 +217,7 @@ class TreeBase(ABC, Generic[Domain]):
                     self.add(value)
         return self
 
-    def __isub__(self, other: 'TreeBase[OtherDomain]'
-                 ) -> 'TreeBase[Domain]':
+    def __isub__(self, other: 'TreeBase[OtherDomain]') -> 'TreeBase[Domain]':
         """Subtracts the tree with given one in-place."""
         if not isinstance(other, TreeBase):
             return NotImplemented
