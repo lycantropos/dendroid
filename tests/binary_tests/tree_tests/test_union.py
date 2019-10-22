@@ -81,3 +81,13 @@ def test_distribution_over_intersection(trees_triplet: Tuple[Tree, Tree, Tree]
     result = left_tree | (mid_tree & right_tree)
 
     assert result == (left_tree | mid_tree) & (left_tree | right_tree)
+
+
+@given(strategies.trees_pairs)
+def test_connection_with_subset_relation(trees_pair: Tuple[Tree, Tree]
+                                         ) -> None:
+    left_tree, right_tree = trees_pair
+
+    result = left_tree | right_tree
+
+    assert left_tree <= result and right_tree <= result
