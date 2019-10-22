@@ -6,6 +6,16 @@ from dendroid.binary import Tree
 from . import strategies
 
 
+@given(strategies.trees_pairs)
+def test_basic(trees_pair: Tuple[Tree, Tree]) -> None:
+    left_tree, right_tree = trees_pair
+
+    result = left_tree & right_tree
+
+    assert isinstance(result, Tree)
+    assert len(result) <= min(len(left_tree), len(right_tree))
+
+
 @given(strategies.trees)
 def test_idempotence(tree: Tree) -> None:
     result = tree & tree
