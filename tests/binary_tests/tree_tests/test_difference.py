@@ -14,14 +14,14 @@ def test_self_difference(tree: Tree) -> None:
 
 
 @given(strategies.empty_trees, strategies.trees)
-def test_empty_set_minuend(empty_tree: Tree, set_: Tree) -> None:
-    result = empty_tree - set_
+def test_empty_tree_minuend(empty_tree: Tree, tree: Tree) -> None:
+    result = empty_tree - tree
 
-    assert not result
+    assert len(result) == 0
 
 
 @given(strategies.empty_trees, strategies.trees)
-def test_empty_set_subtrahend(empty_tree: Tree, tree: Tree) -> None:
+def test_empty_tree_subtrahend(empty_tree: Tree, tree: Tree) -> None:
     result = tree - empty_tree
 
     assert result == tree
