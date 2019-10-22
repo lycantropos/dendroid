@@ -29,7 +29,7 @@ def test_transitivity(trees_triplet: Tuple[Tree, Tree, Tree]) -> None:
 
 
 @given(strategies.trees_pairs)
-def test_relation_with_greater_than(trees_pair: Tuple[Tree, Tree]) -> None:
+def test_connection_with_greater_than(trees_pair: Tuple[Tree, Tree]) -> None:
     first_tree, second_tree = trees_pair
 
     assert equivalence(first_tree < second_tree, second_tree > first_tree)
