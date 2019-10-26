@@ -26,7 +26,6 @@ def test_basic(values: List[Domain], key: Optional[SortingKey]) -> None:
 def test_base_case(values: List[Domain], key: Optional[SortingKey]) -> None:
     result = tree(key=key)
 
-    assert not result
     assert len(result) == 0
     assert all(value not in result
                for value in values)
