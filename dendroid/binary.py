@@ -251,6 +251,10 @@ class TreeBase(ABC, Generic[Domain]):
         """Pops minimum value from the tree."""
 
     @abstractmethod
+    def popmax(self) -> Domain:
+        """Pops maximum value from the tree."""
+
+    @abstractmethod
     def add(self, value: Domain) -> None:
         """Adds given value to the tree."""
 
@@ -421,6 +425,19 @@ class Tree(TreeBase[Domain]):
             while node.left.left is not None:
                 node = node.left
             result, node.left = node.left.value, node.left.right
+            return result
+
+    def popmax(self) -> Domain:
+        node = self._root
+        if node is None:
+            raise KeyError
+        elif node.right is None:
+            self._root = node.left
+            return node.value
+        else:
+            while node.right.right is not None:
+                node = node.right
+            result, node.right = node.right.value, node.right.left
             return result
 
     def clear(self) -> None:
