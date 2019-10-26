@@ -21,8 +21,8 @@ from .hints import (Domain,
 
 
 class Node(ABC):
-    left = None  # type: Optional['_Node']
-    right = None  # type: Optional['_Node']
+    left = None  # type: Optional['Node']
+    right = None  # type: Optional['Node']
 
     @property
     @abstractmethod
@@ -272,7 +272,7 @@ class TreeBase(ABC, Generic[Domain]):
 
 
 class Tree(TreeBase[Domain]):
-    def __init__(self, root: Node,
+    def __init__(self, root: Optional[Node],
                  *,
                  key: Optional[SortingKey] = None) -> None:
         self._root = root
