@@ -228,15 +228,6 @@ class TreeBase(ABC, Generic[Domain]):
                 self.discard(value)
         return self
 
-    def min(self) -> Domain:
-        """Returns minimum value from the tree."""
-        node = self.root
-        if node is None:
-            raise ValueError('Tree is empty.')
-        while node.left is not None:
-            node = node.left
-        return node.value
-
     def max(self) -> Domain:
         """Returns maximum value from the tree."""
         node = self.root
@@ -246,13 +237,14 @@ class TreeBase(ABC, Generic[Domain]):
             node = node.right
         return node.value
 
-    @abstractmethod
-    def popmin(self) -> Domain:
-        """Pops minimum value from the tree."""
-
-    @abstractmethod
-    def popmax(self) -> Domain:
-        """Pops maximum value from the tree."""
+    def min(self) -> Domain:
+        """Returns minimum value from the tree."""
+        node = self.root
+        if node is None:
+            raise ValueError('Tree is empty.')
+        while node.left is not None:
+            node = node.left
+        return node.value
 
     @abstractmethod
     def add(self, value: Domain) -> None:
@@ -277,6 +269,14 @@ class TreeBase(ABC, Generic[Domain]):
             raise KeyError
         self.discard(result)
         return result
+
+    @abstractmethod
+    def popmax(self) -> Domain:
+        """Pops maximum value from the tree."""
+
+    @abstractmethod
+    def popmin(self) -> Domain:
+        """Pops minimum value from the tree."""
 
     @abstractmethod
     def clear(self) -> None:
@@ -414,19 +414,6 @@ class Tree(TreeBase[Domain]):
                 else:
                     parent = parent.right
 
-    def popmin(self) -> Domain:
-        node = self._root
-        if node is None:
-            raise KeyError
-        elif node.left is None:
-            self._root = node.right
-            return node.value
-        else:
-            while node.left.left is not None:
-                node = node.left
-            result, node.left = node.left.value, node.left.right
-            return result
-
     def popmax(self) -> Domain:
         node = self._root
         if node is None:
@@ -438,6 +425,19 @@ class Tree(TreeBase[Domain]):
             while node.right.right is not None:
                 node = node.right
             result, node.right = node.right.value, node.right.left
+            return result
+
+    def popmin(self) -> Domain:
+        node = self._root
+        if node is None:
+            raise KeyError
+        elif node.left is None:
+            self._root = node.right
+            return node.value
+        else:
+            while node.left.left is not None:
+                node = node.left
+            result, node.left = node.left.value, node.left.right
             return result
 
     def clear(self) -> None:
