@@ -40,8 +40,8 @@ class SimpleNode(Node):
 
     def __init__(self, value: Domain,
                  *,
-                 left: Optional[Node] = None,
-                 right: Optional[Node] = None) -> None:
+                 left: Optional['SimpleNode'] = None,
+                 right: Optional['SimpleNode'] = None) -> None:
         self._value = value
         self.left = left
         self.right = right
