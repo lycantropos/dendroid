@@ -349,8 +349,6 @@ class Tree(TreeBase[Domain]):
                 # search in left subtree
                 if parent.left is None:
                     return
-                elif key < parent.left.key or parent.left.key < key:
-                    parent = parent.left
                 elif parent.left.key == key:
                     # remove `parent.left`
                     node = parent.left.left
@@ -367,13 +365,11 @@ class Tree(TreeBase[Domain]):
                             node.right, parent.left.left, parent.left.right,
                             node.right.left)
                 else:
-                    return
+                    parent = parent.left
             else:
                 # search in right subtree
                 if parent.right is None:
                     return
-                elif key < parent.right.key or parent.right.key < key:
-                    parent = parent.right
                 elif parent.right.key == key:
                     # remove `parent.right`
                     node = parent.right.left
@@ -390,7 +386,7 @@ class Tree(TreeBase[Domain]):
                             node.right, parent.right.left, parent.right.right,
                             node.right.left)
                 else:
-                    return
+                    parent = parent.right
 
     def clear(self) -> None:
         self._root = None
