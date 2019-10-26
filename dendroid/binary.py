@@ -228,6 +228,15 @@ class TreeBase(ABC, Generic[Domain]):
                 self.discard(value)
         return self
 
+    def min(self) -> Domain:
+        """Returns minimum value from the tree."""
+        node = self.root
+        if node is None:
+            raise ValueError('Tree is empty.')
+        while node.left is not None:
+            node = node.left
+        return node.value
+
     @abstractmethod
     def add(self, value: Domain) -> None:
         """Adds given value to the tree."""
