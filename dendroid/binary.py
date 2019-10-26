@@ -27,12 +27,12 @@ class Node(ABC):
     @property
     @abstractmethod
     def value(self) -> Domain:
-        pass
+        """Contained value."""
 
     @property
     @abstractmethod
     def key(self) -> Sortable:
-        pass
+        """Comparisons key."""
 
 
 class SimpleNode(Node):
