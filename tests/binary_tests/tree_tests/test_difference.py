@@ -7,21 +7,21 @@ from . import strategies
 
 
 @given(strategies.trees)
-def test_self_difference(tree: Tree) -> None:
+def test_self_inverse(tree: Tree) -> None:
     result = tree - tree
 
     assert len(result) == 0
 
 
 @given(strategies.empty_trees, strategies.trees)
-def test_empty_tree_minuend(empty_tree: Tree, tree: Tree) -> None:
+def test_left_absorbing_element(empty_tree: Tree, tree: Tree) -> None:
     result = empty_tree - tree
 
     assert len(result) == 0
 
 
 @given(strategies.empty_trees, strategies.trees)
-def test_empty_tree_subtrahend(empty_tree: Tree, tree: Tree) -> None:
+def test_right_neutral_element(empty_tree: Tree, tree: Tree) -> None:
     result = tree - empty_tree
 
     assert result == tree
