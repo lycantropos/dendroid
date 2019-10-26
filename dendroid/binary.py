@@ -237,6 +237,15 @@ class TreeBase(ABC, Generic[Domain]):
             node = node.left
         return node.value
 
+    def max(self) -> Domain:
+        """Returns maximum value from the tree."""
+        node = self.root
+        if node is None:
+            raise ValueError('Tree is empty.')
+        while node.right is not None:
+            node = node.right
+        return node.value
+
     @abstractmethod
     def add(self, value: Domain) -> None:
         """Adds given value to the tree."""
