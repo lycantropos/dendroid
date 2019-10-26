@@ -218,7 +218,7 @@ class TreeBase(ABC, Generic[Domain]):
         return self
 
     def __isub__(self, other: 'TreeBase[OtherDomain]') -> 'TreeBase[Domain]':
-        """Subtracts the tree with given one in-place."""
+        """Subtracts from the tree a given one in-place."""
         if not isinstance(other, TreeBase):
             return NotImplemented
         if self == other:
@@ -266,10 +266,10 @@ class TreeBase(ABC, Generic[Domain]):
 
     @abstractmethod
     def discard(self, value: Domain) -> None:
-        """Removes given value from tree if it exists."""
+        """Removes given value from the tree if it exists."""
 
     def pop(self) -> Domain:
-        """Pops value from tree."""
+        """Pops value from the tree."""
         iterator = iter(self)
         try:
             result = next(iterator)
