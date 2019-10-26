@@ -27,14 +27,14 @@ def test_idempotence(tree: Tree) -> None:
 def test_left_absorbing_element(empty_tree: Tree, tree: Tree) -> None:
     result = empty_tree & tree
 
-    assert not result
+    assert len(result) == 0
 
 
 @given(strategies.empty_trees, strategies.trees)
 def test_right_absorbing_element(empty_tree: Tree, tree: Tree) -> None:
     result = tree & empty_tree
 
-    assert not result
+    assert len(result) == 0
 
 
 @given(strategies.trees_pairs)
