@@ -5,6 +5,7 @@ from itertools import chain
 from typing import (Generic,
                     Iterable,
                     Iterator,
+                    List,
                     MutableSet,
                     Optional,
                     Sequence,
@@ -498,7 +499,7 @@ def tree(*values: Domain, key: Optional[SortingKey] = None) -> Tree[Domain]:
 
 def _to_unique_keys_values(values: Sequence[Domain], sorting_key: SortingKey
                            ) -> Sequence[Tuple[Domain, Sortable]]:
-    keys_indices = []
+    keys_indices = []  # type: List[Tuple[Sortable, int]]
     for key, index in sorted([(sorting_key(value), index)
                               for index, value in enumerate(values)],
                              key=sorting_key):
@@ -509,7 +510,7 @@ def _to_unique_keys_values(values: Sequence[Domain], sorting_key: SortingKey
 
 
 def _to_unique_sorted_values(values: Sequence[Domain]) -> Sequence[Domain]:
-    result = []
+    result = []  # type: List[Domain]
     for value in sorted(values):
         while result and result[-1] == value:
             del result[-1]
