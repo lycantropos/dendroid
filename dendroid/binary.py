@@ -461,33 +461,33 @@ class Tree(TreeBase[Domain]):
         if not values:
             root = None
         elif key is None:
-            def to_node(sub_values: Sequence[Domain]) -> SimpleNode:
-                midpoint = len(sub_values) // 2
-                left = (to_node(sub_values[:midpoint])
-                        if midpoint > 0
-                        else None)
-                right = (to_node(sub_values[midpoint + 1:])
-                         if midpoint < len(sub_values) - 1
-                         else None)
-                return SimpleNode(sub_values[midpoint],
-                                  left=left,
-                                  right=right)
+            values = _to_unique_sorted_values(values)
 
-            root = to_node(_to_unique_sorted_values(values))
+            def to_node(start_index: int, end_index: int) -> SimpleNode:
+                middle_index = (start_index + end_index) // 2
+                return SimpleNode(values[middle_index],
+                                  left=(to_node(start_index, middle_index)
+                                        if middle_index > start_index
+                                        else None),
+                                  right=(to_node(middle_index + 1, end_index)
+                                         if middle_index < end_index - 1
+                                         else None))
+
+            root = to_node(0, len(values))
         else:
-            def to_node(sub_keys_values: Sequence[Tuple[Domain, Sortable]]
-                        ) -> ComplexNode:
-                midpoint = len(sub_keys_values) // 2
-                return ComplexNode(*sub_keys_values[midpoint],
-                                   left=(to_node(sub_keys_values[:midpoint])
-                                         if midpoint > 0
-                                         else None),
-                                   right=(
-                                       to_node(sub_keys_values[midpoint + 1:])
-                                       if midpoint < len(sub_keys_values) - 1
-                                       else None))
+            keys_values = _to_unique_keys_values(values, key)
 
-            root = to_node(_to_unique_keys_values(values, key))
+            def to_node(start_index: int, end_index: int) -> ComplexNode:
+                middle_index = (start_index + end_index) // 2
+                return ComplexNode(*keys_values[middle_index],
+                                   left=(to_node(start_index, middle_index)
+                                         if middle_index > start_index
+                                         else None),
+                                   right=(to_node(middle_index + 1, end_index)
+                                          if middle_index < end_index - 1
+                                          else None))
+
+            root = to_node(0, len(keys_values))
         return cls(root,
                    key=key)
 
