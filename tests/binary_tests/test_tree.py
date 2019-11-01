@@ -3,7 +3,8 @@ from typing import (List,
 
 from hypothesis import given
 
-from dendroid.binary import tree, Tree
+from dendroid.binary import (Tree,
+                             tree)
 from dendroid.hints import (Domain,
                             SortingKey)
 from tests import strategies
