@@ -187,7 +187,7 @@ class TreeBase(ABC, Generic[Domain]):
         return (self - other) | (other - self)
 
     def __iand__(self, other: 'TreeBase[OtherDomain]') -> 'TreeBase[Domain]':
-        """Intersects tree with given objects in-place."""
+        """Intersects the tree with given one in-place."""
         if not isinstance(other, TreeBase):
             return NotImplemented
         for value in self - other:
