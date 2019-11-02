@@ -12,7 +12,7 @@ OtherDomain = TypeVar('OtherDomain')
 
 class Sortable(Protocol):
     def __lt__(self, other: 'Sortable') -> bool:
-        pass
+        """Checks if the object is less than given one."""
 
 
 SortingKey = Callable[[Domain], Sortable]
