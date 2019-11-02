@@ -27,7 +27,6 @@ def test_base_case(tree: Tree, value: Domain) -> None:
 def test_step(tree_with_value: Tuple[Tree, Domain]) -> None:
     tree, value = tree_with_value
     original = deepcopy(tree)
-    print(list(original), value)
 
     tree.discard(value)
 
