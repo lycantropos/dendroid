@@ -12,7 +12,7 @@ def test_basic(trees_pair: Tuple[Tree, Tree]) -> None:
 
     result = left_tree ^ right_tree
 
-    assert isinstance(result, Tree)
+    assert isinstance(result, type(left_tree))
     assert len(result) <= len(left_tree) + len(right_tree)
 
 
