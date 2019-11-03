@@ -305,7 +305,8 @@ class Tree(TreeBase[Domain]):
         self._root = root
         self._key = key
 
-    __repr__ = generate_repr(__init__)
+    __repr__ = generate_repr(__init__,
+                             with_module_name=True)
 
     @property
     def root(self) -> Optional[Node]:
