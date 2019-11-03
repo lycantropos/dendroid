@@ -20,10 +20,12 @@ from .hints import (Domain,
                     Sortable,
                     SortingKey)
 
+NIL = None
+
 
 class Node(ABC):
-    left = None  # type: Optional['Node']
-    right = None  # type: Optional['Node']
+    left = NIL  # type: Union['Node', NIL]
+    right = NIL  # type: Union['Node', NIL]
 
     @property
     @abstractmethod
@@ -41,8 +43,8 @@ class SimpleNode(Node):
 
     def __init__(self, value: Domain,
                  *,
-                 left: Optional['SimpleNode'] = None,
-                 right: Optional['SimpleNode'] = None) -> None:
+                 left: Union['SimpleNode', NIL] = NIL,
+                 right: Union['SimpleNode', NIL] = NIL) -> None:
         self._value = value
         self.left = left
         self.right = right
@@ -63,8 +65,8 @@ class ComplexNode(Node):
 
     def __init__(self, value: Domain, key: Sortable,
                  *,
-                 left: Optional['ComplexNode'] = None,
-                 right: Optional['ComplexNode'] = None) -> None:
+                 left: Union['ComplexNode', NIL] = NIL,
+                 right: Union['ComplexNode', NIL] = NIL) -> None:
         self._value = value
         self._key = key
         self.left = left
@@ -85,7 +87,7 @@ class ComplexNode(Node):
 class TreeBase(ABC, Generic[Domain]):
     @property
     @abstractmethod
-    def root(self) -> Optional[Node]:
+    def root(self) -> Union[Node, NIL]:
         """Root node."""
 
     @property
@@ -106,15 +108,15 @@ class TreeBase(ABC, Generic[Domain]):
 
     def __iter__(self) -> Iterator[Domain]:
         """Returns iterator over values."""
-        if self.root is None:
+        if self.root is NIL:
             return
         queue = deque([self.root])
         while queue:
             node = queue.pop()
             yield node.value
-            if node.left is not None:
+            if node.left is not NIL:
                 queue.appendleft(node.left)
-            if node.right is not None:
+            if node.right is not NIL:
                 queue.appendleft(node.right)
 
     @abstractmethod
@@ -232,18 +234,18 @@ class TreeBase(ABC, Generic[Domain]):
     def max(self) -> Domain:
         """Returns maximum value from the tree."""
         node = self.root
-        if node is None:
+        if node is NIL:
             raise ValueError('Tree is empty.')
-        while node.right is not None:
+        while node.right is not NIL:
             node = node.right
         return node.value
 
     def min(self) -> Domain:
         """Returns minimum value from the tree."""
         node = self.root
-        if node is None:
+        if node is NIL:
             raise ValueError('Tree is empty.')
-        while node.left is not None:
+        while node.left is not NIL:
             node = node.left
         return node.value
 
@@ -299,7 +301,7 @@ class TreeBase(ABC, Generic[Domain]):
 
 
 class Tree(TreeBase[Domain]):
-    def __init__(self, root: Optional[Node],
+    def __init__(self, root: Union[Node, NIL],
                  *,
                  key: Optional[SortingKey] = None) -> None:
         self._root = root
@@ -309,7 +311,7 @@ class Tree(TreeBase[Domain]):
                              with_module_name=True)
 
     @property
-    def root(self) -> Optional[Node]:
+    def root(self) -> Union[Node, NIL]:
         return self._root
 
     @property
@@ -318,33 +320,33 @@ class Tree(TreeBase[Domain]):
 
     def __contains__(self, value: Domain) -> bool:
         node = self._root
-        if node is None:
+        if node is NIL:
             return False
         key = self._to_key(value)
-        while node is not None:
+        while node is not NIL:
             if key < node.key:
                 node = node.left
             elif node.key < key:
                 node = node.right
             else:
-                return node.key == key
+                return True
         return False
 
     def add(self, value: Domain) -> None:
         parent = self._root
-        if parent is None:
+        if parent is NIL:
             self._root = self._make_node(value)
             return
         key = self._to_key(value)
         while True:
             if key < parent.key:
-                if parent.left is None:
+                if parent.left is NIL:
                     parent.left = self._make_node(value)
                     return
                 else:
                     parent = parent.left
             elif parent.key < key:
-                if parent.right is None:
+                if parent.right is NIL:
                     parent.right = self._make_node(value)
                     return
                 else:
@@ -354,18 +356,18 @@ class Tree(TreeBase[Domain]):
 
     def discard(self, value: Domain) -> None:
         parent = self._root
-        if parent is None:
+        if parent is NIL:
             return
         key = self._to_key(value)
         if parent.key == key:
-            if parent.left is None:
+            if parent.left is NIL:
                 self._root = parent.right
             else:
                 node = parent.left
-                if node.right is None:
+                if node.right is NIL:
                     self._root, node.right = node, self._root.right
                 else:
-                    while node.right.right is not None:
+                    while node.right.right is not NIL:
                         node = node.right
                     (self._root, node.right.left, node.right.right,
                      node.right) = (
@@ -375,18 +377,18 @@ class Tree(TreeBase[Domain]):
         while True:
             if key < parent.key:
                 # search in left subtree
-                if parent.left is None:
+                if parent.left is NIL:
                     return
                 elif parent.left.key == key:
                     # remove `parent.left`
                     node = parent.left.left
-                    if node is None:
+                    if node is NIL:
                         parent.left = parent.left.right
                         return
-                    elif node.right is None:
+                    elif node.right is NIL:
                         parent.left, node.right = node, parent.left.right
                     else:
-                        while node.right.right is not None:
+                        while node.right.right is not NIL:
                             node = node.right
                         (parent.left, node.right.left, node.right.right,
                          node.right) = (
@@ -396,18 +398,18 @@ class Tree(TreeBase[Domain]):
                     parent = parent.left
             else:
                 # search in right subtree
-                if parent.right is None:
+                if parent.right is NIL:
                     return
                 elif parent.right.key == key:
                     # remove `parent.right`
                     node = parent.right.left
-                    if node is None:
+                    if node is NIL:
                         parent.right = parent.right.right
                         return
-                    elif node.right is None:
+                    elif node.right is NIL:
                         parent.right, node.right = node, parent.right.right
                     else:
-                        while node.right.right is not None:
+                        while node.right.right is not NIL:
                             node = node.right
                         (parent.right, node.right.left, node.right.right,
                          node.right) = (
@@ -418,26 +420,26 @@ class Tree(TreeBase[Domain]):
 
     def popmax(self) -> Domain:
         node = self._root
-        if node is None:
+        if node is NIL:
             raise KeyError
-        elif node.right is None:
+        elif node.right is NIL:
             self._root = node.left
             return node.value
         else:
-            while node.right.right is not None:
+            while node.right.right is not NIL:
                 node = node.right
             result, node.right = node.right.value, node.right.left
             return result
 
     def popmin(self) -> Domain:
         node = self._root
-        if node is None:
+        if node is NIL:
             raise KeyError
-        elif node.left is None:
+        elif node.left is NIL:
             self._root = node.right
             return node.value
         else:
-            while node.left.left is not None:
+            while node.left.left is not NIL:
                 node = node.left
             result, node.left = node.left.value, node.left.right
             return result
@@ -460,7 +462,7 @@ class Tree(TreeBase[Domain]):
                       key: Optional[SortingKey] = None) -> 'Tree[Domain]':
         values = list(values)
         if not values:
-            root = None
+            root = NIL
         elif key is None:
             values = _to_unique_sorted_values(values)
 
@@ -469,10 +471,10 @@ class Tree(TreeBase[Domain]):
                 return SimpleNode(values[middle_index],
                                   left=(to_node(start_index, middle_index)
                                         if middle_index > start_index
-                                        else None),
+                                        else NIL),
                                   right=(to_node(middle_index + 1, end_index)
                                          if middle_index < end_index - 1
-                                         else None))
+                                         else NIL))
 
             root = to_node(0, len(values))
         else:
@@ -483,10 +485,10 @@ class Tree(TreeBase[Domain]):
                 return ComplexNode(*keys_values[middle_index],
                                    left=(to_node(start_index, middle_index)
                                          if middle_index > start_index
-                                         else None),
+                                         else NIL),
                                    right=(to_node(middle_index + 1, end_index)
                                           if middle_index < end_index - 1
-                                          else None))
+                                          else NIL))
 
             root = to_node(0, len(keys_values))
         return cls(root,
