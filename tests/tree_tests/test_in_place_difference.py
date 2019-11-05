@@ -25,4 +25,5 @@ def test_properties(trees_pair: TreesPair) -> None:
 
     assert all(value not in left_tree
                for value in right_tree)
+    assert left_tree.isdisjoint(right_tree)
     assert is_left_subtree_less_than_right_subtree(left_tree)
