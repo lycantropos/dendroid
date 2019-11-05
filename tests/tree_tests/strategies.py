@@ -58,6 +58,17 @@ non_empty_trees_with_totally_ordered_values = strategies.builds(
         keys)
 
 
+def to_non_empty_trees_with_values_from_them(tree: Tree
+                                             ) -> Strategy[Tuple[Tree,
+                                                                 Domain]]:
+    return strategies.tuples(strategies.just(tree),
+                             strategies.sampled_from(list(tree)))
+
+
+non_empty_trees_with_values_from_them = (
+    non_empty_trees.flatmap(to_non_empty_trees_with_values_from_them))
+
+
 def to_trees_pair(factory: Callable[..., Tree],
                   values_lists_pair: Tuple[List[Domain], List[Domain]],
                   key: Optional[SortingKey]) -> TreesPair:
