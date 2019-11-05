@@ -3,10 +3,9 @@ from typing import (List,
 
 from hypothesis import given
 
+from dendroid import red_black
 from dendroid.hints import (Domain,
                             SortingKey)
-from dendroid.red_black import (Tree,
-                                tree)
 from tests import strategies
 from tests.utils import (do_paths_to_leaves_have_same_black_nodes_count,
                          do_red_nodes_have_black_children,
@@ -18,16 +17,16 @@ from tests.utils import (do_paths_to_leaves_have_same_black_nodes_count,
 
 @given(strategies.totally_ordered_values_lists, strategies.keys)
 def test_basic(values: List[Domain], key: Optional[SortingKey]) -> None:
-    result = tree(*values,
-                  key=key)
+    result = red_black.tree(*values,
+                            key=key)
 
-    assert isinstance(result, Tree)
+    assert isinstance(result, red_black.Tree)
 
 
 @given(strategies.totally_ordered_values_lists, strategies.keys)
 def test_properties(values: List[Domain], key: Optional[SortingKey]) -> None:
-    result = tree(*values,
-                  key=key)
+    result = red_black.tree(*values,
+                            key=key)
 
     assert len(result) <= len(values)
     assert to_height(result) <= 2 * log2ceil(len(result))
@@ -43,7 +42,7 @@ def test_properties(values: List[Domain], key: Optional[SortingKey]) -> None:
 
 @given(strategies.totally_ordered_values_lists, strategies.keys)
 def test_base_case(values: List[Domain], key: Optional[SortingKey]) -> None:
-    result = tree(key=key)
+    result = red_black.tree(key=key)
 
     assert len(result) == 0
     assert all(value not in result
@@ -55,10 +54,10 @@ def test_step(non_empty_values: List[Domain],
               key: Optional[SortingKey]) -> None:
     *values, value = non_empty_values
 
-    result = tree(*values,
-                  key=key)
-    next_result = tree(*values, value,
-                       key=key)
+    result = red_black.tree(*values,
+                            key=key)
+    next_result = red_black.tree(*values, value,
+                                 key=key)
 
     assert next_result
     assert len(next_result) == len(result) + (value not in values)
