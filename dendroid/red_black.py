@@ -195,7 +195,9 @@ class Tree(TreeBase[Domain]):
                       key: Optional[SortingKey] = None) -> 'Tree[Domain]':
         result = cls(NIL,
                      key=key)
-        for value in values:
+        for value in sorted(values,
+                            key=key,
+                            reverse=True):
             result.add(value)
         return result
 
