@@ -13,7 +13,7 @@ def test_properties(tree: Tree) -> None:
     result = tree.pop()
 
     assert result not in tree
-    assert is_left_subtree_less_than_right_subtree(result)
+    assert is_left_subtree_less_than_right_subtree(tree)
 
 
 @given(strategies.empty_trees)
