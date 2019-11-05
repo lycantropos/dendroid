@@ -2,7 +2,10 @@ from hypothesis import given
 
 from tests.utils import (Tree,
                          TreesPair,
-                         TreesTriplet)
+                         TreesTriplet,
+                         implication,
+                         is_left_subtree_less_than_right_subtree,
+                         to_height)
 from . import strategies
 
 
@@ -13,7 +16,17 @@ def test_basic(trees_pair: TreesPair) -> None:
     result = left_tree ^ right_tree
 
     assert isinstance(result, type(left_tree))
+
+
+@given(strategies.trees_pairs)
+def test_properties(trees_pair: TreesPair) -> None:
+    left_tree, right_tree = trees_pair
+
+    result = left_tree ^ right_tree
+
     assert len(result) <= len(left_tree) + len(right_tree)
+    assert to_height(result) <= to_height(left_tree) + to_height(right_tree)
+    assert is_left_subtree_less_than_right_subtree(result)
 
 
 @given(strategies.trees)
@@ -73,3 +86,13 @@ def test_repeated(trees_triplet: TreesTriplet) -> None:
     result = (left_tree ^ mid_tree) ^ (mid_tree ^ right_tree)
 
     assert result == left_tree ^ right_tree
+
+
+@given(strategies.trees_pairs)
+def test_connection_with_disjoint(trees_pair: TreesPair) -> None:
+    left_tree, right_tree = trees_pair
+
+    result = left_tree ^ right_tree
+
+    assert implication(left_tree.isdisjoint(right_tree),
+                       result == left_tree | right_tree)
