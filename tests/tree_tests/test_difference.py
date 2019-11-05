@@ -3,6 +3,7 @@ from hypothesis import given
 from tests.utils import (Tree,
                          TreesPair,
                          TreesTriplet,
+                         equivalence,
                          is_left_subtree_less_than_right_subtree)
 from . import strategies
 
@@ -99,3 +100,12 @@ def test_connection_with_subset_relation(trees_pair: TreesPair) -> None:
     result = left_tree - right_tree
 
     assert result <= left_tree
+
+
+@given(strategies.trees_pairs)
+def test_connection_with_disjoint(trees_pair: TreesPair) -> None:
+    left_tree, right_tree = trees_pair
+
+    result = left_tree - right_tree
+
+    assert equivalence(left_tree.isdisjoint(right_tree), result == left_tree)
