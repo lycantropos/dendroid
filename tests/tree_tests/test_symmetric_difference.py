@@ -3,7 +3,7 @@ from hypothesis import given
 from tests.utils import (Tree,
                          TreesPair,
                          TreesTriplet,
-                         implication,
+                         equivalence,
                          is_left_subtree_less_than_right_subtree,
                          to_height)
 from . import strategies
@@ -94,5 +94,5 @@ def test_connection_with_disjoint(trees_pair: TreesPair) -> None:
 
     result = left_tree ^ right_tree
 
-    assert implication(left_tree.isdisjoint(right_tree),
+    assert equivalence(left_tree.isdisjoint(right_tree),
                        result == left_tree | right_tree)
