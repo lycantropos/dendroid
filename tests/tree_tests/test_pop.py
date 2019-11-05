@@ -3,8 +3,17 @@ from copy import deepcopy
 import pytest
 from hypothesis import given
 
-from tests.utils import Tree
+from tests.utils import (Tree,
+                         is_left_subtree_less_than_right_subtree)
 from . import strategies
+
+
+@given(strategies.non_empty_trees)
+def test_properties(tree: Tree) -> None:
+    result = tree.pop()
+
+    assert result not in tree
+    assert is_left_subtree_less_than_right_subtree(result)
 
 
 @given(strategies.empty_trees)
