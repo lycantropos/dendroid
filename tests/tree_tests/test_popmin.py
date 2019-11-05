@@ -1,8 +1,21 @@
 import pytest
 from hypothesis import given
 
-from tests.utils import Tree
+from tests.utils import (Tree,
+                         is_left_subtree_less_than_right_subtree)
 from . import strategies
+
+
+@given(strategies.non_empty_trees)
+def test_properties(tree: Tree) -> None:
+    result = tree.popmin()
+
+    assert result not in tree
+    assert all(result < value
+               if tree.key is None
+               else tree.key(result) < tree.key(value)
+               for value in tree)
+    assert is_left_subtree_less_than_right_subtree(tree)
 
 
 @given(strategies.empty_trees)
