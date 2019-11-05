@@ -2,7 +2,8 @@ from hypothesis import given
 
 from tests.utils import (Tree,
                          TreesPair,
-                         TreesTriplet)
+                         TreesTriplet,
+                         is_left_subtree_less_than_right_subtree)
 from . import strategies
 
 
@@ -13,7 +14,16 @@ def test_basic(trees_pair: TreesPair) -> None:
     result = left_tree - right_tree
 
     assert isinstance(result, type(left_tree))
+
+
+@given(strategies.trees_pairs)
+def test_properties(trees_pair: TreesPair) -> None:
+    left_tree, right_tree = trees_pair
+
+    result = left_tree - right_tree
+
     assert len(result) <= len(left_tree)
+    assert is_left_subtree_less_than_right_subtree(result)
 
 
 @given(strategies.trees)
