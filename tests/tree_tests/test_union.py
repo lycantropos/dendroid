@@ -1,7 +1,11 @@
 from hypothesis import given
 
-from tests.utils import (Tree, TreesPair, TreesTriplet, equivalence,
-                         is_left_subtree_less_than_right_subtree, to_height)
+from tests.utils import (Tree,
+                         TreesPair,
+                         TreesTriplet,
+                         equivalence,
+                         is_left_subtree_less_than_right_subtree,
+                         to_height)
 from . import strategies
 
 
