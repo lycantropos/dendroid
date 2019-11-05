@@ -3,8 +3,7 @@ from copy import deepcopy
 from hypothesis import given
 
 from tests.utils import (TreesPair,
-                         is_left_subtree_less_than_right_subtree,
-                         to_height)
+                         is_left_subtree_less_than_right_subtree)
 from . import strategies
 
 
@@ -25,7 +24,6 @@ def test_properties(trees_pair: TreesPair) -> None:
     left_tree &= right_tree
 
     assert len(left_tree) <= len(right_tree)
-    assert to_height(left_tree) <= to_height(right_tree)
     assert all(value in right_tree
                for value in left_tree)
     assert is_left_subtree_less_than_right_subtree(left_tree)
