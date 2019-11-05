@@ -8,6 +8,9 @@ from dendroid.binary import (Tree,
 from dendroid.hints import (Domain,
                             SortingKey)
 from tests import strategies
+from tests.utils import (is_left_subtree_less_than_right_subtree,
+                         log2ceil,
+                         to_height)
 
 
 @given(strategies.totally_ordered_values_lists, strategies.keys)
@@ -16,11 +19,20 @@ def test_basic(values: List[Domain], key: Optional[SortingKey]) -> None:
                   key=key)
 
     assert isinstance(result, Tree)
+
+
+@given(strategies.totally_ordered_values_lists, strategies.keys)
+def test_properties(values: List[Domain], key: Optional[SortingKey]) -> None:
+    result = tree(*values,
+                  key=key)
+
     assert len(result) <= len(values)
+    assert to_height(result) == log2ceil(len(result))
     assert all(value in result
                for value in values)
     assert all(value in values
                for value in result)
+    assert is_left_subtree_less_than_right_subtree(result)
 
 
 @given(strategies.totally_ordered_values_lists, strategies.keys)
