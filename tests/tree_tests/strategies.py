@@ -2,12 +2,12 @@ from functools import partial
 from typing import (Callable,
                     List,
                     Optional,
-                    Tuple,
-                    TypeVar)
+                    Tuple)
 
 from hypothesis import strategies
 
-from dendroid import binary, red_black
+from dendroid import (binary,
+                      red_black)
 from dendroid.hints import (Domain,
                             SortingKey)
 from tests.strategies import (keys,
@@ -17,6 +17,9 @@ from tests.strategies import (keys,
                               totally_ordered_values_lists,
                               totally_ordered_values_strategies)
 from tests.utils import (Strategy,
+                         Tree,
+                         TreesPair,
+                         TreesTriplet,
                          builds_from)
 
 totally_ordered_values = totally_ordered_values
@@ -33,13 +36,10 @@ non_empty_trees = builds_from(packed_factories,
                               non_empty_totally_ordered_values_lists,
                               key=keys)
 
-Tree = TypeVar('Tree', binary.Tree, red_black.Tree)
 
-
-def to_tree_with_totally_ordered_value(factory: Callable[..., Tree],
-                                       values_list: List[Domain],
-                                       key: Optional[SortingKey]
-                                       ) -> Tuple[Tree, Domain]:
+def to_tree_with_value(factory: Callable[..., Tree],
+                       values_list: List[Domain],
+                       key: Optional[SortingKey]) -> Tuple[Tree, Domain]:
     *rest_values_list, value = values_list
     tree = factory(*rest_values_list,
                    key=key)
@@ -47,12 +47,12 @@ def to_tree_with_totally_ordered_value(factory: Callable[..., Tree],
 
 
 trees_with_totally_ordered_values = strategies.builds(
-        to_tree_with_totally_ordered_value,
+        to_tree_with_value,
         factories,
         non_empty_totally_ordered_values_lists,
         keys)
 non_empty_trees_with_totally_ordered_values = strategies.builds(
-        to_tree_with_totally_ordered_value,
+        to_tree_with_value,
         factories,
         to_totally_ordered_values_lists(min_size=2),
         keys)
@@ -60,7 +60,7 @@ non_empty_trees_with_totally_ordered_values = strategies.builds(
 
 def to_trees_pair(factory: Callable[..., Tree],
                   values_lists_pair: Tuple[List[Domain], List[Domain]],
-                  key: Optional[SortingKey]) -> Tuple[Tree, Tree]:
+                  key: Optional[SortingKey]) -> TreesPair:
     first_values_list, second_values_list = values_lists_pair
     first_tree = factory(*first_values_list,
                          key=key)
@@ -94,7 +94,7 @@ trees_pairs = strategies.builds(to_trees_pair,
 def to_trees_triplet(factory: Callable[..., Tree],
                      values_lists_triplet: Tuple[List[Domain], List[Domain],
                                                  List[Domain]],
-                     key: Optional[SortingKey]) -> Tuple[Tree, Tree, Tree]:
+                     key: Optional[SortingKey]) -> TreesTriplet:
     (first_values_list, second_values_list,
      third_values_list) = values_lists_triplet
     first_tree = factory(*first_values_list,
@@ -133,10 +133,11 @@ trees_triplets = strategies.builds(to_trees_triplet,
                                    keys)
 
 
-def to_trees_pair_with_totally_ordered_value(
-        factory: Callable[..., Tree],
-        values_lists_pair: Tuple[List[Domain], List[Domain]],
-        key: Optional[SortingKey]) -> Tuple[Tree, Tree, Domain]:
+def to_trees_pair_with_value(factory: Callable[..., Tree],
+                             values_lists_pair: Tuple[List[Domain],
+                                                      List[Domain]],
+                             key: Optional[SortingKey]
+                             ) -> Tuple[Tree, Tree, Domain]:
     first_values_list, second_values_list = values_lists_pair
     *first_values_list, value = first_values_list
     first_tree = factory(*first_values_list,
@@ -147,7 +148,7 @@ def to_trees_pair_with_totally_ordered_value(
 
 
 trees_pairs_with_totally_ordered_values = (
-    strategies.builds(to_trees_pair_with_totally_ordered_value,
+    strategies.builds(to_trees_pair_with_value,
                       factories,
                       totally_ordered_values_strategies
                       .flatmap(partial(to_values_lists_pairs,

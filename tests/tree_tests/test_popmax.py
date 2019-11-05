@@ -1,7 +1,7 @@
 import pytest
 from hypothesis import given
 
-from dendroid.binary import Tree
+from tests.utils import Tree
 from . import strategies
 
 

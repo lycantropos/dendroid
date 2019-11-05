@@ -3,15 +3,16 @@ from typing import Tuple
 
 from hypothesis import given
 
-from dendroid.binary import Tree
 from dendroid.hints import Domain
-from tests.utils import (equivalence,
+from tests.utils import (Tree,
+                         TreesPair,
+                         equivalence,
                          implication)
 from . import strategies
 
 
 @given(strategies.trees_pairs)
-def test_basic(trees_pair: Tuple[Tree, Tree]) -> None:
+def test_basic(trees_pair: TreesPair) -> None:
     first_tree, second_tree = trees_pair
 
     result = first_tree.isdisjoint(second_tree)
@@ -39,7 +40,7 @@ def test_step(two_trees_with_value: Tuple[Tree, Tree, Domain]) -> None:
 
 
 @given(strategies.trees_pairs)
-def test_symmetry(trees_pair: Tuple[Tree, Tree]) -> None:
+def test_symmetry(trees_pair: TreesPair) -> None:
     first_tree, second_tree = trees_pair
 
     assert equivalence(first_tree.isdisjoint(second_tree),

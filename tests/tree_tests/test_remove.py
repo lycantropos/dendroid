@@ -3,8 +3,8 @@ from hypothesis import given
 from lz.iterating import (first,
                           last)
 
-from dendroid.binary import Tree
 from dendroid.hints import Domain
+from tests.utils import Tree
 from . import strategies
 
 

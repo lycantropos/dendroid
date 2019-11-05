@@ -1,11 +1,17 @@
 from typing import (Any,
-                    Callable)
+                    Callable,
+                    Tuple)
 
 from hypothesis import strategies
 from hypothesis.searchstrategy import SearchStrategy
 from lz.hints import Range
 
+from dendroid import binary
+
 Strategy = SearchStrategy
+Tree = binary.TreeBase
+TreesPair = Tuple[Tree, Tree]
+TreesTriplet = Tuple[Tree, Tree, Tree]
 
 
 def equivalence(left_statement: bool, right_statement: bool) -> bool:

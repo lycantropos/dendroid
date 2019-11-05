@@ -1,13 +1,13 @@
-from typing import Tuple
-
 from hypothesis import given
 
-from dendroid.binary import Tree
+from tests.utils import (Tree,
+                         TreesPair,
+                         TreesTriplet)
 from . import strategies
 
 
 @given(strategies.trees_pairs)
-def test_basic(trees_pair: Tuple[Tree, Tree]) -> None:
+def test_basic(trees_pair: TreesPair) -> None:
     left_tree, right_tree = trees_pair
 
     result = left_tree | right_tree
@@ -38,7 +38,7 @@ def test_right_neutral_element(empty_tree: Tree, tree: Tree) -> None:
 
 
 @given(strategies.trees_pairs)
-def test_absorption_identity(trees_pair: Tuple[Tree, Tree]) -> None:
+def test_absorption_identity(trees_pair: TreesPair) -> None:
     left_tree, right_tree = trees_pair
 
     result = left_tree | (left_tree & right_tree)
@@ -47,7 +47,7 @@ def test_absorption_identity(trees_pair: Tuple[Tree, Tree]) -> None:
 
 
 @given(strategies.trees_pairs)
-def test_commutativity(trees_pair: Tuple[Tree, Tree]) -> None:
+def test_commutativity(trees_pair: TreesPair) -> None:
     left_tree, right_tree = trees_pair
 
     result = left_tree | right_tree
@@ -56,7 +56,7 @@ def test_commutativity(trees_pair: Tuple[Tree, Tree]) -> None:
 
 
 @given(strategies.trees_triplets)
-def test_associativity(trees_triplet: Tuple[Tree, Tree, Tree]) -> None:
+def test_associativity(trees_triplet: TreesTriplet) -> None:
     left_tree, mid_tree, right_tree = trees_triplet
 
     result = (left_tree | mid_tree) | right_tree
@@ -65,7 +65,7 @@ def test_associativity(trees_triplet: Tuple[Tree, Tree, Tree]) -> None:
 
 
 @given(strategies.trees_triplets)
-def test_difference_operand(trees_triplet: Tuple[Tree, Tree, Tree]) -> None:
+def test_difference_operand(trees_triplet: TreesTriplet) -> None:
     left_tree, mid_tree, right_tree = trees_triplet
 
     result = (left_tree - mid_tree) | right_tree
@@ -74,8 +74,7 @@ def test_difference_operand(trees_triplet: Tuple[Tree, Tree, Tree]) -> None:
 
 
 @given(strategies.trees_triplets)
-def test_distribution_over_intersection(trees_triplet: Tuple[Tree, Tree, Tree]
-                                        ) -> None:
+def test_distribution_over_intersection(trees_triplet: TreesTriplet) -> None:
     left_tree, mid_tree, right_tree = trees_triplet
 
     result = left_tree | (mid_tree & right_tree)
@@ -84,8 +83,7 @@ def test_distribution_over_intersection(trees_triplet: Tuple[Tree, Tree, Tree]
 
 
 @given(strategies.trees_pairs)
-def test_connection_with_subset_relation(trees_pair: Tuple[Tree, Tree]
-                                         ) -> None:
+def test_connection_with_subset_relation(trees_pair: TreesPair) -> None:
     left_tree, right_tree = trees_pair
 
     result = left_tree | right_tree
