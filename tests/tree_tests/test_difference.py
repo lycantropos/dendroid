@@ -1,13 +1,13 @@
-from typing import Tuple
-
 from hypothesis import given
 
-from dendroid.binary import Tree
+from tests.utils import (Tree,
+                         TreesPair,
+                         TreesTriplet)
 from . import strategies
 
 
 @given(strategies.trees_pairs)
-def test_basic(trees_pair: Tuple[Tree, Tree]) -> None:
+def test_basic(trees_pair: TreesPair) -> None:
     left_tree, right_tree = trees_pair
 
     result = left_tree - right_tree
@@ -38,8 +38,7 @@ def test_right_neutral_element(empty_tree: Tree, tree: Tree) -> None:
 
 
 @given(strategies.trees_pairs)
-def test_expressing_intersection_as_difference(trees_pair: Tuple[Tree, Tree]
-                                               ) -> None:
+def test_expressing_intersection_as_difference(trees_pair: TreesPair) -> None:
     left_tree, right_tree = trees_pair
 
     result = left_tree - (left_tree - right_tree)
@@ -48,7 +47,7 @@ def test_expressing_intersection_as_difference(trees_pair: Tuple[Tree, Tree]
 
 
 @given(strategies.trees_triplets)
-def test_difference_subtrahend(trees_triplet: Tuple[Tree, Tree, Tree]) -> None:
+def test_difference_subtrahend(trees_triplet: TreesTriplet) -> None:
     left_tree, mid_tree, right_tree = trees_triplet
 
     result = left_tree - (mid_tree - right_tree)
@@ -57,7 +56,7 @@ def test_difference_subtrahend(trees_triplet: Tuple[Tree, Tree, Tree]) -> None:
 
 
 @given(strategies.trees_triplets)
-def test_intersection_minuend(trees_triplet: Tuple[Tree, Tree, Tree]) -> None:
+def test_intersection_minuend(trees_triplet: TreesTriplet) -> None:
     left_tree, mid_tree, right_tree = trees_triplet
 
     result = (left_tree & mid_tree) - right_tree
@@ -66,8 +65,7 @@ def test_intersection_minuend(trees_triplet: Tuple[Tree, Tree, Tree]) -> None:
 
 
 @given(strategies.trees_triplets)
-def test_intersection_subtrahend(trees_triplet: Tuple[Tree, Tree, Tree]
-                                 ) -> None:
+def test_intersection_subtrahend(trees_triplet: TreesTriplet) -> None:
     left_tree, mid_tree, right_tree = trees_triplet
 
     result = left_tree - (mid_tree & right_tree)
@@ -76,7 +74,7 @@ def test_intersection_subtrahend(trees_triplet: Tuple[Tree, Tree, Tree]
 
 
 @given(strategies.trees_triplets)
-def test_union_subtrahend(trees_triplet: Tuple[Tree, Tree, Tree]) -> None:
+def test_union_subtrahend(trees_triplet: TreesTriplet) -> None:
     left_tree, mid_tree, right_tree = trees_triplet
 
     result = left_tree - (mid_tree | right_tree)
@@ -85,8 +83,7 @@ def test_union_subtrahend(trees_triplet: Tuple[Tree, Tree, Tree]) -> None:
 
 
 @given(strategies.trees_pairs)
-def test_connection_with_subset_relation(trees_pair: Tuple[Tree, Tree]
-                                         ) -> None:
+def test_connection_with_subset_relation(trees_pair: TreesPair) -> None:
     left_tree, right_tree = trees_pair
 
     result = left_tree - right_tree

@@ -3,8 +3,8 @@ from typing import Tuple
 
 from hypothesis import given
 
-from dendroid.binary import Tree
 from dendroid.hints import Domain
+from tests.utils import Tree
 from . import strategies
 
 
