@@ -203,7 +203,7 @@ class Tree(TreeBase[Domain]):
 
     def __contains__(self, value: Domain) -> bool:
         node = self._search_node(value)
-        return not node is NIL
+        return node is not NIL
 
     def add(self, value: Domain) -> None:
         parent = self._root
@@ -403,8 +403,7 @@ class Tree(TreeBase[Domain]):
                     node = self._root
         _set_black(node)
 
-    def _transplant(self, origin: Node,
-                    replacement: Optional[Node]) -> None:
+    def _transplant(self, origin: Node, replacement: Optional[Node]) -> None:
         if origin.parent is None:
             self._root = replacement
         elif origin.parent.left is origin:
