@@ -1,5 +1,6 @@
 from typing import (List,
-                    Optional)
+                    Optional,
+                    Tuple)
 
 from hypothesis import given
 
@@ -15,16 +16,22 @@ from tests.utils import (do_paths_to_leaves_have_same_black_nodes_count,
                          to_height)
 
 
-@given(strategies.totally_ordered_values_lists, strategies.keys)
-def test_basic(values: List[Domain], key: Optional[SortingKey]) -> None:
+@given(strategies.values_lists_with_keys)
+def test_basic(values_with_key: Tuple[List[Domain], Optional[SortingKey]]
+               ) -> None:
+    values, key = values_with_key
+
     result = red_black.tree(*values,
                             key=key)
 
     assert isinstance(result, red_black.Tree)
 
 
-@given(strategies.totally_ordered_values_lists, strategies.keys)
-def test_properties(values: List[Domain], key: Optional[SortingKey]) -> None:
+@given(strategies.values_lists_with_keys)
+def test_properties(values_with_key: Tuple[List[Domain], Optional[SortingKey]]
+                    ) -> None:
+    values, key = values_with_key
+
     result = red_black.tree(*values,
                             key=key)
 
@@ -40,8 +47,11 @@ def test_properties(values: List[Domain], key: Optional[SortingKey]) -> None:
     assert do_paths_to_leaves_have_same_black_nodes_count(result)
 
 
-@given(strategies.totally_ordered_values_lists, strategies.keys)
-def test_base_case(values: List[Domain], key: Optional[SortingKey]) -> None:
+@given(strategies.values_lists_with_keys)
+def test_base_case(values_with_key: Tuple[List[Domain], Optional[SortingKey]]
+                   ) -> None:
+    values, key = values_with_key
+
     result = red_black.tree(key=key)
 
     assert len(result) == 0
@@ -49,10 +59,11 @@ def test_base_case(values: List[Domain], key: Optional[SortingKey]) -> None:
                for value in values)
 
 
-@given(strategies.non_empty_totally_ordered_values_lists, strategies.keys)
-def test_step(non_empty_values: List[Domain],
-              key: Optional[SortingKey]) -> None:
-    *values, value = non_empty_values
+@given(strategies.non_empty_values_lists_with_keys)
+def test_step(values_with_key: Tuple[List[Domain], Optional[SortingKey]]
+              ) -> None:
+    values, key = values_with_key
+    *values, value = values
 
     result = red_black.tree(*values,
                             key=key)

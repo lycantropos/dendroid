@@ -20,9 +20,11 @@ def test_basic(trees_pair: TreesPair) -> None:
     assert isinstance(result, bool)
 
 
-@given(strategies.empty_trees, strategies.trees)
-def test_base_case(left_tree: Tree, right_tree: Tree) -> None:
-    assert left_tree.isdisjoint(right_tree)
+@given(strategies.empty_trees_with_trees)
+def test_base_case(empty_tree_with_tree: TreesPair) -> None:
+    empty_tree, tree = empty_tree_with_tree
+
+    assert empty_tree.isdisjoint(tree)
 
 
 @given(strategies.trees_pairs_with_totally_ordered_values)

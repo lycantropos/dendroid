@@ -10,69 +10,84 @@ from dendroid import (binary,
                       red_black)
 from dendroid.hints import (Domain,
                             SortingKey)
-from tests.strategies import (keys,
-                              non_empty_totally_ordered_values_lists,
-                              to_totally_ordered_values_lists,
-                              totally_ordered_values,
-                              totally_ordered_values_lists,
-                              totally_ordered_values_strategies)
+from tests.strategies import (empty_values_lists_with_keys,
+                              non_empty_values_lists_with_keys,
+                              single_values_with_keys,
+                              to_values_lists_with_keys,
+                              two_or_more_values_with_keys,
+                              values_lists_with_keys,
+                              values_with_keys_strategies)
 from tests.utils import (Strategy,
                          Tree,
                          TreesPair,
-                         TreesTriplet,
-                         builds_from)
+                         TreesTriplet)
 
-totally_ordered_values = totally_ordered_values
 factories = strategies.sampled_from([binary.tree, red_black.tree])
-packed_factories = strategies.sampled_from([binary.Tree.from_iterable,
-                                            red_black.Tree.from_iterable])
 
-empty_trees = builds_from(factories,
-                          key=keys)
-trees = builds_from(packed_factories,
-                    totally_ordered_values_lists,
-                    key=keys)
-non_empty_trees = builds_from(packed_factories,
-                              non_empty_totally_ordered_values_lists,
-                              key=keys)
+
+def to_tree(factory: Callable[..., Tree],
+            values_list_with_key: Tuple[List[Domain], Optional[SortingKey]]
+            ) -> Tree:
+    values_list, key = values_list_with_key
+    return factory(*values_list,
+                   key=key)
+
+
+empty_trees = strategies.builds(to_tree, factories,
+                                empty_values_lists_with_keys)
+trees = strategies.builds(to_tree, factories,
+                          values_lists_with_keys)
+
+
+def to_empty_tree_with_tree(tree: Tree) -> Tuple[Tree, Tree]:
+    return to_empty_copy(tree), tree
+
+
+def to_empty_copy(tree: Tree) -> Tree:
+    return tree.from_iterable((),
+                              key=tree.key)
+
+
+empty_trees_with_trees = trees.map(to_empty_tree_with_tree)
+non_empty_trees = strategies.builds(to_tree, factories,
+                                    non_empty_values_lists_with_keys)
 
 
 def to_tree_with_value(factory: Callable[..., Tree],
-                       values_list: List[Domain],
-                       key: Optional[SortingKey]) -> Tuple[Tree, Domain]:
+                       values_list_with_key: Tuple[List[Domain],
+                                                   Optional[SortingKey]]
+                       ) -> Tuple[Tree, Domain]:
+    values_list, key = values_list_with_key
     *rest_values_list, value = values_list
     tree = factory(*rest_values_list,
                    key=key)
     return tree, value
 
 
-trees_with_totally_ordered_values = strategies.builds(
-        to_tree_with_value,
-        factories,
-        non_empty_totally_ordered_values_lists,
-        keys)
-non_empty_trees_with_totally_ordered_values = strategies.builds(
-        to_tree_with_value,
-        factories,
-        to_totally_ordered_values_lists(min_size=2),
-        keys)
+trees_with_values = strategies.builds(to_tree_with_value, factories,
+                                      non_empty_values_lists_with_keys)
+empty_trees_with_values = strategies.builds(to_tree_with_value, factories,
+                                            single_values_with_keys)
+non_empty_trees_with_values = strategies.builds(to_tree_with_value, factories,
+                                                two_or_more_values_with_keys)
 
 
-def to_non_empty_trees_with_values_from_them(tree: Tree
-                                             ) -> Strategy[Tuple[Tree,
-                                                                 Domain]]:
+def to_non_empty_trees_with_their_values(tree: Tree
+                                         ) -> Strategy[Tuple[Tree, Domain]]:
     return strategies.tuples(strategies.just(tree),
                              strategies.sampled_from(list(tree)))
 
 
-non_empty_trees_with_values_from_them = (
-    non_empty_trees.flatmap(to_non_empty_trees_with_values_from_them))
+non_empty_trees_with_their_values = (
+    non_empty_trees.flatmap(to_non_empty_trees_with_their_values))
 
 
 def to_trees_pair(factory: Callable[..., Tree],
-                  values_lists_pair: Tuple[List[Domain], List[Domain]],
-                  key: Optional[SortingKey]) -> TreesPair:
-    first_values_list, second_values_list = values_lists_pair
+                  values_lists_pair_with_key: Tuple[List[Domain],
+                                                    List[Domain],
+                                                    Optional[SortingKey]]
+                  ) -> TreesPair:
+    first_values_list, second_values_list, key = values_lists_pair_with_key
     first_tree = factory(*first_values_list,
                          key=key)
     second_tree = factory(*second_values_list,
@@ -80,34 +95,21 @@ def to_trees_pair(factory: Callable[..., Tree],
     return first_tree, second_tree
 
 
-def to_values_lists_pairs(values: Strategy[Domain],
-                          *,
-                          first_min_size: int = 0,
-                          first_max_size: Optional[int] = None,
-                          second_min_size: int = 0,
-                          second_max_size: Optional[int] = None
-                          ) -> Strategy[Tuple[List[Domain], List[Domain]]]:
-    return strategies.tuples(strategies.lists(values,
-                                              min_size=first_min_size,
-                                              max_size=first_max_size),
-                             strategies.lists(values,
-                                              min_size=second_min_size,
-                                              max_size=second_max_size))
-
-
 trees_pairs = strategies.builds(to_trees_pair,
                                 factories,
-                                totally_ordered_values_strategies
-                                .flatmap(to_values_lists_pairs),
-                                keys)
+                                values_with_keys_strategies
+                                .flatmap(partial(to_values_lists_with_keys,
+                                                 sizes=[(0, None)] * 2)))
 
 
-def to_trees_triplet(factory: Callable[..., Tree],
-                     values_lists_triplet: Tuple[List[Domain], List[Domain],
-                                                 List[Domain]],
-                     key: Optional[SortingKey]) -> TreesTriplet:
+def to_trees_triplet(
+        factory: Callable[..., Tree],
+        values_lists_triplet_with_key: Tuple[List[Domain], List[Domain],
+                                             List[Domain],
+                                             Optional[SortingKey]]
+) -> TreesTriplet:
     (first_values_list, second_values_list,
-     third_values_list) = values_lists_triplet
+     third_values_list, key) = values_lists_triplet_with_key
     first_tree = factory(*first_values_list,
                          key=key)
     second_tree = factory(*second_values_list,
@@ -117,39 +119,18 @@ def to_trees_triplet(factory: Callable[..., Tree],
     return first_tree, second_tree, third_tree
 
 
-def to_values_lists_triplets(values: Strategy[Domain],
-                             *,
-                             first_min_size: int = 0,
-                             first_max_size: Optional[int] = None,
-                             second_min_size: int = 0,
-                             second_max_size: Optional[int] = None,
-                             third_min_size: int = 0,
-                             third_max_size: Optional[int] = None
-                             ) -> Strategy[Tuple[List[Domain], List[Domain]]]:
-    return strategies.tuples(strategies.lists(values,
-                                              min_size=first_min_size,
-                                              max_size=first_max_size),
-                             strategies.lists(values,
-                                              min_size=second_min_size,
-                                              max_size=second_max_size),
-                             strategies.lists(values,
-                                              min_size=third_min_size,
-                                              max_size=third_max_size))
+trees_triplets = strategies.builds(to_trees_triplet, factories,
+                                   (values_with_keys_strategies
+                                    .flatmap(partial(to_values_lists_with_keys,
+                                                     sizes=[(0, None)] * 3))))
 
 
-trees_triplets = strategies.builds(to_trees_triplet,
-                                   factories,
-                                   totally_ordered_values_strategies
-                                   .flatmap(to_values_lists_triplets),
-                                   keys)
-
-
-def to_trees_pair_with_value(factory: Callable[..., Tree],
-                             values_lists_pair: Tuple[List[Domain],
-                                                      List[Domain]],
-                             key: Optional[SortingKey]
-                             ) -> Tuple[Tree, Tree, Domain]:
-    first_values_list, second_values_list = values_lists_pair
+def to_trees_pair_with_value(
+        factory: Callable[..., Tree],
+        values_lists_pair_with_key: Tuple[List[Domain], List[Domain],
+                                          Optional[SortingKey]]
+) -> Tuple[Tree, Tree, Domain]:
+    first_values_list, second_values_list, key = values_lists_pair_with_key
     *first_values_list, value = first_values_list
     first_tree = factory(*first_values_list,
                          key=key)
@@ -161,7 +142,6 @@ def to_trees_pair_with_value(factory: Callable[..., Tree],
 trees_pairs_with_totally_ordered_values = (
     strategies.builds(to_trees_pair_with_value,
                       factories,
-                      totally_ordered_values_strategies
-                      .flatmap(partial(to_values_lists_pairs,
-                                       first_min_size=1)),
-                      keys))
+                      values_with_keys_strategies
+                      .flatmap(partial(to_values_lists_with_keys,
+                                       sizes=[(1, None), (0, None)]))))

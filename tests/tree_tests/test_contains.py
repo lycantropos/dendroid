@@ -7,7 +7,7 @@ from tests.utils import Tree
 from . import strategies
 
 
-@given(strategies.trees_with_totally_ordered_values)
+@given(strategies.trees_with_values)
 def test_basic(tree_with_value: Tuple[Tree, Domain]) -> None:
     tree, value = tree_with_value
 
