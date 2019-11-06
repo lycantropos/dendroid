@@ -12,7 +12,7 @@ from . import strategies
 
 
 @given(strategies.non_empty_trees_with_their_values)
-def test_properties(tree_with_value: Tree) -> None:
+def test_properties(tree_with_value: Tuple[Tree, Domain]) -> None:
     tree, value = tree_with_value
 
     tree.remove(value)
