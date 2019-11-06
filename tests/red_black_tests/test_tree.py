@@ -71,7 +71,9 @@ def test_step(values_with_key: Tuple[List[Domain], Optional[SortingKey]]
                                  key=key)
 
     assert next_result
-    assert len(next_result) == len(result) + (value not in values)
+    assert len(next_result) == (len(result)
+                                + (result._to_key(value)
+                                   not in map(result._to_key, values)))
     assert value in next_result
     assert all(value in next_result
                for value in result)
