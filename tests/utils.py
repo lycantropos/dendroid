@@ -1,14 +1,11 @@
 from itertools import groupby
 from typing import (Any,
-                    Callable,
                     Iterable,
                     Sequence,
                     Tuple,
                     TypeVar)
 
-from hypothesis import strategies
 from hypothesis.searchstrategy import SearchStrategy
-from lz.hints import Range
 
 from dendroid import (binary,
                       red_black)
@@ -31,13 +28,6 @@ def implication(antecedent: bool, consequent: bool) -> bool:
 def all_equal(iterable: Iterable[Any]) -> bool:
     groups = groupby(iterable)
     return next(groups, True) and not next(groups, False)
-
-
-def builds_from(factories: Strategy[Callable[..., Range]],
-                *args: Any,
-                **kwargs: Any) -> Strategy[Range]:
-    return factories.flatmap(lambda factory: strategies.builds(factory, *args,
-                                                               **kwargs))
 
 
 def is_left_subtree_less_than_right_subtree(tree: Tree) -> bool:

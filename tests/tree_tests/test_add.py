@@ -8,7 +8,7 @@ from tests.utils import Tree
 from . import strategies
 
 
-@given(strategies.trees_with_totally_ordered_values)
+@given(strategies.trees_with_values)
 def test_basic(tree_with_value: Tuple[Tree, Domain]) -> None:
     tree, value = tree_with_value
 
@@ -17,15 +17,17 @@ def test_basic(tree_with_value: Tuple[Tree, Domain]) -> None:
     assert result is None
 
 
-@given(strategies.empty_trees, strategies.totally_ordered_values)
-def test_base_case(tree: Tree, value: Domain) -> None:
+@given(strategies.empty_trees_with_values)
+def test_base_case(tree_with_value: Tuple[Tree, Domain]) -> None:
+    tree, value = tree_with_value
+
     tree.add(value)
 
     assert len(tree) == 1
     assert value in tree
 
 
-@given(strategies.trees_with_totally_ordered_values)
+@given(strategies.trees_with_values)
 def test_step(tree_with_value: Tuple[Tree, Domain]) -> None:
     tree, value = tree_with_value
     original = deepcopy(tree)

@@ -36,15 +36,19 @@ def test_self_inverse(tree: Tree) -> None:
     assert len(result) == 0
 
 
-@given(strategies.empty_trees, strategies.trees)
-def test_left_neutral_element(empty_tree: Tree, tree: Tree) -> None:
+@given(strategies.empty_trees_with_trees)
+def test_left_neutral_element(empty_tree_with_tree: TreesPair) -> None:
+    empty_tree, tree = empty_tree_with_tree
+
     result = empty_tree ^ tree
 
     assert result == tree
 
 
-@given(strategies.empty_trees, strategies.trees)
-def test_right_neutral_element(empty_tree: Tree, tree: Tree) -> None:
+@given(strategies.empty_trees_with_trees)
+def test_right_neutral_element(empty_tree_with_tree: TreesPair) -> None:
+    empty_tree, tree = empty_tree_with_tree
+
     result = tree ^ empty_tree
 
     assert result == tree

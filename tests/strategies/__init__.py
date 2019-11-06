@@ -1,6 +1,8 @@
-from .literals import (keys,
-                       non_empty_totally_ordered_values_lists,
-                       to_totally_ordered_values_lists,
-                       totally_ordered_values,
-                       totally_ordered_values_lists,
-                       totally_ordered_values_strategies)
+from .literals.base import (empty_values_lists_with_keys,
+                            non_empty_values_lists_with_keys,
+                            single_values_with_keys,
+                            two_or_more_values_with_keys,
+                            values_lists_with_keys,
+                            values_with_keys,
+                            values_with_keys_strategies)
+from .literals.factories import to_values_lists_with_keys

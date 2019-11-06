@@ -9,7 +9,7 @@ from tests.utils import (Tree,
 from . import strategies
 
 
-@given(strategies.trees_with_totally_ordered_values)
+@given(strategies.trees_with_values)
 def test_basic(tree_with_value: Tuple[Tree, Domain]) -> None:
     tree, value = tree_with_value
 
@@ -18,7 +18,7 @@ def test_basic(tree_with_value: Tuple[Tree, Domain]) -> None:
     assert result is None
 
 
-@given(strategies.trees_with_totally_ordered_values)
+@given(strategies.trees_with_values)
 def test_properties(tree_with_value: Tuple[Tree, Domain]) -> None:
     tree, value = tree_with_value
 
@@ -28,15 +28,17 @@ def test_properties(tree_with_value: Tuple[Tree, Domain]) -> None:
     assert is_left_subtree_less_than_right_subtree(tree)
 
 
-@given(strategies.empty_trees, strategies.totally_ordered_values)
-def test_base_case(tree: Tree, value: Domain) -> None:
+@given(strategies.empty_trees_with_values)
+def test_base_case(tree_with_value: Tuple[Tree, Domain]) -> None:
+    tree, value = tree_with_value
+
     tree.discard(value)
 
     assert len(tree) == 0
     assert value not in tree
 
 
-@given(strategies.non_empty_trees_with_totally_ordered_values)
+@given(strategies.non_empty_trees_with_values)
 def test_step(tree_with_value: Tuple[Tree, Domain]) -> None:
     tree, value = tree_with_value
     original = deepcopy(tree)

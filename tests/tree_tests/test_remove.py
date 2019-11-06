@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import pytest
 from hypothesis import given
 from lz.iterating import (first,
@@ -9,7 +11,7 @@ from tests.utils import (Tree,
 from . import strategies
 
 
-@given(strategies.non_empty_trees_with_values_from_them)
+@given(strategies.non_empty_trees_with_their_values)
 def test_properties(tree_with_value: Tree) -> None:
     tree, value = tree_with_value
 
@@ -19,8 +21,10 @@ def test_properties(tree_with_value: Tree) -> None:
     assert is_left_subtree_less_than_right_subtree(tree)
 
 
-@given(strategies.empty_trees, strategies.totally_ordered_values)
-def test_base_case(tree: Tree, value: Domain) -> None:
+@given(strategies.empty_trees_with_values)
+def test_base_case(tree_with_value: Tuple[Tree, Domain]) -> None:
+    tree, value = tree_with_value
+
     with pytest.raises(KeyError):
         tree.remove(value)
 
