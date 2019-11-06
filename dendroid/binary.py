@@ -1,6 +1,5 @@
 from abc import (ABC,
                  abstractmethod)
-from collections import deque
 from itertools import chain
 from typing import (Generic,
                     Iterable,
@@ -108,16 +107,17 @@ class TreeBase(ABC, Generic[Domain]):
 
     def __iter__(self) -> Iterator[Domain]:
         """Returns iterator over values."""
-        if self.root is NIL:
-            return
-        queue = deque([self.root])
-        while queue:
+        node = self.root
+        queue = []
+        while True:
+            while node is not NIL:
+                queue.append(node)
+                node = node.left
+            if not queue:
+                return
             node = queue.pop()
             yield node.value
-            if node.left is not NIL:
-                queue.appendleft(node.left)
-            if node.right is not NIL:
-                queue.appendleft(node.right)
+            node = node.right
 
     @abstractmethod
     def __contains__(self, value: Domain) -> bool:
