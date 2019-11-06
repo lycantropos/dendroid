@@ -4,7 +4,9 @@ from typing import Tuple
 from hypothesis import given
 
 from dendroid.hints import Domain
-from tests.utils import Tree
+from tests.utils import (Tree,
+                         is_left_subtree_less_than_right_subtree,
+                         to_height)
 from . import strategies
 
 
@@ -15,6 +17,17 @@ def test_basic(tree_with_value: Tuple[Tree, Domain]) -> None:
     result = tree.add(value)
 
     assert result is None
+
+
+@given(strategies.trees_with_values)
+def test_properties(tree_with_value: Tuple[Tree, Domain]) -> None:
+    tree, value = tree_with_value
+
+    tree.add(value)
+
+    assert len(tree) > 0
+    assert to_height(tree) > 0
+    assert is_left_subtree_less_than_right_subtree(tree)
 
 
 @given(strategies.empty_trees_with_values)
