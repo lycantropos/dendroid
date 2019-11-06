@@ -60,9 +60,9 @@ class SimpleNode(Node):
 
 
 class ComplexNode(Node):
-    __slots__ = ('_value', '_key', 'left', 'right')
+    __slots__ = ('_key', '_value', 'left', 'right')
 
-    def __init__(self, value: Domain, key: Sortable,
+    def __init__(self, key: Sortable, value: Domain,
                  *,
                  left: Union['ComplexNode', NIL] = NIL,
                  right: Union['ComplexNode', NIL] = NIL) -> None:
@@ -451,7 +451,7 @@ class Tree(TreeBase[Domain]):
         if self._key is None:
             return SimpleNode(value)
         else:
-            return ComplexNode(value, self._key(value))
+            return ComplexNode(self._key(value), value)
 
     def _to_key(self, value: Domain) -> Sortable:
         return value if self._key is None else self._key(value)
@@ -478,11 +478,11 @@ class Tree(TreeBase[Domain]):
 
             root = to_node(0, len(values))
         else:
-            keys_values = _to_unique_keys_values(values, key)
+            items = _to_unique_items(values, key)
 
             def to_node(start_index: int, end_index: int) -> ComplexNode:
                 middle_index = (start_index + end_index) // 2
-                return ComplexNode(*keys_values[middle_index],
+                return ComplexNode(*items[middle_index],
                                    left=(to_node(start_index, middle_index)
                                          if middle_index > start_index
                                          else NIL),
@@ -490,7 +490,7 @@ class Tree(TreeBase[Domain]):
                                           if middle_index < end_index - 1
                                           else NIL))
 
-            root = to_node(0, len(keys_values))
+            root = to_node(0, len(items))
         return cls(root,
                    key=key)
 
@@ -500,15 +500,15 @@ def tree(*values: Domain, key: Optional[SortingKey] = None) -> Tree[Domain]:
                               key=key)
 
 
-def _to_unique_keys_values(values: Sequence[Domain], sorting_key: SortingKey
-                           ) -> Sequence[Tuple[Domain, Sortable]]:
+def _to_unique_items(values: Sequence[Domain], sorting_key: SortingKey
+                     ) -> Sequence[Tuple[Sortable, Domain]]:
     keys_indices = []  # type: List[Tuple[Sortable, int]]
     for key, index in sorted((sorting_key(value), index)
                              for index, value in enumerate(values)):
         while keys_indices and keys_indices[-1][0] == key:
             del keys_indices[-1]
         keys_indices.append((key, index))
-    return [(values[index], key) for key, index in keys_indices]
+    return [(key, values[index]) for key, index in keys_indices]
 
 
 def _to_unique_sorted_values(values: Sequence[Domain]) -> Sequence[Domain]:
