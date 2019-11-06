@@ -478,7 +478,7 @@ class Tree(TreeBase[Domain]):
 
             root = to_node(0, len(values))
         else:
-            items = _to_unique_items(values, key)
+            items = _to_unique_sorted_items(values, key)
 
             def to_node(start_index: int, end_index: int) -> ComplexNode:
                 middle_index = (start_index + end_index) // 2
@@ -500,8 +500,8 @@ def tree(*values: Domain, key: Optional[SortingKey] = None) -> Tree[Domain]:
                               key=key)
 
 
-def _to_unique_items(values: Sequence[Domain], sorting_key: SortingKey
-                     ) -> Sequence[Tuple[Sortable, Domain]]:
+def _to_unique_sorted_items(values: Sequence[Domain], sorting_key: SortingKey
+                            ) -> Sequence[Tuple[Sortable, Domain]]:
     keys_indices = []  # type: List[Tuple[Sortable, int]]
     for key, index in sorted((sorting_key(value), index)
                              for index, value in enumerate(values)):
