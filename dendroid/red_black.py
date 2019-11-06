@@ -84,9 +84,9 @@ class SimpleNode(Node):
 
 
 class ComplexNode(Node):
-    slots = ('_value', '_key', 'is_black', '_parent', 'left', 'right')
+    slots = ('_key', '_value', 'is_black', '_parent', 'left', 'right')
 
-    def __init__(self, value: Domain, key: Sortable,
+    def __init__(self, key: Sortable, value: Domain,
                  *,
                  is_black: bool,
                  parent: Optional['ComplexNode'] = None,
@@ -267,7 +267,7 @@ class Tree(TreeBase[Domain]):
             return SimpleNode(value,
                               is_black=is_black)
         else:
-            return ComplexNode(value, self._key(value),
+            return ComplexNode(self._key(value), value,
                                is_black=is_black)
 
     def _search_node(self, value: Domain) -> Optional[Node]:
