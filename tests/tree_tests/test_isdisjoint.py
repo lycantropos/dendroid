@@ -27,7 +27,7 @@ def test_base_case(empty_tree_with_tree: TreesPair) -> None:
     assert empty_tree.isdisjoint(tree)
 
 
-@given(strategies.trees_pairs_with_totally_ordered_values)
+@given(strategies.trees_pairs_with_values)
 def test_step(two_trees_with_value: Tuple[Tree, Tree, Domain]) -> None:
     left_tree, right_tree, value = two_trees_with_value
     original = deepcopy(left_tree)

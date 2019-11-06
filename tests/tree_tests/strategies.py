@@ -39,7 +39,7 @@ trees = strategies.builds(to_tree, factories,
                           values_lists_with_keys)
 
 
-def to_empty_tree_with_tree(tree: Tree) -> Tuple[Tree, Tree]:
+def to_empty_tree_with_tree(tree: Tree) -> TreesPair:
     return to_empty_copy(tree), tree
 
 
@@ -139,7 +139,7 @@ def to_trees_pair_with_value(
     return first_tree, second_tree, value
 
 
-trees_pairs_with_totally_ordered_values = (
+trees_pairs_with_values = (
     strategies.builds(to_trees_pair_with_value,
                       factories,
                       values_with_keys_strategies
