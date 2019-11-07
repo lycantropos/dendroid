@@ -14,7 +14,7 @@ from .binary import (NIL,
 from .hints import (Domain,
                     Sortable,
                     SortingKey)
-from .utils import log2ceil
+from .utils import to_balanced_tree_height
 
 
 class Node(_Node):
@@ -201,7 +201,7 @@ class Tree(TreeBase[Domain]):
             root = NIL
         elif key is None:
             values = _to_unique_sorted_values(values)
-            height = log2ceil(len(values))
+            height = to_balanced_tree_height(len(values))
 
             def to_node(start_index: int, end_index: int,
                         depth: int) -> SimpleNode:
@@ -220,7 +220,7 @@ class Tree(TreeBase[Domain]):
             root.is_black = True
         else:
             items = _to_unique_sorted_items(values, key)
-            height = log2ceil(len(items))
+            height = to_balanced_tree_height(len(items))
 
             def to_node(start_index: int, end_index: int, depth: int
                         ) -> ComplexNode:
