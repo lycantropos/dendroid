@@ -1,1 +1,1 @@
-log2ceil = int.bit_length
+to_balanced_tree_height = int.bit_length
