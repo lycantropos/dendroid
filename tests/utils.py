@@ -110,7 +110,3 @@ def to_paths_to_leaves(root: AnyNode) -> Iterable[Sequence[AnyNode]]:
             queue.append(path + [last_node.right])
         if ended:
             yield path
-
-
-def log2ceil(number: int) -> int:
-    return number.bit_length()

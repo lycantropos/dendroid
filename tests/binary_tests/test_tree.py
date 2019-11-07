@@ -9,8 +9,8 @@ from dendroid.hints import (Domain,
                             SortingKey)
 from tests import strategies
 from tests.utils import (is_left_subtree_less_than_right_subtree,
-                         log2ceil,
                          to_height)
+from dendroid.utils import log2ceil
 
 
 @given(strategies.values_lists_with_keys)
