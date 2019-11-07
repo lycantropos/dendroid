@@ -12,8 +12,8 @@ from tests.utils import (do_paths_to_leaves_have_same_black_nodes_count,
                          do_red_nodes_have_black_children,
                          is_left_subtree_less_than_right_subtree,
                          is_root_black,
-                         log2ceil,
                          to_height)
+from dendroid.utils import log2ceil
 
 
 @given(strategies.values_lists_with_keys)
@@ -36,7 +36,7 @@ def test_properties(values_with_key: Tuple[List[Domain], Optional[SortingKey]]
                             key=key)
 
     assert len(result) <= len(values)
-    assert to_height(result) <= 2 * log2ceil(len(result))
+    assert to_height(result) == log2ceil(len(result))
     assert all(value in result
                for value in values)
     assert all(value in values

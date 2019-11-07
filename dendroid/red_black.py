@@ -6,12 +6,15 @@ from typing import (Iterable,
 
 from reprit.base import generate_repr
 
-from dendroid.hints import (Domain,
-                            Sortable,
-                            SortingKey)
 from .binary import (NIL,
                      Node as _Node,
-                     TreeBase)
+                     TreeBase,
+                     _to_unique_sorted_items,
+                     _to_unique_sorted_values)
+from .hints import (Domain,
+                    Sortable,
+                    SortingKey)
+from .utils import log2ceil
 
 
 class Node(_Node):
@@ -193,13 +196,49 @@ class Tree(TreeBase[Domain]):
     def from_iterable(cls, values: Iterable[Domain],
                       *,
                       key: Optional[SortingKey] = None) -> 'Tree[Domain]':
-        result = cls(NIL,
-                     key=key)
-        for value in sorted(values,
-                            key=key,
-                            reverse=True):
-            result.add(value)
-        return result
+        values = list(values)
+        if not values:
+            root = NIL
+        elif key is None:
+            values = _to_unique_sorted_values(values)
+            height = log2ceil(len(values))
+
+            def to_node(start_index: int, end_index: int,
+                        depth: int) -> SimpleNode:
+                middle_index = (start_index + end_index) // 2
+                result = SimpleNode(values[middle_index],
+                                    is_black=depth != height)
+                result.left = (to_node(start_index, middle_index, depth + 1)
+                               if middle_index > start_index
+                               else NIL)
+                result.right = (to_node(middle_index + 1, end_index, depth + 1)
+                                if middle_index < end_index - 1
+                                else NIL)
+                return result
+
+            root = to_node(0, len(values), 1)
+            root.is_black = True
+        else:
+            items = _to_unique_sorted_items(values, key)
+            height = log2ceil(len(items))
+
+            def to_node(start_index: int, end_index: int, depth: int
+                        ) -> ComplexNode:
+                middle_index = (start_index + end_index) // 2
+                result = ComplexNode(*items[middle_index],
+                                     is_black=depth != height)
+                result.left = (to_node(start_index, middle_index, depth + 1)
+                               if middle_index > start_index
+                               else NIL)
+                result.right = (to_node(middle_index + 1, end_index, depth + 1)
+                                if middle_index < end_index - 1
+                                else NIL)
+                return result
+
+            root = to_node(0, len(items), 1)
+            root.is_black = True
+        return cls(root,
+                   key=key)
 
     def __contains__(self, value: Domain) -> bool:
         node = self._search_node(value)
