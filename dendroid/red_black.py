@@ -309,16 +309,16 @@ class Tree(TreeBase[Domain]):
                                is_black=is_black)
 
     def _search_node(self, value: Domain) -> Optional[Node]:
-        node = self._root
+        result = self._root
         key = self._to_key(value)
-        while node is not NIL:
-            if key < node.key:
-                node = node.left
-            elif node.key < key:
-                node = node.right
+        while result is not NIL:
+            if key < result.key:
+                result = result.left
+            elif result.key < key:
+                result = result.right
             else:
                 break
-        return node
+        return result
 
     def _restore(self, node: Node) -> None:
         while not _is_node_black(node.parent):
