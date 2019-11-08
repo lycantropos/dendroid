@@ -1,4 +1,3 @@
-import weakref
 from reprlib import recursive_repr
 from typing import (Iterable,
                     Optional,
@@ -14,26 +13,14 @@ from .binary import (NIL,
 from .hints import (Domain,
                     Sortable,
                     SortingKey)
-from .utils import to_balanced_tree_height
+from .utils import (_dereference_maybe,
+                    _maybe_weakref,
+                    to_balanced_tree_height)
 
 
 class Node(_Node):
     parent = None  # type: Optional['Node']
     is_black = False  # type: bool
-
-
-def _maybe_weakref(object_: Optional[Domain]
-                   ) -> Optional[weakref.ReferenceType]:
-    return (object_
-            if object_ is None
-            else weakref.ref(object_))
-
-
-def _dereference_maybe(maybe_reference: Optional[weakref.ref]
-                       ) -> Optional[Domain]:
-    return (maybe_reference
-            if maybe_reference is None
-            else maybe_reference())
 
 
 class SimpleNode(Node):
