@@ -24,7 +24,9 @@ class Node(_Node):
 
 def _maybe_weakref(object_: Optional[Domain]
                    ) -> Optional[weakref.ReferenceType]:
-    return object_ if object_ is None else weakref.ref(object_)
+    return (object_
+            if object_ is None
+            else weakref.ref(object_))
 
 
 def _dereference_maybe(maybe_reference: Optional[weakref.ref]
