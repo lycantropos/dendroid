@@ -18,7 +18,7 @@ from .utils import to_balanced_tree_height
 
 
 class Node(_Node):
-    parent = None  # type: Optional['InnerNode']
+    parent = None  # type: Optional['Node']
     is_black = False  # type: bool
 
 
