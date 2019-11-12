@@ -76,7 +76,7 @@ class SimpleNode(Node):
 
 
 class ComplexNode(Node):
-    slots = ('_key', '_value', 'is_black', '_parent', 'left', 'right')
+    slots = ('_key', '_value', 'is_black', '_parent', '_left', '_right')
 
     def __init__(self, key: Sortable, value: Domain,
                  *,
@@ -88,8 +88,8 @@ class ComplexNode(Node):
         self._key = key
         self.is_black = is_black
         self._parent = _maybe_weakref(parent)
-        self.left = left
-        self.right = right
+        self._left = left
+        self._right = right
 
     __repr__ = recursive_repr()(generate_repr(__init__))
 
