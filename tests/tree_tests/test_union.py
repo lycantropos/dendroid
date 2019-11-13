@@ -25,7 +25,8 @@ def test_properties(trees_pair: TreesPair) -> None:
     result = left_tree | right_tree
 
     assert len(result) <= len(left_tree) + len(right_tree)
-    assert to_height(result) <= to_height(left_tree) + to_height(right_tree)
+    assert (to_height(result)
+            <= to_height(left_tree) + to_height(right_tree) + 1)
     assert (all(value in result
                 for value in left_tree)
             and all(value in result
