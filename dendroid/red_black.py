@@ -205,7 +205,7 @@ class Tree(TreeBase[Domain]):
                                 else NIL)
                 return result
 
-            root = to_node(0, len(values), 1)
+            root = to_node(0, len(values), 0)
             root.is_black = True
         else:
             items = _to_unique_sorted_items(values, key)
@@ -224,7 +224,7 @@ class Tree(TreeBase[Domain]):
                                 else NIL)
                 return result
 
-            root = to_node(0, len(items), 1)
+            root = to_node(0, len(items), 0)
             root.is_black = True
         return cls(root,
                    key=key)

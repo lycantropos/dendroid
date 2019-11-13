@@ -50,8 +50,9 @@ def is_left_subtree_less_than_right_subtree(tree: Tree) -> bool:
 
 
 def to_height(tree: Tree) -> int:
-    return max(map(len, to_paths_to_leaves(tree.root)),
-               default=0)
+    return (max(map(len, to_paths_to_leaves(tree.root)),
+                default=0)
+            - 1)
 
 
 def is_root_black(tree: red_black.Tree) -> bool:
@@ -70,11 +71,6 @@ def do_paths_to_leaves_have_same_black_nodes_count(
     return all(all_equal(to_black_nodes_count(path)
                          for path in to_paths_to_leaves(node))
                for node in iter_nodes(tree.root))
-
-
-def to_black_height(tree: red_black.Tree) -> int:
-    return max(to_paths_to_leaves(tree.root),
-               key=len)
 
 
 def to_black_nodes_count(path: Sequence[red_black.Node]) -> int:

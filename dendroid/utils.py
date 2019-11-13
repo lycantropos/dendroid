@@ -3,7 +3,9 @@ from typing import Optional
 
 from .hints import Domain
 
-to_balanced_tree_height = int.bit_length
+
+def to_balanced_tree_height(size: int) -> int:
+    return size.bit_length() - 1
 
 
 def _maybe_weakref(object_: Optional[Domain]
