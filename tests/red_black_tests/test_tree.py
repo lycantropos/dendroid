@@ -9,7 +9,8 @@ from dendroid.hints import (Domain,
                             SortingKey)
 from dendroid.utils import to_balanced_tree_height
 from tests import strategies
-from tests.utils import (do_paths_to_leaves_have_same_black_nodes_count,
+from tests.utils import (are_nodes_parents_to_children,
+                         do_paths_to_leaves_have_same_black_nodes_count,
                          do_red_nodes_have_black_children,
                          is_left_subtree_less_than_right_subtree,
                          is_root_black,
@@ -42,6 +43,7 @@ def test_properties(values_with_key: Tuple[List[Domain], Optional[SortingKey]]
     assert all(value in values
                for value in result)
     assert is_left_subtree_less_than_right_subtree(result)
+    assert are_nodes_parents_to_children(result)
     assert is_root_black(result)
     assert do_red_nodes_have_black_children(result)
     assert do_paths_to_leaves_have_same_black_nodes_count(result)
