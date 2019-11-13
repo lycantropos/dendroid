@@ -26,7 +26,7 @@ def test_properties(tree_with_value: Tuple[Tree, Domain]) -> None:
     tree.add(value)
 
     assert len(tree) > 0
-    assert to_height(tree) > 0
+    assert to_height(tree) >= 0
     assert is_left_subtree_less_than_right_subtree(tree)
 
 
