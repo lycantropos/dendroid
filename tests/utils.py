@@ -3,7 +3,8 @@ from typing import (Any,
                     Iterable,
                     Sequence,
                     Tuple,
-                    TypeVar)
+                    TypeVar,
+                    Union)
 
 from hypothesis.searchstrategy import SearchStrategy
 
@@ -49,6 +50,20 @@ def is_left_subtree_less_than_right_subtree(tree: Tree) -> bool:
     return True
 
 
+def are_nodes_parents_to_children(tree: red_black.Tree) -> bool:
+    return all(is_node_parent_to_children(node)
+               for node in iter_nodes(tree.root))
+
+
+def is_node_parent_to_children(node: red_black.Node) -> int:
+    return _is_child_node(node.left, node) and _is_child_node(node.right, node)
+
+
+def _is_child_node(node: Union[red_black.Node, binary.NIL],
+                   parent: red_black.Node) -> bool:
+    return node is binary.NIL or node.parent is parent
+
+
 def to_height(tree: Tree) -> int:
     return (max(map(len, to_paths_to_leaves(tree.root)),
                 default=0)
@@ -66,8 +81,8 @@ def do_red_nodes_have_black_children(tree: red_black.Tree) -> bool:
                for node in iter_nodes(tree.root))
 
 
-def do_paths_to_leaves_have_same_black_nodes_count(
-        tree: red_black.Tree) -> bool:
+def do_paths_to_leaves_have_same_black_nodes_count(tree: red_black.Tree
+                                                   ) -> bool:
     return all(all_equal(to_black_nodes_count(path)
                          for path in to_paths_to_leaves(node))
                for node in iter_nodes(tree.root))
