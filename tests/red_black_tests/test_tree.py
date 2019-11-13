@@ -7,13 +7,13 @@ from hypothesis import given
 from dendroid import red_black
 from dendroid.hints import (Domain,
                             SortingKey)
+from dendroid.utils import to_balanced_tree_height
 from tests import strategies
 from tests.utils import (do_paths_to_leaves_have_same_black_nodes_count,
                          do_red_nodes_have_black_children,
                          is_left_subtree_less_than_right_subtree,
                          is_root_black,
                          to_height)
-from dendroid.utils import to_balanced_tree_height
 
 
 @given(strategies.values_lists_with_keys)
