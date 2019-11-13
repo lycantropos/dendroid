@@ -10,7 +10,7 @@ from hypothesis.searchstrategy import SearchStrategy
 from dendroid import (binary,
                       red_black)
 
-AnyNode = TypeVar('AnyNode', binary.Node, red_black.Node)
+AnyNode = TypeVar('AnyNode', binary.Node, binary.NIL, red_black.Node)
 Strategy = SearchStrategy
 Tree = binary.TreeBase
 TreesPair = Tuple[Tree, Tree]
