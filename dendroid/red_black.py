@@ -19,8 +19,8 @@ from .utils import (_dereference_maybe,
 
 
 class Node(_Node):
-    parent = None  # type: Optional['Node']
     is_black = False  # type: bool
+    parent = None  # type: Optional['Node']
 
 
 class SimpleNode(Node):
