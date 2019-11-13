@@ -35,8 +35,8 @@ class SimpleNode(Node):
         self._value = value
         self.is_black = is_black
         self._parent = _maybe_weakref(parent)
-        self._left = left
-        self._right = right
+        self.left = left
+        self.right = right
 
     __repr__ = recursive_repr()(generate_repr(__init__))
 
@@ -88,8 +88,8 @@ class ComplexNode(Node):
         self._key = key
         self.is_black = is_black
         self._parent = _maybe_weakref(parent)
-        self._left = left
-        self._right = right
+        self.left = left
+        self.right = right
 
     __repr__ = recursive_repr()(generate_repr(__init__))
 
@@ -128,8 +128,7 @@ class ComplexNode(Node):
         _set_parent(node, self)
 
 
-def _set_parent(node: Union[Node, NIL],
-                parent: Optional[Node]) -> None:
+def _set_parent(node: Union[Node, NIL], parent: Optional[Node]) -> None:
     if node is not NIL:
         node.parent = parent
 
@@ -195,15 +194,16 @@ class Tree(TreeBase[Domain]):
             def to_node(start_index: int, end_index: int,
                         depth: int) -> SimpleNode:
                 middle_index = (start_index + end_index) // 2
-                result = SimpleNode(values[middle_index],
-                                    is_black=depth != height)
-                result.left = (to_node(start_index, middle_index, depth + 1)
-                               if middle_index > start_index
-                               else NIL)
-                result.right = (to_node(middle_index + 1, end_index, depth + 1)
-                                if middle_index < end_index - 1
-                                else NIL)
-                return result
+                return SimpleNode(values[middle_index],
+                                  is_black=depth != height,
+                                  left=(to_node(start_index, middle_index,
+                                                depth + 1)
+                                        if middle_index > start_index
+                                        else NIL),
+                                  right=(to_node(middle_index + 1, end_index,
+                                                 depth + 1)
+                                         if middle_index < end_index - 1
+                                         else NIL))
 
             root = to_node(0, len(values), 0)
             root.is_black = True
@@ -214,15 +214,16 @@ class Tree(TreeBase[Domain]):
             def to_node(start_index: int, end_index: int, depth: int
                         ) -> ComplexNode:
                 middle_index = (start_index + end_index) // 2
-                result = ComplexNode(*items[middle_index],
-                                     is_black=depth != height)
-                result.left = (to_node(start_index, middle_index, depth + 1)
-                               if middle_index > start_index
-                               else NIL)
-                result.right = (to_node(middle_index + 1, end_index, depth + 1)
-                                if middle_index < end_index - 1
-                                else NIL)
-                return result
+                return ComplexNode(*items[middle_index],
+                                   is_black=depth != height,
+                                   left=(to_node(start_index, middle_index,
+                                                 depth + 1)
+                                         if middle_index > start_index
+                                         else NIL),
+                                   right=(to_node(middle_index + 1, end_index,
+                                                  depth + 1)
+                                          if middle_index < end_index - 1
+                                          else NIL))
 
             root = to_node(0, len(items), 0)
             root.is_black = True
