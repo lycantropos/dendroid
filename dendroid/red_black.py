@@ -364,15 +364,13 @@ class Tree(TreeBase[Domain]):
             successor = _to_successor(node)
             is_node_black = successor.is_black
             successor_child, is_successor_child_left = successor.right, False
-            if successor.parent == node:
-                _set_parent(successor_child, successor)
+            if successor.parent is node:
                 successor_child_parent = successor
             else:
                 is_successor_child_left = _is_left_child(successor)
                 successor_child_parent = successor.parent
                 self._transplant(successor, successor.right)
                 successor.right = node.right
-                _set_parent(successor.right, successor)
             self._transplant(node, successor)
             successor.left, successor.left.parent = node.left, successor
             successor.is_black = node.is_black
