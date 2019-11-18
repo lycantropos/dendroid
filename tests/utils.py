@@ -10,6 +10,7 @@ from hypothesis.searchstrategy import SearchStrategy
 
 from dendroid import (binary,
                       red_black)
+from dendroid.utils import to_balanced_tree_height
 
 AnyNode = TypeVar('AnyNode', binary.Node, binary.NIL, red_black.Node)
 Strategy = SearchStrategy
@@ -68,6 +69,10 @@ def to_height(tree: Tree) -> int:
     return (max(map(len, to_paths_to_leaves(tree.root)),
                 default=0)
             - 1)
+
+
+def to_max_red_black_tree_height(tree: red_black.Tree) -> int:
+    return 2 * to_balanced_tree_height(len(tree) + 1)
 
 
 def is_root_black(tree: red_black.Tree) -> bool:
