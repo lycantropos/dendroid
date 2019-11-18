@@ -34,7 +34,7 @@ class SimpleNode(Node):
                  right: Union['SimpleNode', NIL] = NIL) -> None:
         self._value = value
         self.is_black = is_black
-        self._parent = _maybe_weakref(parent)
+        self.parent = parent
         self.left = left
         self.right = right
 
