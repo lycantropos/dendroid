@@ -440,12 +440,10 @@ class Tree(TreeBase[Domain]):
         _set_parent(replacement, parent)
 
     def _rotate_right(self, node: Node) -> None:
-        replacement = node.left
-        parent = node.parent
+        parent, replacement = node.parent, node.left
         replacement.right, node.left = node, replacement.right
         if parent is None:
-            replacement.parent = None
-            self._root = replacement
+            replacement.parent, self._root = None, replacement
         elif node is parent.left:
             parent.left = replacement
         else:
