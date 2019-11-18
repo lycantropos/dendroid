@@ -1,5 +1,6 @@
 from hypothesis import given
 
+from dendroid.utils import to_balanced_tree_height
 from tests.utils import (Tree,
                          TreesPair,
                          TreesTriplet,
@@ -24,8 +25,9 @@ def test_properties(trees_pair: TreesPair) -> None:
     result = left_tree & right_tree
 
     assert len(result) <= min(len(left_tree), len(right_tree))
-    assert to_height(result) <= min(to_height(left_tree),
-                                    to_height(right_tree))
+    assert (to_balanced_tree_height(len(result))
+            <= to_height(result)
+            <= min(to_height(left_tree), to_height(right_tree)))
     assert all(value in left_tree and value in right_tree
                for value in result)
     assert (not result

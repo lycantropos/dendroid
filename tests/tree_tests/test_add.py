@@ -4,6 +4,7 @@ from typing import Tuple
 from hypothesis import given
 
 from dendroid.hints import Domain
+from dendroid.utils import to_balanced_tree_height
 from tests.utils import (Tree,
                          is_left_subtree_less_than_right_subtree,
                          to_height)
@@ -26,7 +27,7 @@ def test_properties(tree_with_value: Tuple[Tree, Domain]) -> None:
     tree.add(value)
 
     assert len(tree) > 0
-    assert to_height(tree) >= 0
+    assert to_height(tree) >= max(0, to_balanced_tree_height(len(tree)))
     assert is_left_subtree_less_than_right_subtree(tree)
 
 

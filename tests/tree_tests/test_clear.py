@@ -1,5 +1,6 @@
 from hypothesis import given
 
+from dendroid.utils import to_balanced_tree_height
 from tests.utils import (Tree,
                          is_left_subtree_less_than_right_subtree,
                          to_height)
@@ -18,5 +19,5 @@ def test_properties(tree: Tree) -> None:
     tree.clear()
 
     assert len(tree) == 0
-    assert to_height(tree) == -1
+    assert to_height(tree) == to_balanced_tree_height(len(tree)) == -1
     assert is_left_subtree_less_than_right_subtree(tree)
