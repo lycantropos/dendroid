@@ -322,8 +322,7 @@ class Tree(TreeBase[Domain]):
                     if node is parent.right:
                         self._rotate_left(parent)
                         node, parent = parent, node
-                    parent.is_black = True
-                    grandparent.is_black = False
+                    parent.is_black, grandparent.is_black = True, False
                     self._rotate_right(grandparent)
                 else:
                     # uncle is red
@@ -338,8 +337,7 @@ class Tree(TreeBase[Domain]):
                     if node is parent.left:
                         self._rotate_right(parent)
                         node, parent = parent, node
-                    parent.is_black = True
-                    grandparent.is_black = False
+                    parent.is_black, grandparent.is_black = True, False
                     self._rotate_left(grandparent)
                 else:
                     # uncle is red
