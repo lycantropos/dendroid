@@ -376,8 +376,8 @@ class Tree(TreeBase[Domain]):
             self._remove_node_fixup(successor_child, successor_child_parent,
                                     is_successor_child_left)
 
-    def _remove_node_fixup(self, node: Union[Node, NIL],
-                           parent: Node, is_left_child: bool) -> None:
+    def _remove_node_fixup(self, node: Union[Node, NIL], parent: Node,
+                           is_left_child: bool) -> None:
         while node is not self._root and _is_node_black(node):
             if is_left_child:
                 sibling = parent.right
