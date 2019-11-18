@@ -87,7 +87,7 @@ class ComplexNode(Node):
         self._value = value
         self._key = key
         self.is_black = is_black
-        self._parent = _maybe_weakref(parent)
+        self.parent = parent
         self.left = left
         self.right = right
 
