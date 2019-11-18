@@ -1,8 +1,10 @@
 import pytest
 from hypothesis import given
 
+from dendroid.utils import to_balanced_tree_height
 from tests.utils import (Tree,
-                         is_left_subtree_less_than_right_subtree)
+                         is_left_subtree_less_than_right_subtree,
+                         to_height)
 from . import strategies
 
 
@@ -10,6 +12,7 @@ from . import strategies
 def test_properties(tree: Tree) -> None:
     result = tree.popmin()
 
+    assert to_height(tree) >= to_balanced_tree_height(len(tree))
     assert result not in tree
     assert all(result < value
                if tree.key is None

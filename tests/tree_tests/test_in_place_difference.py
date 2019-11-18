@@ -2,8 +2,10 @@ from copy import deepcopy
 
 from hypothesis import given
 
+from dendroid.utils import to_balanced_tree_height
 from tests.utils import (TreesPair,
-                         is_left_subtree_less_than_right_subtree)
+                         is_left_subtree_less_than_right_subtree,
+                         to_height)
 from . import strategies
 
 
@@ -23,6 +25,7 @@ def test_properties(trees_pair: TreesPair) -> None:
 
     left_tree -= right_tree
 
+    assert to_height(left_tree) >= to_balanced_tree_height(len(left_tree))
     assert all(value not in left_tree
                for value in right_tree)
     assert left_tree.isdisjoint(right_tree)
