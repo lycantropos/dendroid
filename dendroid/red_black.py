@@ -382,8 +382,7 @@ class Tree(TreeBase[Domain]):
             if is_left_child:
                 sibling = parent.right
                 if not _is_node_black(sibling):
-                    sibling.is_black = True
-                    parent.is_black = False
+                    sibling.is_black, parent.is_black = True, False
                     self._rotate_left(parent)
                     sibling = parent.right
                 if (_is_node_black(sibling.left)
@@ -393,20 +392,17 @@ class Tree(TreeBase[Domain]):
                     is_left_child = _is_left_child(node)
                 else:
                     if _is_node_black(sibling.right):
-                        sibling.left.is_black = True
-                        sibling.is_black = False
+                        sibling.left.is_black, sibling.is_black = True, False
                         self._rotate_right(sibling)
                         sibling = parent.right
-                    sibling.is_black = parent.is_black
-                    parent.is_black = True
+                    sibling.is_black, parent.is_black = parent.is_black, True
                     _set_black(sibling.right)
                     self._rotate_left(parent)
                     node = self._root
             else:
                 sibling = parent.left
                 if not _is_node_black(sibling):
-                    sibling.is_black = True
-                    parent.is_black = False
+                    sibling.is_black, parent.is_black = True, False
                     self._rotate_right(parent)
                     sibling = parent.left
                 if (_is_node_black(sibling.left)
@@ -416,12 +412,10 @@ class Tree(TreeBase[Domain]):
                     is_left_child = _is_left_child(node)
                 else:
                     if _is_node_black(sibling.left):
-                        sibling.right.is_black = True
-                        sibling.is_black = False
+                        sibling.right.is_black, sibling.is_black = True, False
                         self._rotate_left(sibling)
                         sibling = parent.left
-                    sibling.is_black = parent.is_black
-                    parent.is_black = True
+                    sibling.is_black, parent.is_black = parent.is_black, True
                     _set_black(sibling.left)
                     self._rotate_right(parent)
                     node = self._root
