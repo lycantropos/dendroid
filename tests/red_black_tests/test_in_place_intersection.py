@@ -7,7 +7,8 @@ from dendroid.utils import to_balanced_tree_height
 from tests.utils import (are_nodes_parents_to_children,
                          do_paths_to_leaves_have_same_black_nodes_count,
                          do_red_nodes_have_black_children,
-                         is_root_black, to_height)
+                         is_root_black,
+                         to_height)
 from . import strategies
 
 
