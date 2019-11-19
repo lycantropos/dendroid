@@ -1,3 +1,4 @@
+from functools import singledispatch
 from itertools import groupby
 from typing import (Any,
                     Iterable,
@@ -7,6 +8,7 @@ from typing import (Any,
                     Union)
 
 from hypothesis.searchstrategy import SearchStrategy
+from lz.functional import compose
 
 from dendroid import (binary,
                       red_black)
@@ -71,10 +73,20 @@ def to_height(tree: Tree) -> int:
             - 1)
 
 
-to_max_binary_tree_height = len
+to_min_binary_tree_height = compose(to_balanced_tree_height, len)
 
 
-def to_max_red_black_tree_height(tree: red_black.Tree) -> int:
+@singledispatch
+def to_max_binary_tree_height(tree: binary.TreeBase) -> int:
+    raise TypeError('Unsupported tree type: {type}.'
+                    .format(type=type(tree)))
+
+
+to_max_binary_tree_height.register(binary.Tree, len)
+
+
+@to_max_binary_tree_height.register(red_black.Tree)
+def _(tree: red_black.Tree) -> int:
     return 2 * to_balanced_tree_height(len(tree) + 1)
 
 

@@ -1,12 +1,13 @@
 from hypothesis import given
 
-from dendroid.utils import to_balanced_tree_height
 from tests.utils import (Tree,
                          TreesPair,
                          TreesTriplet,
                          equivalence,
                          is_left_subtree_less_than_right_subtree,
-                         to_height)
+                         to_height,
+                         to_max_binary_tree_height,
+                         to_min_binary_tree_height)
 from . import strategies
 
 
@@ -26,7 +27,9 @@ def test_properties(trees_pair: TreesPair) -> None:
     result = left_tree - right_tree
 
     assert len(result) <= len(left_tree)
-    assert to_height(result) >= to_balanced_tree_height(len(result))
+    assert (to_min_binary_tree_height(result)
+            <= to_height(result)
+            <= to_max_binary_tree_height(result))
     assert is_left_subtree_less_than_right_subtree(result)
 
 
