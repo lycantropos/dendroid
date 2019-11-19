@@ -8,9 +8,9 @@ from dendroid import binary
 from dendroid.hints import (Domain,
                             SortingKey)
 from dendroid.utils import to_balanced_tree_height
-from tests import strategies
 from tests.utils import (is_left_subtree_less_than_right_subtree,
                          to_height)
+from . import strategies
 
 
 @given(strategies.values_lists_with_keys)
