@@ -431,7 +431,7 @@ class Tree(TreeBase[Domain]):
         self._transplant(node, replacement)
         node.left, replacement.right = replacement.right, node
 
-    def _transplant(self, origin: Node, replacement: Optional[Node]) -> None:
+    def _transplant(self, origin: Node, replacement: Union[Node, NIL]) -> None:
         parent = origin.parent
         if parent is None:
             self._root = replacement
