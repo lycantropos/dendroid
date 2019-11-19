@@ -421,32 +421,22 @@ class Tree(TreeBase[Domain]):
                     node = self._root
         _set_black(node)
 
+    def _rotate_left(self, node: Node) -> None:
+        replacement = node.right
+        self._transplant(node, replacement)
+        node.right, replacement.left = replacement.left, node
+
+    def _rotate_right(self, node: Node) -> None:
+        replacement = node.left
+        self._transplant(node, replacement)
+        node.left, replacement.right = replacement.right, node
+
     def _transplant(self, origin: Node, replacement: Optional[Node]) -> None:
         parent = origin.parent
         if parent is None:
             self._root = replacement
+            _set_parent(replacement, None)
         elif origin is parent.left:
-            parent.left = replacement
-        else:
-            parent.right = replacement
-        _set_parent(replacement, parent)
-
-    def _rotate_right(self, node: Node) -> None:
-        parent, replacement = node.parent, node.left
-        replacement.right, node.left = node, replacement.right
-        if parent is None:
-            replacement.parent, self._root = None, replacement
-        elif node is parent.left:
-            parent.left = replacement
-        else:
-            parent.right = replacement
-
-    def _rotate_left(self, node: Node) -> None:
-        parent, replacement = node.parent, node.right
-        replacement.left, node.right = node, replacement.left
-        if parent is None:
-            replacement.parent, self._root = None, replacement
-        elif parent.left is node:
             parent.left = replacement
         else:
             parent.right = replacement
