@@ -349,35 +349,24 @@ class Tree(TreeBase[Domain]):
                 self._rotate_left(node)
             node = node.parent
 
-    def _rotate_right(self, node: Node) -> None:
-        parent, replacement = node.parent, node.left
-        if parent is None:
-            replacement.parent, self._root = None, replacement
-        elif node is parent.left:
-            parent.left = replacement
-        else:
-            parent.right = replacement
-        replacement.right, node.left = node, replacement.right
-
     def _rotate_left(self, node: Node) -> None:
-        parent, replacement = node.parent, node.right
-        if parent is None:
-            replacement.parent, self._root = None, replacement
-        elif parent.left is node:
-            parent.left = replacement
-        else:
-            parent.right = replacement
-        replacement.left, node.right = node, replacement.left
+        replacement = node.right
+        self._transplant(node, replacement)
+        node.right, replacement.left = replacement.left, node
 
-    def _transplant(self, origin: Node, replacement: Optional[Node]) -> None:
+    def _rotate_right(self, node: Node) -> None:
+        replacement = node.left
+        self._transplant(node, replacement)
+        node.left, replacement.right = replacement.right, node
+
+    def _transplant(self, origin: Node, replacement: Node) -> None:
         parent = origin.parent
         if parent is None:
-            self._root = replacement
+            self._root, replacement.parent = replacement, None
         elif origin is parent.left:
             parent.left = replacement
         else:
             parent.right = replacement
-        _set_parent(replacement, parent)
 
     def _to_key(self, value: Domain) -> Sortable:
         return value if self._key is None else self._key(value)
