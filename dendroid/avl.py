@@ -359,10 +359,11 @@ class Tree(TreeBase[Domain]):
         self._transplant(node, replacement)
         node.left, replacement.right = replacement.right, node
 
-    def _transplant(self, origin: Node, replacement: Node) -> None:
+    def _transplant(self, origin: Node, replacement: Optional[Node]) -> None:
         parent = origin.parent
         if parent is None:
-            self._root, replacement.parent = replacement, None
+            self._root = replacement
+            _set_parent(replacement, None)
         elif origin is parent.left:
             parent.left = replacement
         else:
