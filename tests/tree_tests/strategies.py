@@ -6,7 +6,8 @@ from typing import (Callable,
 
 from hypothesis import strategies
 
-from dendroid import (binary,
+from dendroid import (avl,
+                      binary,
                       red_black)
 from dendroid.hints import (Domain,
                             SortingKey)
@@ -22,7 +23,7 @@ from tests.utils import (Strategy,
                          TreesPair,
                          TreesTriplet)
 
-factories = strategies.sampled_from([binary.tree, red_black.tree])
+factories = strategies.sampled_from([binary.tree, avl.tree, red_black.tree])
 
 
 def to_tree(factory: Callable[..., Tree],
