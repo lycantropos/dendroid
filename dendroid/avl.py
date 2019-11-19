@@ -352,11 +352,13 @@ class Tree(TreeBase[Domain]):
     def _rotate_left(self, node: Node) -> None:
         replacement = node.right
         self._transplant(node, replacement)
+        # order matters because of height recalculation
         node.right, replacement.left = replacement.left, node
 
     def _rotate_right(self, node: Node) -> None:
         replacement = node.left
         self._transplant(node, replacement)
+        # order matters because of height recalculation
         node.left, replacement.right = replacement.right, node
 
     def _transplant(self, origin: Node, replacement: Union[Node, NIL]) -> None:
