@@ -22,7 +22,7 @@ class Node(_Node):
     @property
     @abstractmethod
     def height(self) -> int:
-        pass
+        """Height of the node."""
 
     parent = None  # type: Optional['Node']
 
