@@ -55,17 +55,18 @@ def is_left_subtree_less_than_right_subtree(tree: Tree) -> bool:
     return True
 
 
-def are_nodes_parents_to_children(tree: red_black.Tree) -> bool:
+def are_nodes_parents_to_children(tree: Union[avl.Tree, red_black.Tree]
+                                  ) -> bool:
     return all(is_node_parent_to_children(node)
                for node in iter_nodes(tree.root))
 
 
-def is_node_parent_to_children(node: red_black.Node) -> int:
+def is_node_parent_to_children(node: Union[avl.Node, red_black.Node]) -> bool:
     return _is_child_node(node.left, node) and _is_child_node(node.right, node)
 
 
-def _is_child_node(node: Union[red_black.Node, binary.NIL],
-                   parent: red_black.Node) -> bool:
+def _is_child_node(node: Union[avl.Node, red_black.Node, binary.NIL],
+                   parent: Union[avl.Node, red_black.Node]) -> bool:
     return node is binary.NIL or node.parent is parent
 
 
@@ -101,6 +102,11 @@ MAX_AVL_TREE_HEIGHT_INTERCEPT = (MAX_AVL_TREE_HEIGHT_SLOPE * math.log2(5) / 2
 def _(tree: avl.Tree) -> int:
     return math.floor(MAX_AVL_TREE_HEIGHT_SLOPE * math.log2(len(tree) + 2)
                       + MAX_AVL_TREE_HEIGHT_INTERCEPT)
+
+
+def are_balance_factors_normalized(tree: avl.Tree) -> bool:
+    return all(node.balance_factor in (-1, 0, 1)
+               for node in iter_nodes(tree.root))
 
 
 def is_root_black(tree: red_black.Tree) -> bool:
