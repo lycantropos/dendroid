@@ -271,7 +271,7 @@ class Tree(TreeBase[Domain]):
                     parent = parent.right
             else:
                 return
-        self._restore(node.parent)
+        self._rebalance(node.parent)
 
     def discard(self, value: Domain) -> None:
         node = self._search_node(value)
@@ -335,29 +335,19 @@ class Tree(TreeBase[Domain]):
                 successor.right = node.right
             self._transplant(node, successor)
             successor.left, successor.left.parent = node.left, successor
-        self._remove_node_fixup(imbalanced_node)
-
-    def _restore(self, node: Optional[Node]) -> None:
-        while node is not None and node.balance_factor:
-            if node.balance_factor > 1 or node.balance_factor < -1:
-                self._rebalance(node)
-                return
-            node = node.parent
-
-    def _remove_node_fixup(self, node: Node) -> None:
-        while node is not None:
-            self._rebalance(node)
-            node = node.parent
+        self._rebalance(imbalanced_node)
 
     def _rebalance(self, node: Node) -> None:
-        if node.balance_factor > 1:
-            if node.left.balance_factor < 0:
-                self._rotate_left(node.left)
-            self._rotate_right(node)
-        elif node.balance_factor < -1:
-            if node.right.balance_factor > 0:
-                self._rotate_right(node.right)
-            self._rotate_left(node)
+        while node is not None:
+            if node.balance_factor > 1:
+                if node.left.balance_factor < 0:
+                    self._rotate_left(node.left)
+                self._rotate_right(node)
+            elif node.balance_factor < -1:
+                if node.right.balance_factor > 0:
+                    self._rotate_right(node.right)
+                self._rotate_left(node)
+            node = node.parent
 
     def _rotate_right(self, node: Node) -> None:
         parent, replacement = node.parent, node.left
