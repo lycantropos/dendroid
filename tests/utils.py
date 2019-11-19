@@ -71,6 +71,9 @@ def to_height(tree: Tree) -> int:
             - 1)
 
 
+to_max_binary_tree_height = len
+
+
 def to_max_red_black_tree_height(tree: red_black.Tree) -> int:
     return 2 * to_balanced_tree_height(len(tree) + 1)
 
