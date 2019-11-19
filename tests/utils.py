@@ -1,3 +1,4 @@
+import math
 from functools import singledispatch
 from itertools import groupby
 from typing import (Any,
@@ -10,11 +11,12 @@ from typing import (Any,
 from hypothesis.searchstrategy import SearchStrategy
 from lz.functional import compose
 
-from dendroid import (binary,
+from dendroid import (avl,
+                      binary,
                       red_black)
 from dendroid.utils import to_balanced_tree_height
 
-AnyNode = TypeVar('AnyNode', binary.Node, binary.NIL, red_black.Node)
+AnyNode = TypeVar('AnyNode', binary.Node, avl.Node, red_black.Node, binary.NIL)
 Strategy = SearchStrategy
 Tree = binary.TreeBase
 TreesPair = Tuple[Tree, Tree]
@@ -88,6 +90,17 @@ to_max_binary_tree_height.register(binary.Tree, len)
 @to_max_binary_tree_height.register(red_black.Tree)
 def _(tree: red_black.Tree) -> int:
     return 2 * to_balanced_tree_height(len(tree) + 1)
+
+
+MAX_AVL_TREE_HEIGHT_SLOPE = 1 / math.log2((1 + math.sqrt(5)) / 2)
+MAX_AVL_TREE_HEIGHT_INTERCEPT = (MAX_AVL_TREE_HEIGHT_SLOPE * math.log2(5) / 2
+                                 - 2)
+
+
+@to_max_binary_tree_height.register(avl.Tree)
+def _(tree: avl.Tree) -> int:
+    return math.floor(MAX_AVL_TREE_HEIGHT_SLOPE * math.log2(len(tree) + 2)
+                      + MAX_AVL_TREE_HEIGHT_INTERCEPT)
 
 
 def is_root_black(tree: red_black.Tree) -> bool:
