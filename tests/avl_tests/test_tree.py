@@ -10,6 +10,7 @@ from dendroid.hints import (Domain,
 from dendroid.utils import to_balanced_tree_height
 from tests import strategies
 from tests.utils import (are_balance_factors_normalized,
+                         are_nodes_heights_correct,
                          are_nodes_parents_to_children,
                          is_left_subtree_less_than_right_subtree,
                          to_height)
@@ -42,6 +43,7 @@ def test_properties(values_with_key: Tuple[List[Domain], Optional[SortingKey]]
                for value in result)
     assert is_left_subtree_less_than_right_subtree(result)
     assert are_nodes_parents_to_children(result)
+    assert are_nodes_heights_correct(result)
     assert are_balance_factors_normalized(result)
 
 

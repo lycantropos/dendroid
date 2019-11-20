@@ -71,7 +71,11 @@ def _is_child_node(node: Union[avl.Node, red_black.Node, binary.NIL],
 
 
 def to_height(tree: Tree) -> int:
-    return (max(map(len, to_paths_to_leaves(tree.root)),
+    return to_node_height(tree.root)
+
+
+def to_node_height(node: AnyNode) -> int:
+    return (max(map(len, to_paths_to_leaves(node)),
                 default=0)
             - 1)
 
@@ -106,6 +110,11 @@ def _(tree: avl.Tree) -> int:
 
 def are_balance_factors_normalized(tree: avl.Tree) -> bool:
     return all(node.balance_factor in (-1, 0, 1)
+               for node in iter_nodes(tree.root))
+
+
+def are_nodes_heights_correct(tree: avl.Tree) -> bool:
+    return all(node.height == to_node_height(node)
                for node in iter_nodes(tree.root))
 
 
