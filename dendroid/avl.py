@@ -1,4 +1,3 @@
-from abc import abstractmethod
 from reprlib import recursive_repr
 from typing import (Iterable,
                     Optional,
