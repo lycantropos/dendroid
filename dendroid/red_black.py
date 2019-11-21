@@ -144,18 +144,15 @@ def _is_left_child(node: Node) -> bool:
 
 
 def _to_successor(node: Node) -> Union[Node, NIL]:
-    if node.right is not NIL:
-        node = node.right
-        if node.left is NIL:
-            return node
-        else:
-            while node.left.left is not NIL:
-                node = node.left
-            return node.left
-    result = node.parent
-    while result is not NIL and node is result.right:
-        node, result = result, result.parent
-    return result
+    # we are assuming that right child is not NIL
+    node = node.right
+    if node.left is NIL:
+        return node
+    else:
+        node = node.left
+        while node.left is not NIL:
+            node = node.left
+        return node
 
 
 def _is_node_black(node: Union[Node, NIL]) -> bool:
