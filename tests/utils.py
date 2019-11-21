@@ -1,6 +1,7 @@
 import math
 from functools import singledispatch
-from itertools import groupby
+from itertools import (groupby,
+                       islice)
 from typing import (Any,
                     Iterable,
                     List,
@@ -12,6 +13,7 @@ from typing import (Any,
 
 from hypothesis.searchstrategy import SearchStrategy
 from lz.functional import compose
+from lz.iterating import interleave
 
 from dendroid import (avl,
                       binary,
@@ -43,6 +45,10 @@ def implication(antecedent: bool, consequent: bool) -> bool:
 def all_equal(iterable: Iterable[Any]) -> bool:
     groups = groupby(iterable)
     return next(groups, True) and not next(groups, False)
+
+
+def leap_traverse(values: List[Domain]) -> List[Domain]:
+    return list(islice(interleave([values, reversed(values)]), len(values)))
 
 
 def is_left_subtree_less_than_right_subtree(tree: Tree) -> bool:

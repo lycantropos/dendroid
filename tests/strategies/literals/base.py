@@ -1,10 +1,13 @@
+import math
 from functools import partial
 from operator import not_
 
-import math
 from hypothesis import strategies
-from lz.functional import identity
+from lz.functional import (combine,
+                           compose,
+                           identity)
 
+from tests.utils import leap_traverse
 from .factories import (to_values_lists_with_keys,
                         to_values_tuples_with_keys,
                         to_values_with_keys)
@@ -33,6 +36,15 @@ values_with_keys_strategies = (strategies
 values_with_keys = values_with_keys_strategies.flatmap(to_values_with_keys)
 values_lists_with_keys = (values_with_keys_strategies
                           .flatmap(to_values_lists_with_keys))
+values_lists_with_keys |= ((values_lists_with_keys
+                            .map(compose(tuple, combine(partial(sorted,
+                                                                reverse=True),
+                                                        identity))))
+                           | (values_lists_with_keys
+                              .map(compose(tuple, combine(sorted, identity)))))
+values_lists_with_keys |= (values_lists_with_keys
+                           .map(compose(tuple, combine(leap_traverse,
+                                                       identity))))
 empty_values_lists_with_keys = (values_with_keys_strategies
                                 .flatmap(partial(to_values_lists_with_keys,
                                                  sizes=[(0, 0)])))

@@ -1,5 +1,7 @@
-from functools import partial
+from functools import (partial,
+                       wraps)
 from typing import (Callable,
+                    Optional,
                     Tuple)
 
 from hypothesis import strategies
@@ -7,7 +9,8 @@ from hypothesis import strategies
 from dendroid import (avl,
                       binary,
                       red_black)
-from dendroid.hints import Domain
+from dendroid.hints import (Domain,
+                            SortingKey)
 from tests.strategies import (empty_values_lists_with_keys,
                               non_empty_values_lists_with_keys,
                               single_values_with_keys,
@@ -23,7 +26,20 @@ from tests.utils import (Strategy,
                          ValuesListsPairWithKey,
                          ValuesListsTripletWithKey)
 
+
+def to_degenerate_factory(factory: Callable[..., Tree]) -> Callable[..., Tree]:
+    @wraps(factory)
+    def wrapper(*values: Domain, key: Optional[SortingKey] = None) -> Tree:
+        result = factory(key=key)
+        for value in values:
+            result.add(value)
+        return result
+
+    return wrapper
+
+
 factories = strategies.sampled_from([binary.tree, avl.tree, red_black.tree])
+factories |= factories.map(to_degenerate_factory)
 
 
 def to_tree(factory: Callable[..., Tree],
