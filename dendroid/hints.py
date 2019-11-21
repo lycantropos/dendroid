@@ -1,18 +1,8 @@
-from typing import (Callable,
-                    TypeVar)
+from typing import TypeVar
 
-try:
-    from typing import Protocol
-except ImportError:
-    from typing_extensions import Protocol
+from lz import sorting
 
 Domain = TypeVar('Domain')
 OtherDomain = TypeVar('OtherDomain')
 
-
-class Sortable(Protocol):
-    def __lt__(self, other: 'Sortable') -> bool:
-        """Checks if the object is less than given one."""
-
-
-SortingKey = Callable[[Domain], Sortable]
+SortingKey = sorting.Key
