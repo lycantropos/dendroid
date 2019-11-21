@@ -16,5 +16,5 @@ RUN pip install --force-reinstall -r requirements-tests.txt
 COPY README.md .
 COPY setup.cfg .
 COPY setup.py .
-COPY tests/ tests/
 COPY dendroid dendroid/
+COPY tests/ tests/
