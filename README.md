@@ -70,28 +70,30 @@ Usage
 -----
 
 ```python
->>> from dendroid import binary
->>> tree = binary.tree()
->>> 1 in tree
-False
->>> len(tree)
-0
->>> list(tree)
-[]
->>> tree.add(1)
->>> 1 in tree
+>>> from dendroid import avl, red_black
+>>> avl_tree, red_black_tree = avl.tree(), red_black.tree()
+>>> 1 not in avl_tree and 1 not in red_black_tree
 True
->>> len(tree)
-1
->>> list(tree)
-[1]
->>> tree.remove(1)
->>> 1 in tree
-False
->>> len(tree)
-0
->>> list(tree)
-[]
+>>> len(avl_tree) == len(red_black_tree) == 0
+True
+>>> list(avl_tree) == list(red_black_tree) == []
+True
+>>> avl_tree.add(1)
+>>> red_black_tree.add(1)
+>>> 1 in avl_tree and 1 in red_black_tree
+True
+>>> len(avl_tree) == len(red_black_tree) == 1
+True
+>>> list(avl_tree) == list(red_black_tree) == [1]
+True
+>>> avl_tree.remove(1)
+>>> red_black_tree.remove(1)
+>>> 1 not in avl_tree and 1 not in red_black_tree
+True
+>>> len(avl_tree) == len(red_black_tree) == 0
+True
+>>> list(avl_tree) == list(red_black_tree) == []
+True
 
 ```
 
