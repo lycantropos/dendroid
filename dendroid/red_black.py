@@ -170,7 +170,7 @@ class Tree(TreeBase[Domain]):
                              with_module_name=True)
 
     @property
-    def root(self) -> Optional[Node]:
+    def root(self) -> Union[Node, NIL]:
         return self._root
 
     @property
