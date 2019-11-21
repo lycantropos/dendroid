@@ -3,6 +3,8 @@ from functools import singledispatch
 from itertools import groupby
 from typing import (Any,
                     Iterable,
+                    List,
+                    Optional,
                     Sequence,
                     Tuple,
                     TypeVar,
@@ -14,6 +16,8 @@ from lz.functional import compose
 from dendroid import (avl,
                       binary,
                       red_black)
+from dendroid.hints import (Domain,
+                            SortingKey)
 from dendroid.utils import to_balanced_tree_height
 
 AnyNode = TypeVar('AnyNode', binary.Node, avl.Node, red_black.Node, binary.NIL)
@@ -21,6 +25,11 @@ Strategy = SearchStrategy
 Tree = binary.TreeBase
 TreesPair = Tuple[Tree, Tree]
 TreesTriplet = Tuple[Tree, Tree, Tree]
+ValuesListWithKey = Tuple[List[Domain], Optional[SortingKey]]
+ValuesListsPairWithKey = Tuple[List[Domain], List[Domain],
+                               Optional[SortingKey]]
+ValuesListsTripletWithKey = Tuple[List[Domain], List[Domain], List[Domain],
+                                  Optional[SortingKey]]
 
 
 def equivalence(left_statement: bool, right_statement: bool) -> bool:
