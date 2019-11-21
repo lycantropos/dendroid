@@ -27,3 +27,11 @@ def test_transitivity(trees_triplet: TreesTriplet) -> None:
 
     assert implication(first_tree == second_tree and second_tree == third_tree,
                        first_tree == third_tree)
+
+
+@given(strategies.trees_pairs)
+def test_connection_with_inequality(trees_pair: TreesPair) -> None:
+    first_tree, second_tree = trees_pair
+
+    assert equivalence(not first_tree == second_tree,
+                       first_tree != second_tree)
