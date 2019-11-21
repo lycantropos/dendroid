@@ -1,15 +1,10 @@
-from typing import (List,
-                    Optional,
-                    Tuple)
-
 from hypothesis import given
 
 from dendroid import avl
-from dendroid.hints import (Domain,
-                            SortingKey)
 from dendroid.utils import to_balanced_tree_height
 from tests import strategies
-from tests.utils import (are_balance_factors_normalized,
+from tests.utils import (ValuesListWithKey,
+                         are_balance_factors_normalized,
                          are_nodes_heights_correct,
                          are_nodes_parents_to_children,
                          is_left_subtree_less_than_right_subtree,
@@ -17,8 +12,7 @@ from tests.utils import (are_balance_factors_normalized,
 
 
 @given(strategies.values_lists_with_keys)
-def test_basic(values_with_key: Tuple[List[Domain], Optional[SortingKey]]
-               ) -> None:
+def test_basic(values_with_key: ValuesListWithKey) -> None:
     values, key = values_with_key
 
     result = avl.tree(*values,
@@ -28,8 +22,7 @@ def test_basic(values_with_key: Tuple[List[Domain], Optional[SortingKey]]
 
 
 @given(strategies.values_lists_with_keys)
-def test_properties(values_with_key: Tuple[List[Domain], Optional[SortingKey]]
-                    ) -> None:
+def test_properties(values_with_key: ValuesListWithKey) -> None:
     values, key = values_with_key
 
     result = avl.tree(*values,
@@ -48,8 +41,7 @@ def test_properties(values_with_key: Tuple[List[Domain], Optional[SortingKey]]
 
 
 @given(strategies.values_lists_with_keys)
-def test_base_case(values_with_key: Tuple[List[Domain], Optional[SortingKey]]
-                   ) -> None:
+def test_base_case(values_with_key: ValuesListWithKey) -> None:
     values, key = values_with_key
 
     result = avl.tree(key=key)
@@ -60,8 +52,7 @@ def test_base_case(values_with_key: Tuple[List[Domain], Optional[SortingKey]]
 
 
 @given(strategies.non_empty_values_lists_with_keys)
-def test_step(values_with_key: Tuple[List[Domain], Optional[SortingKey]]
-              ) -> None:
+def test_step(values_with_key: ValuesListWithKey) -> None:
     values, key = values_with_key
     *values, value = values
 

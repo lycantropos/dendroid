@@ -1,21 +1,15 @@
-from typing import (List,
-                    Optional,
-                    Tuple)
-
 from hypothesis import given
 
 from dendroid import binary
-from dendroid.hints import (Domain,
-                            SortingKey)
 from dendroid.utils import to_balanced_tree_height
 from tests import strategies
-from tests.utils import (is_left_subtree_less_than_right_subtree,
+from tests.utils import (ValuesListWithKey,
+                         is_left_subtree_less_than_right_subtree,
                          to_height)
 
 
 @given(strategies.values_lists_with_keys)
-def test_basic(values_with_key: Tuple[List[Domain], Optional[SortingKey]]
-               ) -> None:
+def test_basic(values_with_key: ValuesListWithKey) -> None:
     values, key = values_with_key
 
     result = binary.tree(*values,
@@ -25,8 +19,7 @@ def test_basic(values_with_key: Tuple[List[Domain], Optional[SortingKey]]
 
 
 @given(strategies.values_lists_with_keys)
-def test_properties(values_with_key: Tuple[List[Domain], Optional[SortingKey]]
-                    ) -> None:
+def test_properties(values_with_key: ValuesListWithKey) -> None:
     values, key = values_with_key
 
     result = binary.tree(*values,
@@ -42,8 +35,7 @@ def test_properties(values_with_key: Tuple[List[Domain], Optional[SortingKey]]
 
 
 @given(strategies.values_lists_with_keys)
-def test_base_case(values_with_key: Tuple[List[Domain], Optional[SortingKey]]
-                   ) -> None:
+def test_base_case(values_with_key: ValuesListWithKey) -> None:
     values, key = values_with_key
 
     result = binary.tree(key=key)
@@ -54,8 +46,7 @@ def test_base_case(values_with_key: Tuple[List[Domain], Optional[SortingKey]]
 
 
 @given(strategies.non_empty_values_lists_with_keys)
-def test_properties(values_with_key: Tuple[List[Domain], Optional[SortingKey]]
-                    ) -> None:
+def test_properties(values_with_key: ValuesListWithKey) -> None:
     values, key = values_with_key
     *values, value = values
 

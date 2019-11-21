@@ -1,7 +1,5 @@
 from functools import partial
 from typing import (Callable,
-                    List,
-                    Optional,
                     Tuple)
 
 from hypothesis import strategies
@@ -9,8 +7,7 @@ from hypothesis import strategies
 from dendroid import (avl,
                       binary,
                       red_black)
-from dendroid.hints import (Domain,
-                            SortingKey)
+from dendroid.hints import Domain
 from tests.strategies import (empty_values_lists_with_keys,
                               non_empty_values_lists_with_keys,
                               single_values_with_keys,
@@ -21,14 +18,16 @@ from tests.strategies import (empty_values_lists_with_keys,
 from tests.utils import (Strategy,
                          Tree,
                          TreesPair,
-                         TreesTriplet)
+                         TreesTriplet,
+                         ValuesListWithKey,
+                         ValuesListsPairWithKey,
+                         ValuesListsTripletWithKey)
 
 factories = strategies.sampled_from([binary.tree, avl.tree, red_black.tree])
 
 
 def to_tree(factory: Callable[..., Tree],
-            values_list_with_key: Tuple[List[Domain], Optional[SortingKey]]
-            ) -> Tree:
+            values_list_with_key: ValuesListWithKey) -> Tree:
     values_list, key = values_list_with_key
     return factory(*values_list,
                    key=key)
@@ -36,8 +35,7 @@ def to_tree(factory: Callable[..., Tree],
 
 empty_trees = strategies.builds(to_tree, factories,
                                 empty_values_lists_with_keys)
-trees = strategies.builds(to_tree, factories,
-                          values_lists_with_keys)
+trees = strategies.builds(to_tree, factories, values_lists_with_keys)
 
 
 def to_empty_tree_with_tree(tree: Tree) -> TreesPair:
@@ -55,8 +53,7 @@ non_empty_trees = strategies.builds(to_tree, factories,
 
 
 def to_tree_with_value(factory: Callable[..., Tree],
-                       values_list_with_key: Tuple[List[Domain],
-                                                   Optional[SortingKey]]
+                       values_list_with_key: ValuesListWithKey
                        ) -> Tuple[Tree, Domain]:
     values_list, key = values_list_with_key
     *rest_values_list, value = values_list
@@ -84,9 +81,7 @@ non_empty_trees_with_their_values = (
 
 
 def to_trees_pair(factory: Callable[..., Tree],
-                  values_lists_pair_with_key: Tuple[List[Domain],
-                                                    List[Domain],
-                                                    Optional[SortingKey]]
+                  values_lists_pair_with_key: ValuesListsPairWithKey
                   ) -> TreesPair:
     first_values_list, second_values_list, key = values_lists_pair_with_key
     first_tree = factory(*first_values_list,
@@ -103,12 +98,9 @@ trees_pairs = strategies.builds(to_trees_pair,
                                                  sizes=[(0, None)] * 2)))
 
 
-def to_trees_triplet(
-        factory: Callable[..., Tree],
-        values_lists_triplet_with_key: Tuple[List[Domain], List[Domain],
-                                             List[Domain],
-                                             Optional[SortingKey]]
-) -> TreesTriplet:
+def to_trees_triplet(factory: Callable[..., Tree],
+                     values_lists_triplet_with_key: ValuesListsTripletWithKey
+                     ) -> TreesTriplet:
     (first_values_list, second_values_list,
      third_values_list, key) = values_lists_triplet_with_key
     first_tree = factory(*first_values_list,
@@ -126,11 +118,9 @@ trees_triplets = strategies.builds(to_trees_triplet, factories,
                                                      sizes=[(0, None)] * 3))))
 
 
-def to_trees_pair_with_value(
-        factory: Callable[..., Tree],
-        values_lists_pair_with_key: Tuple[List[Domain], List[Domain],
-                                          Optional[SortingKey]]
-) -> Tuple[Tree, Tree, Domain]:
+def to_trees_pair_with_value(factory: Callable[..., Tree],
+                             values_lists_pair_with_key: ValuesListsPairWithKey
+                             ) -> Tuple[Tree, Tree, Domain]:
     first_values_list, second_values_list, key = values_lists_pair_with_key
     *first_values_list, value = first_values_list
     first_tree = factory(*first_values_list,

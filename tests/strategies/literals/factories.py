@@ -1,11 +1,20 @@
 from operator import itemgetter
-from typing import List, Optional, Tuple, Sequence
+from typing import (List,
+                    Optional,
+                    Sequence,
+                    Tuple,
+                    Union)
 
 from hypothesis import strategies
-from lz.functional import combine, compose
+from lz.functional import (combine,
+                           compose)
 
-from dendroid.hints import Domain, SortingKey
-from tests.utils import Strategy
+from dendroid.hints import (Domain,
+                            SortingKey)
+from tests.utils import (Strategy,
+                         ValuesListWithKey,
+                         ValuesListsPairWithKey,
+                         ValuesListsTripletWithKey)
 
 
 def to_values_tuples_with_keys(
@@ -39,7 +48,9 @@ def to_values_lists_with_keys(
                                 Strategy[SortingKey]],
         *,
         sizes: Sequence[Tuple[int, Optional[int]]] = ((0, None),)
-) -> Strategy[Tuple[List[Domain], Optional[SortingKey]]]:
+) -> Strategy[Union[ValuesListWithKey,
+                    ValuesListsPairWithKey,
+                    ValuesListsTripletWithKey]]:
     values, keys = values_with_keys
     return strategies.tuples(*[strategies.lists(values,
                                                 min_size=min_size,
