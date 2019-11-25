@@ -129,7 +129,7 @@ class Tree(TreeBase[Domain]):
         self._splay(key)
         if key != self._root.key:
             return
-        self._remove_root(key)
+        self._remove_root()
 
     def popmax(self) -> Domain:
         if self._root is NIL:
@@ -224,14 +224,14 @@ class Tree(TreeBase[Domain]):
         else:
             return ComplexNode(self._key(value), value)
 
-    def _remove_root(self, key: Sortable) -> None:
+    def _remove_root(self) -> None:
         root = self._root
         if root.left is NIL:
             self._root = root.right
         else:
             right_root_child = root.right
             self._root = root.left
-            self._splay(key)
+            self._splay(root.key)
             self._root.right = right_root_child
 
     @staticmethod
