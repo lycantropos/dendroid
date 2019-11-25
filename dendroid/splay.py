@@ -135,7 +135,7 @@ class Tree(TreeBase[Domain]):
         if self._root is NIL:
             raise KeyError
         result = self.max()
-        self.discard(result)
+        self._remove_root()
         return result
 
     def popmin(self) -> Domain:
