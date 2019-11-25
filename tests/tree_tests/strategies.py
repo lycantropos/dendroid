@@ -7,7 +7,8 @@ from hypothesis import strategies
 
 from dendroid import (avl,
                       binary,
-                      red_black)
+                      red_black,
+                      splay)
 from dendroid.hints import Domain
 from tests.strategies import (empty_values_lists_with_keys,
                               non_empty_values_lists_with_keys,
@@ -36,7 +37,8 @@ def to_degenerate_factory(factory: Callable[..., Tree]) -> Callable[..., Tree]:
     return wrapper
 
 
-factories = strategies.sampled_from([binary.tree, avl.tree, red_black.tree])
+factories = strategies.sampled_from([binary.tree, avl.tree, red_black.tree,
+                                     splay.tree])
 factories |= factories.map(to_degenerate_factory)
 
 
