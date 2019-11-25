@@ -264,7 +264,7 @@ class Tree(TreeBase[Domain]):
         return node.value
 
     def clear(self) -> None:
-        self._root = None
+        self._root = NIL
 
     def _make_node(self, value: Domain) -> Node:
         if self._key is None:
