@@ -142,7 +142,7 @@ class Tree(TreeBase[Domain]):
         if self._root is NIL:
             raise KeyError
         result = self.min()
-        self.discard(result)
+        self._remove_root()
         return result
 
     def clear(self) -> None:
