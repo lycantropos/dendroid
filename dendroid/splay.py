@@ -134,7 +134,7 @@ class Tree(TreeBase[Domain]):
     def popmax(self) -> Domain:
         if self._root is NIL:
             raise KeyError
-        result = self.min()
+        result = self.max()
         self.discard(result)
         return result
 
