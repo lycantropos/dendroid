@@ -136,6 +136,7 @@ class Tree(TreeBase[Domain]):
             result = node.left
             while result.right is not NIL:
                 result = result.right
+            self._splay(result.key)
             return result.value
 
     def add(self, value: Domain) -> None:
