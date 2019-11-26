@@ -127,7 +127,9 @@ class Tree(TreeBase[Domain]):
         key = self._to_key(value)
         self._splay(key)
         node = self._root
-        if node.left is NIL:
+        if node.key != key:
+            raise ValueError('Value is not in tree.')
+        elif node.left is NIL:
             raise ValueError('Value corresponds to a minimum node.')
         else:
             result = node.left
