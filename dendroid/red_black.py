@@ -252,10 +252,12 @@ class Tree(TreeBase[Domain]):
         self._restore(node)
 
     def discard(self, value: Domain) -> None:
-        node = self._search_node(value)
-        if node is NIL:
+        try:
+            node = self._search_node(value)
+        except ValueError:
             return
-        self._remove_node(node)
+        else:
+            self._remove_node(node)
 
     def popmax(self) -> Domain:
         node = self.root
