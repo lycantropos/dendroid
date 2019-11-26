@@ -246,9 +246,6 @@ class Tree(TreeBase[Domain]):
         node.left, replacement.right = replacement.right, node
         return replacement
 
-    def _to_key(self, value: Domain) -> Sortable:
-        return value if self._key is None else self._key(value)
-
 
 def tree(*values: Domain, key: Optional[SortingKey] = None) -> Tree[Domain]:
     return Tree.from_iterable(values,

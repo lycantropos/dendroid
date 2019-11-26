@@ -285,6 +285,9 @@ class TreeBase(ABC, Generic[Domain]):
     def clear(self) -> None:
         """Clears the tree."""
 
+    def _to_key(self, value: Domain) -> Sortable:
+        return value if self.key is None else self.key(value)
+
     def isdisjoint(self, other: 'TreeBase[OtherDomain]') -> bool:
         """Checks if the tree has no intersection with given one."""
 
@@ -452,9 +455,6 @@ class Tree(TreeBase[Domain]):
             return SimpleNode(value)
         else:
             return ComplexNode(self._key(value), value)
-
-    def _to_key(self, value: Domain) -> Sortable:
-        return value if self._key is None else self._key(value)
 
     @classmethod
     def from_iterable(cls, values: Iterable[Domain],
