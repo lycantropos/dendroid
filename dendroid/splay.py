@@ -105,6 +105,20 @@ class Tree(TreeBase[Domain]):
         self._splay(node.key)
         return node.value
 
+    def next(self, value: Domain) -> Domain:
+        if self._root is NIL:
+            raise ValueError('Tree is empty.')
+        key = self._to_key(value)
+        self._splay(key)
+        node = self._root
+        if node.right is NIL:
+            raise ValueError('Value corresponds to a maximum node.')
+        else:
+            result = node.right
+            while result.left is not NIL:
+                result = result.left
+            return result.value
+
     def add(self, value: Domain) -> None:
         if self._root is NIL:
             self._root = self._make_node(value)
