@@ -111,7 +111,9 @@ class Tree(TreeBase[Domain]):
         key = self._to_key(value)
         self._splay(key)
         node = self._root
-        if node.right is NIL:
+        if node.key != key:
+            raise ValueError('Value is not in tree.')
+        elif node.right is NIL:
             raise ValueError('Value corresponds to a maximum node.')
         else:
             result = node.right
