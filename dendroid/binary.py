@@ -384,20 +384,6 @@ class Tree(TreeBase[Domain]):
     def key(self) -> Optional[SortingKey]:
         return self._key
 
-    def __contains__(self, value: Domain) -> bool:
-        node = self._root
-        if node is NIL:
-            return False
-        key = self._to_key(value)
-        while node is not NIL:
-            if key < node.key:
-                node = node.left
-            elif node.key < key:
-                node = node.right
-            else:
-                return True
-        return False
-
     def add(self, value: Domain) -> None:
         parent = self._root
         if parent is NIL:
