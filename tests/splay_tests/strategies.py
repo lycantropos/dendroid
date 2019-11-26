@@ -34,6 +34,15 @@ non_empty_trees_with_their_non_max_values = (non_empty_trees_with_their_values
                                              .filter(is_value_non_max))
 
 
+def is_value_non_min(tree_with_value: Tuple[splay.Tree, Domain]) -> bool:
+    tree, value = tree_with_value
+    return value != tree.min()
+
+
+non_empty_trees_with_their_non_min_values = (non_empty_trees_with_their_values
+                                             .filter(is_value_non_min))
+
+
 def to_tree_with_value(values_list_with_key: ValuesListWithKey
                        ) -> Tuple[splay.Tree, Domain]:
     values_list, key = values_list_with_key
