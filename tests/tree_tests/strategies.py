@@ -86,6 +86,15 @@ non_empty_trees_with_values = strategies.builds(to_tree_with_value, factories,
                                                 two_or_more_values_with_keys)
 
 
+def is_value_external(tree_with_value: Tuple[Tree, Domain]) -> bool:
+    tree, value = tree_with_value
+    return value not in tree
+
+
+non_empty_trees_with_external_values = (non_empty_trees_with_values
+                                        .filter(is_value_external))
+
+
 def to_tree_with_values_pair(factory: Callable[..., Tree],
                              values_list_with_key: ValuesListWithKey
                              ) -> Tuple[Tree, Tuple[Domain, Domain]]:
