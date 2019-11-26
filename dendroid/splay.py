@@ -106,21 +106,9 @@ class Tree(TreeBase[Domain]):
         return node.value
 
     def next(self, value: Domain) -> Domain:
-        if self._root is NIL:
-            raise ValueError('Tree is empty.')
-        key = self._to_key(value)
-        self._splay(key)
-        node = self._root
-        if node.key != key:
-            raise ValueError('Value is not in tree.')
-        elif node.right is NIL:
-            raise ValueError('Value corresponds to a maximum node.')
-        else:
-            result = node.right
-            while result.left is not NIL:
-                result = result.left
-            self._splay(result.key)
-            return result.value
+        node = self._to_successor(value)
+        self._splay(node.key)
+        return node.value
 
     def prev(self, value: Domain) -> Domain:
         if self._root is NIL:
