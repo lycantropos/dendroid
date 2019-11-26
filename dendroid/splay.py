@@ -213,8 +213,8 @@ class Tree(TreeBase[Domain]):
                 next_root_left_child, next_root = next_root, next_root.right
             else:
                 break
-        next_root_left_child.right = next_root.left
-        next_root_right_child.left = next_root.right
+        next_root_left_child.right, next_root_right_child.left = (
+            next_root.left, next_root.right)
         next_root.left, next_root.right = self._header.right, self._header.left
         self._root = next_root
 
