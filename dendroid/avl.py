@@ -225,10 +225,12 @@ class Tree(TreeBase[Domain]):
         self._rebalance(node.parent)
 
     def discard(self, value: Domain) -> None:
-        node = self._search_node(value)
-        if node is NIL:
+        try:
+            node = self._search_node(value)
+        except ValueError:
             return
-        self._remove_node(node)
+        else:
+            self._remove_node(node)
 
     def popmax(self) -> Domain:
         node = self.root
@@ -256,18 +258,6 @@ class Tree(TreeBase[Domain]):
             return SimpleNode(value)
         else:
             return ComplexNode(self._key(value), value)
-
-    def _search_node(self, value: Domain) -> Optional[Node]:
-        result = self._root
-        key = self._to_key(value)
-        while result is not NIL:
-            if key < result.key:
-                result = result.left
-            elif result.key < key:
-                result = result.right
-            else:
-                break
-        return result
 
     def _remove_node(self, node: Node) -> None:
         if node.left is NIL:
