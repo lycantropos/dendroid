@@ -143,18 +143,6 @@ def _is_left_child(node: Node) -> bool:
     return parent is not None and parent.left is node
 
 
-def _to_successor(node: Node) -> Union[Node, NIL]:
-    # we are assuming that right child is not NIL
-    node = node.right
-    if node.left is NIL:
-        return node
-    else:
-        node = node.left
-        while node.left is not NIL:
-            node = node.left
-        return node
-
-
 def _is_node_black(node: Union[Node, NIL]) -> bool:
     return node is NIL or node.is_black
 
@@ -350,7 +338,9 @@ class Tree(TreeBase[Domain]):
                                          _is_left_child(successor))
             self._transplant(successor, successor_child)
         else:
-            successor = _to_successor(node)
+            successor = node.right
+            while successor.left is not NIL:
+                successor = successor.left
             is_node_black = successor.is_black
             successor_child, is_successor_child_left = successor.right, False
             if successor.parent is node:
