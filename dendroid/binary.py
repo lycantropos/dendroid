@@ -315,6 +315,20 @@ class TreeBase(ABC, Generic[Domain]):
     def _to_key(self, value: Domain) -> Sortable:
         return value if self.key is None else self.key(value)
 
+    def _search_node(self, value: Domain) -> Node:
+        node = self._root
+        if node is NIL:
+            raise ValueError('Tree is empty.')
+        key = self._to_key(value)
+        while node is not NIL:
+            if key < node.key:
+                node = node.left
+            elif node.key < key:
+                node = node.right
+            else:
+                return node
+        raise ValueError('Value is not in tree.')
+
     def _to_successor(self, node: Node) -> Node:
         if node.right is NIL:
             candidate, cursor, key = NIL, self.root, node.key
@@ -350,20 +364,6 @@ class TreeBase(ABC, Generic[Domain]):
             while result.right is not NIL:
                 result = result.right
             return result
-
-    def _search_node(self, value: Domain) -> Node:
-        node = self._root
-        if node is NIL:
-            raise ValueError('Tree is empty.')
-        key = self._to_key(value)
-        while node is not NIL:
-            if key < node.key:
-                node = node.left
-            elif node.key < key:
-                node = node.right
-            else:
-                return node
-        raise ValueError('Value is not in tree.')
 
 
 class Tree(TreeBase[Domain]):
