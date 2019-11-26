@@ -251,35 +251,7 @@ class TreeBase(ABC, Generic[Domain]):
 
     def next(self, value: Domain) -> Domain:
         """Returns first value with a key greater than of the given value."""
-        node = self._root
-        if node is NIL:
-            raise ValueError('Tree is empty.')
-        key = self._to_key(value)
-        while node is not NIL:
-            if key < node.key:
-                node = node.left
-            elif node.key < key:
-                node = node.right
-            else:
-                break
-        else:
-            raise ValueError('Value is not in tree.')
-        if node.right is NIL:
-            candidate, cursor = NIL, self.root
-            while cursor is not node:
-                if key < cursor.key:
-                    candidate, cursor = cursor, cursor.left
-                else:
-                    cursor = cursor.right
-            if candidate is NIL:
-                raise ValueError('Value corresponds to a maximum node.')
-            else:
-                return candidate.value
-        else:
-            result = node.right
-            while result.left is not NIL:
-                result = result.left
-            return result.value
+        return self._to_successor(value).value
 
     def prev(self, value: Domain) -> Domain:
         """Returns last value with a key less than of the given value."""
@@ -351,6 +323,37 @@ class TreeBase(ABC, Generic[Domain]):
 
     def _to_key(self, value: Domain) -> Sortable:
         return value if self.key is None else self.key(value)
+
+    def _to_successor(self, value: Domain) -> Node:
+        node = self._root
+        if node is NIL:
+            raise ValueError('Tree is empty.')
+        key = self._to_key(value)
+        while node is not NIL:
+            if key < node.key:
+                node = node.left
+            elif node.key < key:
+                node = node.right
+            else:
+                break
+        else:
+            raise ValueError('Value is not in tree.')
+        if node.right is NIL:
+            candidate, cursor = NIL, self.root
+            while cursor is not node:
+                if key < cursor.key:
+                    candidate, cursor = cursor, cursor.left
+                else:
+                    cursor = cursor.right
+            if candidate is NIL:
+                raise ValueError('Value corresponds to a maximum node.')
+            else:
+                return candidate
+        else:
+            result = node.right
+            while result.left is not NIL:
+                result = result.left
+            return result
 
     def isdisjoint(self, other: 'TreeBase[OtherDomain]') -> bool:
         """Checks if the tree has no intersection with given one."""
