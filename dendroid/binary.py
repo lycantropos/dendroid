@@ -255,35 +255,7 @@ class TreeBase(ABC, Generic[Domain]):
 
     def prev(self, value: Domain) -> Domain:
         """Returns last value with a key less than of the given value."""
-        node = self._root
-        if node is NIL:
-            raise ValueError('Tree is empty.')
-        key = self._to_key(value)
-        while node is not NIL:
-            if key < node.key:
-                node = node.left
-            elif node.key < key:
-                node = node.right
-            else:
-                break
-        else:
-            raise ValueError('Value is not in tree.')
-        if node.left is NIL:
-            candidate, cursor = NIL, self.root
-            while cursor is not node:
-                if key > cursor.key:
-                    candidate, cursor = cursor, cursor.right
-                else:
-                    cursor = cursor.left
-            if candidate is NIL:
-                raise ValueError('Value corresponds to a minimum node.')
-            else:
-                return candidate.value
-        else:
-            result = node.left
-            while result.right is not NIL:
-                result = result.right
-            return result.value
+        return self._to_predecessor(value).value
 
     @abstractmethod
     def add(self, value: Domain) -> None:
@@ -367,6 +339,37 @@ class TreeBase(ABC, Generic[Domain]):
             result = node.right
             while result.left is not NIL:
                 result = result.left
+            return result
+
+    def _to_predecessor(self, value: Domain) -> Node:
+        node = self._root
+        if node is NIL:
+            raise ValueError('Tree is empty.')
+        key = self._to_key(value)
+        while node is not NIL:
+            if key < node.key:
+                node = node.left
+            elif node.key < key:
+                node = node.right
+            else:
+                break
+        else:
+            raise ValueError('Value is not in tree.')
+        if node.left is NIL:
+            candidate, cursor = NIL, self.root
+            while cursor is not node:
+                if key > cursor.key:
+                    candidate, cursor = cursor, cursor.right
+                else:
+                    cursor = cursor.left
+            if candidate is NIL:
+                raise ValueError('Value corresponds to a minimum node.')
+            else:
+                return candidate
+        else:
+            result = node.left
+            while result.right is not NIL:
+                result = result.right
             return result
 
 
