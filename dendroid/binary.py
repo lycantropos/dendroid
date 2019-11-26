@@ -265,7 +265,7 @@ class TreeBase(ABC, Generic[Domain]):
         else:
             raise ValueError('Value is not in tree.')
         if node.right is NIL:
-            key, candidate, cursor = node.key, NIL, self.root
+            candidate, cursor = NIL, self.root
             while cursor is not node:
                 if key < cursor.key:
                     candidate, cursor = cursor, cursor.left
