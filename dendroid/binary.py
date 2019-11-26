@@ -249,6 +249,38 @@ class TreeBase(ABC, Generic[Domain]):
             node = node.left
         return node.value
 
+    def next(self, value: Domain) -> Domain:
+        """Returns first value with a key greater than of the given value."""
+        node = self._root
+        if node is NIL:
+            raise ValueError('Tree is empty.')
+        key = self._to_key(value)
+        while node is not NIL:
+            if key < node.key:
+                node = node.left
+            elif node.key < key:
+                node = node.right
+            else:
+                break
+        else:
+            raise ValueError('Value is not in tree.')
+        if node.right is NIL:
+            key, candidate, cursor = node.key, NIL, self.root
+            while cursor is not node:
+                if key < cursor.key:
+                    candidate, cursor = cursor, cursor.left
+                else:
+                    cursor = cursor.right
+            if candidate is NIL:
+                raise ValueError('Value corresponds to a maximum node.')
+            else:
+                return candidate.value
+        else:
+            result = node.right
+            while result.left is not NIL:
+                result = result.left
+            return result.value
+
     @abstractmethod
     def add(self, value: Domain) -> None:
         """Adds given value to the tree."""
