@@ -70,29 +70,33 @@ Usage
 -----
 
 ```python
->>> from dendroid import avl, red_black
->>> avl_tree, red_black_tree = avl.tree(), red_black.tree()
->>> 1 not in avl_tree and 1 not in red_black_tree
+>>> from dendroid import avl, red_black, splay
+>>> avl_tree, red_black_tree, splay_tree = (avl.tree(), 
+...                                         red_black.tree(), 
+...                                         splay.tree())
+>>> 1 not in avl_tree and 1 not in red_black_tree and 1 not in splay_tree
 True
->>> len(avl_tree) == len(red_black_tree) == 0
+>>> len(avl_tree) == len(red_black_tree) == len(splay_tree) == 0
 True
->>> list(avl_tree) == list(red_black_tree) == []
+>>> list(avl_tree) == list(red_black_tree) == list(splay_tree) == []
 True
 >>> avl_tree.add(1)
 >>> red_black_tree.add(1)
->>> 1 in avl_tree and 1 in red_black_tree
+>>> splay_tree.add(1)
+>>> 1 in avl_tree and 1 in red_black_tree and 1 in splay_tree
 True
->>> len(avl_tree) == len(red_black_tree) == 1
+>>> len(avl_tree) == len(red_black_tree) == len(splay_tree) == 1
 True
->>> list(avl_tree) == list(red_black_tree) == [1]
+>>> list(avl_tree) == list(red_black_tree) == list(splay_tree) == [1]
 True
 >>> avl_tree.remove(1)
 >>> red_black_tree.remove(1)
->>> 1 not in avl_tree and 1 not in red_black_tree
+>>> splay_tree.remove(1)
+>>> 1 not in avl_tree and 1 not in red_black_tree and 1 not in splay_tree
 True
->>> len(avl_tree) == len(red_black_tree) == 0
+>>> len(avl_tree) == len(red_black_tree) == len(splay_tree) == 0
 True
->>> list(avl_tree) == list(red_black_tree) == []
+>>> list(avl_tree) == list(red_black_tree) == list(splay_tree) == []
 True
 
 ```
