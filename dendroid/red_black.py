@@ -216,7 +216,12 @@ class Tree(TreeBase[Domain]):
                    key=key)
 
     def __contains__(self, value: Domain) -> bool:
-        return self._search_node(value) is not NIL
+        try:
+            self._search_node(value)
+        except ValueError:
+            return False
+        else:
+            return True
 
     def add(self, value: Domain) -> None:
         parent = self._root
@@ -282,18 +287,6 @@ class Tree(TreeBase[Domain]):
         else:
             return ComplexNode(self._key(value), value,
                                is_black=is_black)
-
-    def _search_node(self, value: Domain) -> Optional[Node]:
-        result = self._root
-        key = self._to_key(value)
-        while result is not NIL:
-            if key < result.key:
-                result = result.left
-            elif result.key < key:
-                result = result.right
-            else:
-                break
-        return result
 
     def _restore(self, node: Node) -> None:
         while not _is_node_black(node.parent):
