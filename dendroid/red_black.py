@@ -215,14 +215,6 @@ class Tree(TreeBase[Domain]):
         return cls(root,
                    key=key)
 
-    def __contains__(self, value: Domain) -> bool:
-        try:
-            self._search_node(value)
-        except ValueError:
-            return False
-        else:
-            return True
-
     def add(self, value: Domain) -> None:
         parent = self._root
         if parent is NIL:
