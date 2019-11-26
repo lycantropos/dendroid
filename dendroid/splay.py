@@ -119,6 +119,20 @@ class Tree(TreeBase[Domain]):
                 result = result.left
             return result.value
 
+    def prev(self, value: Domain) -> Domain:
+        if self._root is NIL:
+            raise ValueError('Tree is empty.')
+        key = self._to_key(value)
+        self._splay(key)
+        node = self._root
+        if node.left is NIL:
+            raise ValueError('Value corresponds to a minimum node.')
+        else:
+            result = node.left
+            while result.right is not NIL:
+                result = result.right
+            return result.value
+
     def add(self, value: Domain) -> None:
         if self._root is NIL:
             self._root = self._make_node(value)
