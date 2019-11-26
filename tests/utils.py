@@ -12,6 +12,7 @@ from typing import (Any,
                     Union)
 
 from hypothesis.searchstrategy import SearchStrategy
+from lz import left
 from lz.functional import compose
 from lz.iterating import interleave
 
@@ -51,6 +52,11 @@ def all_equal(iterable: Iterable[Any]) -> bool:
 
 def leap_traverse(values: List[Domain]) -> List[Domain]:
     return list(islice(interleave([values, reversed(values)]), len(values)))
+
+
+def to_tree_including_value(tree: Tree, value: Domain) -> Tree:
+    return tree.from_iterable(left.attach(tree, value),
+                              key=tree.key)
 
 
 def is_left_subtree_less_than_right_subtree(tree: Tree) -> bool:

@@ -86,6 +86,21 @@ non_empty_trees_with_values = strategies.builds(to_tree_with_value, factories,
                                                 two_or_more_values_with_keys)
 
 
+def to_tree_with_values_pair(factory: Callable[..., Tree],
+                             values_list_with_key: ValuesListWithKey
+                             ) -> Tuple[Tree, Tuple[Domain, Domain]]:
+    values_list, key = values_list_with_key
+    *rest_values_list, first_value, second_value = values_list
+    tree = factory(*rest_values_list,
+                   key=key)
+    return tree, (first_value, second_value)
+
+
+trees_with_values_pairs = strategies.builds(to_tree_with_values_pair,
+                                            factories,
+                                            two_or_more_values_with_keys)
+
+
 def to_non_empty_trees_with_their_values(tree: Tree
                                          ) -> Strategy[Tuple[Tree, Domain]]:
     return strategies.tuples(strategies.just(tree),
