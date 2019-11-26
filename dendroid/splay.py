@@ -119,6 +119,7 @@ class Tree(TreeBase[Domain]):
             result = node.right
             while result.left is not NIL:
                 result = result.left
+            self._splay(result.key)
             return result.value
 
     def prev(self, value: Domain) -> Domain:
