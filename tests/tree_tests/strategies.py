@@ -13,12 +13,12 @@ from dendroid.hints import Domain
 from tests.strategies import (empty_values_lists_with_keys,
                               non_empty_values_lists_with_keys,
                               single_values_with_keys,
+                              to_non_empty_trees_with_their_values,
                               to_values_lists_with_keys,
                               two_or_more_values_with_keys,
                               values_lists_with_keys,
                               values_with_keys_strategies)
-from tests.utils import (Strategy,
-                         Tree,
+from tests.utils import (Tree,
                          TreesPair,
                          TreesTriplet,
                          ValuesListWithKey,
@@ -108,14 +108,6 @@ def to_tree_with_values_pair(factory: Callable[..., Tree],
 trees_with_values_pairs = strategies.builds(to_tree_with_values_pair,
                                             factories,
                                             two_or_more_values_with_keys)
-
-
-def to_non_empty_trees_with_their_values(tree: Tree
-                                         ) -> Strategy[Tuple[Tree, Domain]]:
-    return strategies.tuples(strategies.just(tree),
-                             strategies.sampled_from(list(tree)))
-
-
 non_empty_trees_with_their_values = (
     non_empty_trees.flatmap(to_non_empty_trees_with_their_values))
 

@@ -12,6 +12,7 @@ from lz.functional import (combine,
 from dendroid.hints import (Domain,
                             SortingKey)
 from tests.utils import (Strategy,
+                         Tree,
                          ValuesListWithKey,
                          ValuesListsPairWithKey,
                          ValuesListsTripletWithKey)
@@ -57,3 +58,9 @@ def to_values_lists_with_keys(
                                                 max_size=max_size)
                                for min_size, max_size in sizes],
                              strategies.none() | keys)
+
+
+def to_non_empty_trees_with_their_values(tree: Tree
+                                         ) -> Strategy[Tuple[Tree, Domain]]:
+    return strategies.tuples(strategies.just(tree),
+                             strategies.sampled_from(list(tree)))

@@ -5,4 +5,5 @@ from .literals.base import (empty_values_lists_with_keys,
                             values_lists_with_keys,
                             values_with_keys,
                             values_with_keys_strategies)
-from .literals.factories import to_values_lists_with_keys
+from .literals.factories import (to_non_empty_trees_with_their_values,
+                                 to_values_lists_with_keys)
