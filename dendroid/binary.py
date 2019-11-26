@@ -119,9 +119,14 @@ class TreeBase(ABC, Generic[Domain]):
             yield node.value
             node = node.right
 
-    @abstractmethod
     def __contains__(self, value: Domain) -> bool:
         """Checks if given value is contained in the tree."""
+        try:
+            self._search_node(value)
+        except ValueError:
+            return False
+        else:
+            return True
 
     def __eq__(self, other: 'TreeBase[OtherDomain]') -> bool:
         """Checks if the tree is equal to given one."""
