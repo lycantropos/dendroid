@@ -40,18 +40,6 @@ def _set_parent(node: Union[Node, NIL],
         node.parent = parent
 
 
-def _to_successor(node: Node) -> Union[Node, NIL]:
-    # we are assuming that right child is not NIL
-    node = node.right
-    if node.left is NIL:
-        return node
-    else:
-        node = node.left
-        while node.left is not NIL:
-            node = node.left
-        return node
-
-
 class SimpleNode(Node):
     slots = ('_value', 'height', '_parent', '_left', '_right')
 
@@ -292,7 +280,9 @@ class Tree(TreeBase[Domain]):
             imbalanced_node = node.parent
             self._transplant(node, node.left)
         else:
-            successor = _to_successor(node)
+            successor = node.right
+            while successor.left is not NIL:
+                successor = successor.left
             if successor.parent is node:
                 imbalanced_node = successor
             else:
