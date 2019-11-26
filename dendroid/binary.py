@@ -321,6 +321,20 @@ class TreeBase(ABC, Generic[Domain]):
     def clear(self) -> None:
         """Clears the tree."""
 
+    def isdisjoint(self, other: 'TreeBase[OtherDomain]') -> bool:
+        """Checks if the tree has no intersection with given one."""
+
+        def _are_disjoint(left: TreeBase[Domain],
+                          right: TreeBase[OtherDomain]) -> bool:
+            for value in left:
+                if value in right:
+                    return False
+            return True
+
+        return (_are_disjoint(self, other)
+                if len(self) < len(other)
+                else _are_disjoint(other, self))
+
     def _to_key(self, value: Domain) -> Sortable:
         return value if self.key is None else self.key(value)
 
@@ -354,20 +368,6 @@ class TreeBase(ABC, Generic[Domain]):
             while result.left is not NIL:
                 result = result.left
             return result
-
-    def isdisjoint(self, other: 'TreeBase[OtherDomain]') -> bool:
-        """Checks if the tree has no intersection with given one."""
-
-        def _are_disjoint(left: TreeBase[Domain],
-                          right: TreeBase[OtherDomain]) -> bool:
-            for value in left:
-                if value in right:
-                    return False
-            return True
-
-        return (_are_disjoint(self, other)
-                if len(self) < len(other)
-                else _are_disjoint(other, self))
 
 
 class Tree(TreeBase[Domain]):
