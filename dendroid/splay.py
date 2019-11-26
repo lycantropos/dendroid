@@ -111,7 +111,7 @@ class Tree(TreeBase[Domain]):
         return node.value
 
     def prev(self, value: Domain) -> Domain:
-        node = self._to_predecessor(value)
+        node = self._to_predecessor(self._search_node(value))
         self._splay(node.key)
         return node.value
 
