@@ -20,8 +20,8 @@ class SimpleNode(Node):
 
     def __init__(self, value: Domain,
                  *,
-                 left: Union['SimpleNode', NIL] = NIL,
-                 right: Union['SimpleNode', NIL] = NIL) -> None:
+                 left: Union[NIL, 'SimpleNode'] = NIL,
+                 right: Union[NIL, 'SimpleNode'] = NIL) -> None:
         self._value = value
         self.left = left
         self.right = right
@@ -42,8 +42,8 @@ class ComplexNode(Node):
 
     def __init__(self, key: Sortable, value: Domain,
                  *,
-                 left: Union['ComplexNode', NIL] = NIL,
-                 right: Union['ComplexNode', NIL] = NIL) -> None:
+                 left: Union[NIL, 'ComplexNode'] = NIL,
+                 right: Union[NIL, 'ComplexNode'] = NIL) -> None:
         self._value = value
         self._key = key
         self.left = left
@@ -63,7 +63,7 @@ class ComplexNode(Node):
 class Tree(TreeBase[Domain]):
     __slots__ = ('_root', '_key', '_header')
 
-    def __init__(self, root: Union[Node, NIL],
+    def __init__(self, root: Union[NIL, Node],
                  *,
                  key: Optional[SortingKey]) -> None:
         self._root = root
@@ -74,7 +74,7 @@ class Tree(TreeBase[Domain]):
                              with_module_name=True)
 
     @property
-    def root(self) -> Union[Node, NIL]:
+    def root(self) -> Union[NIL, Node]:
         return self._root
 
     @property
