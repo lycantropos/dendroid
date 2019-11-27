@@ -1,3 +1,4 @@
+import sys
 import math
 from functools import singledispatch
 from itertools import (groupby,
@@ -35,6 +36,8 @@ ValuesListsPairWithKey = Tuple[List[Domain], List[Domain],
                                Optional[SortingKey]]
 ValuesListsTripletWithKey = Tuple[List[Domain], List[Domain], List[Domain],
                                   Optional[SortingKey]]
+
+MAX_ITERABLES_SIZE = min(100, sys.maxsize)
 
 
 def equivalence(left_statement: bool, right_statement: bool) -> bool:
