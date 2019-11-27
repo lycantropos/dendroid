@@ -81,11 +81,11 @@ class Tree(TreeBase[Domain]):
         return self._key
 
     def __contains__(self, value: Domain) -> bool:
-        if self.root is NIL:
+        if self._root is NIL:
             return False
         key = self._to_key(value)
         self._splay(key)
-        return self.root.key == key
+        return self._root.key == key
 
     def max(self) -> Domain:
         node = self.root
