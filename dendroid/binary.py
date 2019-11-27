@@ -106,7 +106,7 @@ class TreeBase(ABC, Generic[Domain]):
         return capacity(iter(self))
 
     def __iter__(self) -> Iterator[Domain]:
-        """Returns iterator over values."""
+        """Returns iterator over values in ascending order."""
         node = self.root
         queue = []
         while True:
