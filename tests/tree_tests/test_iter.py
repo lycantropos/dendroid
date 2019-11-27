@@ -1,23 +1,29 @@
-import pytest
 from hypothesis import given
+from lz.iterating import (capacity,
+                          pairwise)
 
 from tests.utils import Tree
 from . import strategies
 
 
-@given(strategies.empty_trees)
-def test_basic(tree: Tree) -> None:
-    iterator = iter(tree)
+@given(strategies.trees)
+def test_size(tree: Tree) -> None:
+    result = iter(tree)
 
-    with pytest.raises(StopIteration):
-        next(iterator)
+    assert capacity(result) == len(tree)
 
 
-@given(strategies.non_empty_trees)
-def test_step(tree: Tree) -> None:
-    iterator = iter(tree)
+@given(strategies.trees)
+def test_elements(tree: Tree) -> None:
+    result = iter(tree)
 
-    result = next(iterator)
+    assert all(element in tree
+               for element in result)
 
-    assert result in tree
-    assert result == tree.min()
+
+@given(strategies.trees_with_two_or_more_nodes)
+def test_order(tree: Tree) -> None:
+    result = iter(tree)
+
+    assert all(tree._to_key(element) < tree._to_key(next_element)
+               for element, next_element in pairwise(result))
