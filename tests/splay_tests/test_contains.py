@@ -19,8 +19,7 @@ def test_properties(tree_with_value: Tuple[Tree, Domain]) -> None:
 
 @given(strategies.non_empty_trees)
 def test_accessing_in_order(tree: Tree) -> None:
-    for element in sorted(tree,
-                          key=tree.key):
+    for element in tree:
         element in tree
 
     assert to_height(tree) == to_max_binary_tree_height(tree)
