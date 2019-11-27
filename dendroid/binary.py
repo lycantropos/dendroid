@@ -120,7 +120,7 @@ class TreeBase(ABC, Generic[Domain]):
             node = node.right
 
     def __reversed__(self) -> Iterator[Domain]:
-        """Returns iterator over values in descending order."""
+        """Returns iterator over values in descending keys order."""
         node = self.root
         queue = []
         while True:
