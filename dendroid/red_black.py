@@ -425,6 +425,22 @@ class Tree(TreeBase[Domain]):
                 node = node.left
             return node
 
+    @staticmethod
+    def _to_predecessor(node: Node) -> Node:
+        if node.left is NIL:
+            parent = node.parent
+            while parent is not None and node is not parent.right:
+                node, parent = parent, parent.parent
+            if parent is None:
+                raise ValueError('Value corresponds to a minimum node.')
+            else:
+                return parent
+        else:
+            node = node.left
+            while node.right is not NIL:
+                node = node.right
+            return node
+
 
 def tree(*values: Domain, key: Optional[SortingKey] = None) -> Tree[Domain]:
     return Tree.from_iterable(values,
