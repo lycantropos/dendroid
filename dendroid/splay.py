@@ -87,6 +87,12 @@ class Tree(TreeBase[Domain]):
         # and cause infinite loops
         return iter(list(super().__iter__()))
 
+    def __reversed__(self) -> Iterator[Domain]:
+        # we are collecting all values at once
+        # because tree can be changed during iteration
+        # and cause infinite loops
+        return iter(list(super().__reversed__()))
+
     def __contains__(self, value: Domain) -> bool:
         if self._root is NIL:
             return False
