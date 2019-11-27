@@ -338,7 +338,7 @@ class TreeBase(ABC, Generic[Domain]):
                 else:
                     cursor = cursor.right
             if candidate is NIL:
-                raise ValueError('Value corresponds to a maximum node.')
+                raise ValueError('Corresponds to a maximum node.')
             else:
                 return candidate
         else:
