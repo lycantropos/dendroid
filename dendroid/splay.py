@@ -1,4 +1,5 @@
 from typing import (Iterable,
+                    Iterator,
                     Optional,
                     Union)
 
@@ -79,6 +80,12 @@ class Tree(TreeBase[Domain]):
     @property
     def key(self) -> Optional[SortingKey]:
         return self._key
+
+    def __iter__(self) -> Iterator[Domain]:
+        # we are collecting all values at once
+        # because tree can be changed during iteration
+        # and cause infinite loops
+        return iter(list(super().__iter__()))
 
     def __contains__(self, value: Domain) -> bool:
         if self._root is NIL:
