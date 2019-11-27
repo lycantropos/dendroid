@@ -432,7 +432,7 @@ class Tree(TreeBase[Domain]):
             while parent is not None and node is not parent.right:
                 node, parent = parent, parent.parent
             if parent is None:
-                raise ValueError('Value corresponds to a minimum node.')
+                raise ValueError('Corresponds to a minimum node.')
             else:
                 return parent
         else:
