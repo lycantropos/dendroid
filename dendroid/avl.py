@@ -344,10 +344,10 @@ class Tree(TreeBase[Domain]):
             else:
                 return parent
         else:
-            node = node.left
-            while node.right is not NIL:
-                node = node.right
-            return node
+            result = node.left
+            while result.right is not NIL:
+                result = result.right
+            return result
 
 
 def tree(*values: Domain, key: Optional[SortingKey] = None) -> Tree[Domain]:
