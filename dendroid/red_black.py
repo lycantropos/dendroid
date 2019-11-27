@@ -416,7 +416,7 @@ class Tree(TreeBase[Domain]):
             while parent is not None and node is not parent.left:
                 node, parent = parent, parent.parent
             if parent is None:
-                raise ValueError('Value corresponds to a maximum node.')
+                raise ValueError('Corresponds to a maximum node.')
             else:
                 return parent
         else:
