@@ -97,7 +97,7 @@ class Tree(TreeBase[Domain]):
         return node.value
 
     def min(self) -> Domain:
-        node = self.root
+        node = self._root
         if node is NIL:
             raise ValueError('Tree is empty.')
         while node.left is not NIL:
