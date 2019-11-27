@@ -112,7 +112,11 @@ def to_max_binary_tree_height(tree: binary.TreeBase) -> int:
                     .format(type=type(tree)))
 
 
-to_max_binary_tree_height.register(binary.Tree, len)
+@to_max_binary_tree_height.register(binary.Tree)
+@to_max_binary_tree_height.register(splay.Tree)
+def _(tree: binary.Tree) -> int:
+    return len(tree) - 1
+
 
 MAX_AVL_TREE_HEIGHT_SLOPE = 1 / math.log2((1 + math.sqrt(5)) / 2)
 MAX_AVL_TREE_HEIGHT_INTERCEPT = (MAX_AVL_TREE_HEIGHT_SLOPE * math.log2(5) / 2
@@ -128,9 +132,6 @@ def _(tree: avl.Tree) -> int:
 @to_max_binary_tree_height.register(red_black.Tree)
 def _(tree: red_black.Tree) -> int:
     return 2 * to_balanced_tree_height(len(tree) + 1)
-
-
-to_max_binary_tree_height.register(splay.Tree, len)
 
 
 def are_balance_factors_normalized(tree: avl.Tree) -> bool:
