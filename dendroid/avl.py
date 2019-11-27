@@ -34,7 +34,7 @@ def _update_height(node: Node) -> None:
     node.height = max(_to_height(node.left), _to_height(node.right)) + 1
 
 
-def _set_parent(node: Union[Node, NIL],
+def _set_parent(node: Union[NIL, Node],
                 parent: Optional[Node]) -> None:
     if node is not NIL:
         node.parent = parent
@@ -46,8 +46,8 @@ class SimpleNode(Node):
     def __init__(self, value: Domain,
                  *,
                  parent: Optional['SimpleNode'] = None,
-                 left: Union['SimpleNode', NIL] = NIL,
-                 right: Union['SimpleNode', NIL] = NIL) -> None:
+                 left: Union[NIL, 'SimpleNode'] = NIL,
+                 right: Union[NIL, 'SimpleNode'] = NIL) -> None:
         self._value = value
         self.parent = parent
         self.left = left
@@ -73,20 +73,20 @@ class SimpleNode(Node):
         self._parent = _maybe_weakref(node)
 
     @property
-    def left(self) -> Union['SimpleNode', NIL]:
+    def left(self) -> Union[NIL, 'SimpleNode']:
         return self._left
 
     @left.setter
-    def left(self, node: Union['SimpleNode', NIL]) -> None:
+    def left(self, node: Union[NIL, 'SimpleNode']) -> None:
         self._left = node
         _set_parent(node, self)
 
     @property
-    def right(self) -> Union['SimpleNode', NIL]:
+    def right(self) -> Union[NIL, 'SimpleNode']:
         return self._right
 
     @right.setter
-    def right(self, node: Union['SimpleNode', NIL]) -> None:
+    def right(self, node: Union[NIL, 'SimpleNode']) -> None:
         self._right = node
         _set_parent(node, self)
 
@@ -97,8 +97,8 @@ class ComplexNode(Node):
     def __init__(self, key: Sortable, value: Domain,
                  *,
                  parent: Optional['ComplexNode'] = None,
-                 left: Union['ComplexNode', NIL] = NIL,
-                 right: Union['ComplexNode', NIL] = NIL) -> None:
+                 left: Union[NIL, 'ComplexNode'] = NIL,
+                 right: Union[NIL, 'ComplexNode'] = NIL) -> None:
         self._value = value
         self._key = key
         self.parent = parent
@@ -125,26 +125,26 @@ class ComplexNode(Node):
         self._parent = _maybe_weakref(node)
 
     @property
-    def left(self) -> Union['SimpleNode', NIL]:
+    def left(self) -> Union[NIL, 'SimpleNode']:
         return self._left
 
     @left.setter
-    def left(self, node: Union['SimpleNode', NIL]) -> None:
+    def left(self, node: Union[NIL, 'SimpleNode']) -> None:
         self._left = node
         _set_parent(node, self)
 
     @property
-    def right(self) -> Union['SimpleNode', NIL]:
+    def right(self) -> Union[NIL, 'SimpleNode']:
         return self._right
 
     @right.setter
-    def right(self, node: Union['SimpleNode', NIL]) -> None:
+    def right(self, node: Union[NIL, 'SimpleNode']) -> None:
         self._right = node
         _set_parent(node, self)
 
 
 class Tree(TreeBase[Domain]):
-    def __init__(self, root: Union[Node, NIL],
+    def __init__(self, root: Union[NIL, Node],
                  *,
                  key: Optional[SortingKey] = None) -> None:
         self._root = root
@@ -154,7 +154,7 @@ class Tree(TreeBase[Domain]):
                              with_module_name=True)
 
     @property
-    def root(self) -> Union[Node, NIL]:
+    def root(self) -> Union[NIL, Node]:
         return self._root
 
     @property
@@ -307,7 +307,7 @@ class Tree(TreeBase[Domain]):
         _update_height(node)
         _update_height(replacement)
 
-    def _transplant(self, origin: Node, replacement: Union[Node, NIL]) -> None:
+    def _transplant(self, origin: Node, replacement: Union[NIL, Node]) -> None:
         parent = origin.parent
         if parent is None:
             self._root = replacement
