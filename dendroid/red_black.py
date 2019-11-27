@@ -409,6 +409,22 @@ class Tree(TreeBase[Domain]):
         else:
             parent.right = replacement
 
+    @staticmethod
+    def _to_successor(node: Node) -> Node:
+        if node.right is NIL:
+            parent = node.parent
+            while parent is not None and node is not parent.left:
+                node, parent = parent, parent.parent
+            if parent is None:
+                raise ValueError('Value corresponds to a maximum node.')
+            else:
+                return parent
+        else:
+            node = node.right
+            while node.left is not NIL:
+                node = node.left
+            return node
+
 
 def tree(*values: Domain, key: Optional[SortingKey] = None) -> Tree[Domain]:
     return Tree.from_iterable(values,
