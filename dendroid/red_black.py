@@ -413,7 +413,7 @@ class Tree(TreeBase[Domain]):
     def _to_successor(node: Node) -> Node:
         if node.right is NIL:
             parent = node.parent
-            while parent is not None and node is not parent.left:
+            while parent is not None and node is parent.right:
                 node, parent = parent, parent.parent
             if parent is None:
                 raise ValueError('Corresponds to a maximum node.')
