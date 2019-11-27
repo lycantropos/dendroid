@@ -9,7 +9,8 @@ from dendroid.hints import (Domain,
                             SortingKey)
 from tests.strategies import (non_empty_values_lists_with_keys,
                               to_non_empty_trees_with_their_values,
-                              two_or_more_values_with_keys)
+                              two_or_more_values_with_keys,
+                              values_lists_with_keys)
 from tests.utils import (ValuesListWithKey)
 
 
@@ -20,6 +21,7 @@ def to_tree(values_list_with_key: Tuple[List[Domain], Optional[SortingKey]]
                       key=key)
 
 
+trees = strategies.builds(to_tree, values_lists_with_keys)
 non_empty_trees = strategies.builds(to_tree, non_empty_values_lists_with_keys)
 non_empty_trees_with_their_values = (
     non_empty_trees.flatmap(to_non_empty_trees_with_their_values))
