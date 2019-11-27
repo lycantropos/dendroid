@@ -30,8 +30,8 @@ class SimpleNode(Node):
                  *,
                  is_black: bool,
                  parent: Optional['SimpleNode'] = None,
-                 left: Union['SimpleNode', NIL] = NIL,
-                 right: Union['SimpleNode', NIL] = NIL) -> None:
+                 left: Union[NIL, 'SimpleNode'] = NIL,
+                 right: Union[NIL, 'SimpleNode'] = NIL) -> None:
         self._value = value
         self.is_black = is_black
         self.parent = parent
@@ -57,20 +57,20 @@ class SimpleNode(Node):
         self._parent = _maybe_weakref(node)
 
     @property
-    def left(self) -> Union['SimpleNode', NIL]:
+    def left(self) -> Union[NIL, 'SimpleNode']:
         return self._left
 
     @left.setter
-    def left(self, node: Union['SimpleNode', NIL]) -> None:
+    def left(self, node: Union[NIL, 'SimpleNode']) -> None:
         self._left = node
         _set_parent(node, self)
 
     @property
-    def right(self) -> Union['SimpleNode', NIL]:
+    def right(self) -> Union[NIL, 'SimpleNode']:
         return self._right
 
     @right.setter
-    def right(self, node: Union['SimpleNode', NIL]) -> None:
+    def right(self, node: Union[NIL, 'SimpleNode']) -> None:
         self._right = node
         _set_parent(node, self)
 
@@ -82,8 +82,8 @@ class ComplexNode(Node):
                  *,
                  is_black: bool,
                  parent: Optional['ComplexNode'] = None,
-                 left: Union['ComplexNode', NIL] = NIL,
-                 right: Union['ComplexNode', NIL] = NIL) -> None:
+                 left: Union[NIL, 'ComplexNode'] = NIL,
+                 right: Union[NIL, 'ComplexNode'] = NIL) -> None:
         self._value = value
         self._key = key
         self.is_black = is_black
@@ -110,25 +110,25 @@ class ComplexNode(Node):
         self._parent = _maybe_weakref(node)
 
     @property
-    def left(self) -> Union['ComplexNode', NIL]:
+    def left(self) -> Union[NIL, 'ComplexNode']:
         return self._left
 
     @left.setter
-    def left(self, node: Union['ComplexNode', NIL]) -> None:
+    def left(self, node: Union[NIL, 'ComplexNode']) -> None:
         self._left = node
         _set_parent(node, self)
 
     @property
-    def right(self) -> Union['ComplexNode', NIL]:
+    def right(self) -> Union[NIL, 'ComplexNode']:
         return self._right
 
     @right.setter
-    def right(self, node: Union['ComplexNode', NIL]) -> None:
+    def right(self, node: Union[NIL, 'ComplexNode']) -> None:
         self._right = node
         _set_parent(node, self)
 
 
-def _set_parent(node: Union[Node, NIL], parent: Optional[Node]) -> None:
+def _set_parent(node: Union[NIL, Node], parent: Optional[Node]) -> None:
     if node is not NIL:
         node.parent = parent
 
@@ -143,12 +143,12 @@ def _is_left_child(node: Node) -> bool:
     return parent is not None and parent.left is node
 
 
-def _is_node_black(node: Union[Node, NIL]) -> bool:
+def _is_node_black(node: Union[NIL, Node]) -> bool:
     return node is NIL or node.is_black
 
 
 class Tree(TreeBase[Domain]):
-    def __init__(self, root: Union[Node, NIL],
+    def __init__(self, root: Union[NIL, Node],
                  *,
                  key: Optional[SortingKey] = None) -> None:
         self._root = root
@@ -158,7 +158,7 @@ class Tree(TreeBase[Domain]):
                              with_module_name=True)
 
     @property
-    def root(self) -> Union[Node, NIL]:
+    def root(self) -> Union[NIL, Node]:
         return self._root
 
     @property
@@ -344,7 +344,7 @@ class Tree(TreeBase[Domain]):
             self._remove_node_fixup(successor_child, successor_child_parent,
                                     is_successor_child_left)
 
-    def _remove_node_fixup(self, node: Union[Node, NIL], parent: Node,
+    def _remove_node_fixup(self, node: Union[NIL, Node], parent: Node,
                            is_left_child: bool) -> None:
         while node is not self._root and _is_node_black(node):
             if is_left_child:
@@ -399,7 +399,7 @@ class Tree(TreeBase[Domain]):
         self._transplant(node, replacement)
         node.left, replacement.right = replacement.right, node
 
-    def _transplant(self, origin: Node, replacement: Union[Node, NIL]) -> None:
+    def _transplant(self, origin: Node, replacement: Union[NIL, Node]) -> None:
         parent = origin.parent
         if parent is None:
             self._root = replacement
