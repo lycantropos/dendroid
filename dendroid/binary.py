@@ -119,6 +119,20 @@ class TreeBase(ABC, Generic[Domain]):
             yield node.value
             node = node.right
 
+    def __reversed__(self) -> Iterator[Domain]:
+        """Returns iterator over values in descending order."""
+        node = self.root
+        queue = []
+        while True:
+            while node is not NIL:
+                queue.append(node)
+                node = node.right
+            if not queue:
+                return
+            node = queue.pop()
+            yield node.value
+            node = node.left
+
     def __contains__(self, value: Domain) -> bool:
         """Checks if given value is contained in the tree."""
         try:
