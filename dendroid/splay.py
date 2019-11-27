@@ -174,10 +174,9 @@ class Tree(TreeBase[Domain]):
                                   left=(to_node(start_index, middle_index)
                                         if middle_index > start_index
                                         else NIL),
-                                  right=(
-                                      to_node(middle_index + 1, end_index)
-                                      if middle_index < end_index - 1
-                                      else NIL))
+                                  right=(to_node(middle_index + 1, end_index)
+                                         if middle_index < end_index - 1
+                                         else NIL))
 
             root = to_node(0, len(values))
         else:
@@ -189,10 +188,9 @@ class Tree(TreeBase[Domain]):
                                    left=(to_node(start_index, middle_index)
                                          if middle_index > start_index
                                          else NIL),
-                                   right=(
-                                       to_node(middle_index + 1, end_index)
-                                       if middle_index < end_index - 1
-                                       else NIL))
+                                   right=(to_node(middle_index + 1, end_index)
+                                          if middle_index < end_index - 1
+                                          else NIL))
 
             root = to_node(0, len(items))
         return cls(root,
