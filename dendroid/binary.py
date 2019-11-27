@@ -356,7 +356,7 @@ class TreeBase(ABC, Generic[Domain]):
                 else:
                     cursor = cursor.left
             if candidate is NIL:
-                raise ValueError('Value corresponds to a minimum node.')
+                raise ValueError('Corresponds to a minimum node.')
             else:
                 return candidate
         else:
