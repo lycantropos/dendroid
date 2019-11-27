@@ -337,7 +337,7 @@ class Tree(TreeBase[Domain]):
     def _to_predecessor(node: Node) -> Node:
         if node.left is NIL:
             parent = node.parent
-            while parent is not None and node is not parent.right:
+            while parent is not None and node is parent.left:
                 node, parent = parent, parent.parent
             if parent is None:
                 raise ValueError('Corresponds to a minimum node.')
