@@ -54,6 +54,15 @@ empty_trees = strategies.builds(to_tree, factories,
 trees = strategies.builds(to_tree, factories, values_lists_with_keys)
 
 
+def has_tree_two_or_more_nodes(tree: Tree) -> bool:
+    return len(tree) > 2
+
+
+trees_with_two_or_more_nodes = (strategies.builds(to_tree, factories,
+                                                  two_or_more_values_with_keys)
+                                .filter(has_tree_two_or_more_nodes))
+
+
 def to_empty_tree_with_tree(tree: Tree) -> TreesPair:
     return to_empty_copy(tree), tree
 
