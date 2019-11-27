@@ -83,13 +83,15 @@ class Tree(TreeBase[Domain]):
 
     def __iter__(self) -> Iterator[Domain]:
         # we are collecting all values at once
-        # because tree can be changed during iteration
+        # because tree can be implicitly changed during iteration
+        # (e.g. by simple lookup)
         # and cause infinite loops
         return iter(list(super().__iter__()))
 
     def __reversed__(self) -> Iterator[Domain]:
         # we are collecting all values at once
-        # because tree can be changed during iteration
+        # because tree can be implicitly changed during iteration
+        # (e.g. by simple lookup)
         # and cause infinite loops
         return iter(list(super().__reversed__()))
 
