@@ -88,7 +88,7 @@ class Tree(TreeBase[Domain]):
         return self._root.key == key
 
     def max(self) -> Domain:
-        node = self.root
+        node = self._root
         if node is NIL:
             raise ValueError('Tree is empty.')
         while node.right is not NIL:
