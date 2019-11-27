@@ -420,10 +420,10 @@ class Tree(TreeBase[Domain]):
             else:
                 return parent
         else:
-            node = node.right
-            while node.left is not NIL:
-                node = node.left
-            return node
+            result = node.right
+            while result.left is not NIL:
+                result = result.left
+            return result
 
     @staticmethod
     def _to_predecessor(node: Node) -> Node:
