@@ -37,8 +37,6 @@ ValuesListsPairWithKey = Tuple[List[Domain], List[Domain],
 ValuesListsTripletWithKey = Tuple[List[Domain], List[Domain], List[Domain],
                                   Optional[SortingKey]]
 
-MAX_ITERABLES_SIZE = min(100, sys.maxsize)
-
 
 def equivalence(left_statement: bool, right_statement: bool) -> bool:
     return left_statement is right_statement
