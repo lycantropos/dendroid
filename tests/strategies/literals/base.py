@@ -7,7 +7,8 @@ from lz.functional import (combine,
                            compose,
                            identity)
 
-from tests.utils import leap_traverse
+from tests.utils import (MAX_ITERABLES_SIZE,
+                         leap_traverse)
 from .factories import (to_values_lists_with_keys,
                         to_values_tuples_with_keys,
                         to_values_with_keys)
@@ -27,11 +28,11 @@ base_values_with_keys_strategies = strategies.sampled_from(
                             allow_infinity=False),
           finite_numbers_keys),
          (strategies.booleans(), strategies.just(not_) | finite_numbers_keys),
-         (strategies.text(), strings_keys)])
+         (strategies.text(max_size=MAX_ITERABLES_SIZE), strings_keys)])
 values_with_keys_strategies = (strategies
                                .recursive(base_values_with_keys_strategies,
                                           to_values_tuples_with_keys,
-                                          max_leaves=10))
+                                          max_leaves=3))
 
 values_with_keys = values_with_keys_strategies.flatmap(to_values_with_keys)
 values_lists_with_keys = (values_with_keys_strategies

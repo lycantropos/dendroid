@@ -11,7 +11,8 @@ from lz.functional import (combine,
 
 from dendroid.hints import (Domain,
                             SortingKey)
-from tests.utils import (Strategy,
+from tests.utils import (MAX_ITERABLES_SIZE,
+                         Strategy,
                          Tree,
                          ValuesListWithKey,
                          ValuesListsPairWithKey,
@@ -33,7 +34,7 @@ def to_values_tuples_with_keys(
                 .map(combine_keys))
 
     return (strategies.lists(values_with_keys,
-                             max_size=100)
+                             max_size=10)
             .map(to_values_tuples_with_key))
 
 
@@ -53,11 +54,13 @@ def to_values_lists_with_keys(
                     ValuesListsPairWithKey,
                     ValuesListsTripletWithKey]]:
     values, keys = values_with_keys
-    return strategies.tuples(*[strategies.lists(values,
-                                                min_size=min_size,
-                                                max_size=max_size)
-                               for min_size, max_size in sizes],
-                             strategies.none() | keys)
+    lists_strategies = [strategies.lists(values,
+                                         min_size=min_size,
+                                         max_size=(max_size
+                                                   if max_size is not None
+                                                   else MAX_ITERABLES_SIZE))
+                        for min_size, max_size in sizes]
+    return strategies.tuples(*lists_strategies, strategies.none() | keys)
 
 
 def to_non_empty_trees_with_their_values(tree: Tree
