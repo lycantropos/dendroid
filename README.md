@@ -2,7 +2,7 @@ dendroid
 ========
 
 [![](https://travis-ci.com/lycantropos/dendroid.svg?branch=master)](https://travis-ci.com/lycantropos/dendroid "Travis CI")
-[![](https://dev.azure.com/lycantropos/dendroid/_apis/build/status/lycantropos.dendroid?branchName=master)](https://dev.azure.com/lycantropos/dendroid/_build/latest?branchName=master "Azure Pipelines")
+[![](https://dev.azure.com/lycantropos/dendroid/_apis/build/status/lycantropos.dendroid?branchName=master)](https://dev.azure.com/lycantropos/dendroid/_build/latest?definitionId=14&branchName=master "Azure Pipelines")
 [![](https://codecov.io/gh/lycantropos/dendroid/branch/master/graph/badge.svg)](https://codecov.io/gh/lycantropos/dendroid "Codecov")
 [![](https://img.shields.io/github/license/lycantropos/dendroid.svg)](https://github.com/lycantropos/dendroid/blob/master/LICENSE "License")
 [![](https://badge.fury.io/py/dendroid.svg)](https://badge.fury.io/py/dendroid "PyPI")
