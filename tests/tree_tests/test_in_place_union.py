@@ -11,7 +11,7 @@ from . import strategies
 
 
 @given(strategies.trees_pairs)
-def test_connection_with_intersection(trees_pair: TreesPair) -> None:
+def test_connection_with_union(trees_pair: TreesPair) -> None:
     left_tree, right_tree = trees_pair
     original_left_tree = deepcopy(left_tree)
 
