@@ -1,4 +1,5 @@
 import math
+import pickle
 from functools import singledispatch
 from itertools import (groupby,
                        islice)
@@ -48,6 +49,10 @@ def implication(antecedent: bool, consequent: bool) -> bool:
 def all_equal(iterable: Iterable[Any]) -> bool:
     groups = groupby(iterable)
     return next(groups, True) and not next(groups, False)
+
+
+def pickle_round_trip(object_: Domain) -> Domain:
+    return pickle.loads(pickle.dumps(object_))
 
 
 def leap_traverse(values: List[Domain]) -> List[Domain]:
