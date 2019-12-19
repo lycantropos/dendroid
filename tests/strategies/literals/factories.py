@@ -1,3 +1,4 @@
+from functools import partial
 from operator import itemgetter
 from typing import (List,
                     Optional,
@@ -6,10 +7,9 @@ from typing import (List,
                     Union)
 
 from hypothesis import strategies
-from lz.functional import (combine,
-                           compose)
 
 from dendroid.hints import (Domain,
+                            Sortable,
                             SortingKey)
 from tests.utils import (Strategy,
                          Tree,
@@ -26,7 +26,7 @@ def to_values_tuples_with_keys(
             values_with_keys_list: List[Strategy[Tuple[Domain, SortingKey]]]
     ) -> Tuple[Strategy[Tuple[Domain, ...]], Strategy[SortingKey]]:
         def combine_keys(keys: Tuple[SortingKey, ...]) -> SortingKey:
-            return compose(tuple, combine(*keys))
+            return partial(combine, keys)
 
         return (strategies.tuples(*map(itemgetter(0), values_with_keys_list)),
                 strategies.tuples(*map(itemgetter(1), values_with_keys_list))
@@ -35,6 +35,11 @@ def to_values_tuples_with_keys(
     return (strategies.lists(values_with_keys,
                              max_size=100)
             .map(to_values_tuples_with_key))
+
+
+def combine(keys: Sequence[SortingKey],
+            values: Sequence[Domain]) -> Tuple[Sortable, ...]:
+    return tuple(key(value) for key, value in zip(keys, values))
 
 
 def to_values_with_keys(values_with_keys: Tuple[Strategy[Domain],
