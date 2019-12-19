@@ -11,7 +11,7 @@ from typing import (Any,
                     TypeVar,
                     Union)
 
-from hypothesis.searchstrategy import SearchStrategy
+from hypothesis.strategies import SearchStrategy
 from lz import left
 from lz.functional import compose
 from lz.iterating import interleave
