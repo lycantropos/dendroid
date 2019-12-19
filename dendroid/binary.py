@@ -1,3 +1,4 @@
+import sys
 from abc import (ABC,
                  abstractmethod)
 from itertools import chain
@@ -100,6 +101,13 @@ class TreeBase(ABC, Generic[Domain]):
                       *,
                       key: Optional[SortingKey] = None) -> 'TreeBase[Domain]':
         """Constructs tree from given iterable using given sorting key."""
+
+    if sys.version_info < (3, 6, 4):
+        # caused by https://github.com/python/typing/issues/498
+
+        def __copy__(self) -> 'TreeBase[Domain]':
+            return self.from_iterable(self,
+                                      key=self.key)
 
     def __len__(self) -> int:
         """Returns number of nodes."""
