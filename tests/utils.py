@@ -1,4 +1,3 @@
-import sys
 import math
 from functools import singledispatch
 from itertools import (groupby,
