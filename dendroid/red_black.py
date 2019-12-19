@@ -1,6 +1,7 @@
 from reprlib import recursive_repr
 from typing import (Iterable,
                     Optional,
+                    Tuple,
                     Union)
 
 from reprit.base import generate_repr
@@ -39,6 +40,16 @@ class SimpleNode(Node):
         self.right = right
 
     __repr__ = recursive_repr()(generate_repr(__init__))
+
+    State = Tuple[Domain, bool, Optional['SimpleNode'],
+                  Union[NIL, 'SimpleNode'], Union[NIL, 'SimpleNode']]
+
+    def __getstate__(self) -> State:
+        return self._value, self.is_black, self.parent, self._left, self._right
+
+    def __setstate__(self, state: State) -> None:
+        (self._value, self.is_black,
+         self.parent, self._left, self._right) = state
 
     @property
     def value(self) -> Domain:
@@ -126,6 +137,17 @@ class ComplexNode(Node):
     def right(self, node: Union[NIL, 'ComplexNode']) -> None:
         self._right = node
         _set_parent(node, self)
+
+    State = Tuple[Sortable, Domain, bool, Optional['ComplexNode'],
+                  Union[NIL, 'ComplexNode'], Union[NIL, 'ComplexNode']]
+
+    def __getstate__(self) -> State:
+        return (self._key, self._value, self.is_black,
+                self.parent, self._left, self._right)
+
+    def __setstate__(self, state: State) -> None:
+        (self._key, self._value, self.is_black,
+         self.parent, self._left, self._right) = state
 
 
 def _set_parent(node: Union[NIL, Node], parent: Optional[Node]) -> None:
