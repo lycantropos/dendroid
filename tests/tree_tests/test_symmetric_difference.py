@@ -60,6 +60,24 @@ def test_right_neutral_element(empty_tree_with_tree: TreesPair) -> None:
 
 
 @given(strategies.trees_pairs)
+def test_commutativity(trees_pair: TreesPair) -> None:
+    left_tree, right_tree = trees_pair
+
+    result = left_tree ^ right_tree
+
+    assert result == right_tree ^ left_tree
+
+
+@given(strategies.trees_triplets)
+def test_associativity(trees_triplet: TreesTriplet) -> None:
+    left_tree, mid_tree, right_tree = trees_triplet
+
+    result = (left_tree ^ mid_tree) ^ right_tree
+
+    assert result == left_tree ^ (mid_tree ^ right_tree)
+
+
+@given(strategies.trees_pairs)
 def test_equivalent_using_union_of_differences(trees_pair: TreesPair) -> None:
     left_tree, right_tree = trees_pair
 
