@@ -15,5 +15,5 @@ services:
       - ./requirements.txt:/opt/dendroid/requirements.txt
       - ./requirements-tests.txt:/opt/dendroid/requirements-tests.txt
       - ./setup.py:/opt/dendroid/setup.py
-      - ./setup.cfg:/opt/dendroid/setup.cfg
+      - ./pytest.ini:/opt/dendroid/pytest.ini
     entrypoint: pytest
