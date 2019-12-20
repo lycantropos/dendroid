@@ -12,13 +12,13 @@ from typing import (Generic,
                     Tuple,
                     Union)
 
-from lz.iterating import capacity
 from reprit.base import generate_repr
 
 from .hints import (Domain,
                     OtherDomain,
                     Sortable,
                     SortingKey)
+from .utils import capacity
 
 NIL = None
 
@@ -111,7 +111,7 @@ class TreeBase(ABC, Generic[Domain]):
 
     def __len__(self) -> int:
         """Returns number of nodes."""
-        return capacity(iter(self))
+        return capacity(self)
 
     def __iter__(self) -> Iterator[Domain]:
         """Returns iterator over values in ascending keys order."""

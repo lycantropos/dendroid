@@ -1,5 +1,9 @@
 import weakref
-from typing import Optional
+from collections import deque
+from itertools import count
+from typing import (Any,
+                    Iterable,
+                    Optional)
 
 from .hints import Domain
 
@@ -20,3 +24,20 @@ def _dereference_maybe(maybe_reference: Optional[weakref.ref]
     return (maybe_reference
             if maybe_reference is None
             else maybe_reference())
+
+
+def capacity(iterable: Iterable[Any]) -> int:
+    """
+    Returns number of elements in iterable.
+
+    >>> capacity(range(0))
+    0
+    >>> capacity(range(10))
+    10
+    """
+    counter = count()
+    # order matters: if `counter` goes first,
+    # then it will be incremented even for empty `iterable`
+    deque(zip(iterable, counter),
+          maxlen=0)
+    return next(counter)
