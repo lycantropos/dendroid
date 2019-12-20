@@ -102,6 +102,10 @@ class Tree(TreeBase[Domain]):
         self._splay(key)
         return self._root.key == key
 
+    def __copy__(self) -> 'Tree[Domain]':
+        return self.from_iterable(self,
+                                  key=self.key)
+
     def max(self) -> Domain:
         node = self._root
         if node is NIL:
