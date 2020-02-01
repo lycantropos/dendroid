@@ -52,6 +52,7 @@ def test_left_absorbing_element(empty_tree_with_tree: TreesPair) -> None:
     result = empty_tree & tree
 
     assert len(result) == 0
+    assert not result
 
 
 @given(strategies.empty_trees_with_trees)
@@ -61,6 +62,7 @@ def test_right_absorbing_element(empty_tree_with_tree: TreesPair) -> None:
     result = tree & empty_tree
 
     assert len(result) == 0
+    assert not result
 
 
 @given(strategies.trees_pairs)
