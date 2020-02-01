@@ -109,6 +109,10 @@ class TreeBase(ABC, Generic[Domain]):
             return self.from_iterable(self,
                                       key=self.key)
 
+    def __bool__(self) -> bool:
+        """Checks if the tree has nodes."""
+        return self.root is not NIL
+
     def __len__(self) -> int:
         """Returns number of nodes."""
         return capacity(self)
