@@ -47,7 +47,7 @@ def test_base_case(values_with_key: ValuesListWithKey) -> None:
 
 
 @given(strategies.non_empty_values_lists_with_keys)
-def test_properties(values_with_key: ValuesListWithKey) -> None:
+def test_step(values_with_key: ValuesListWithKey) -> None:
     values, key = values_with_key
     *values, value = values
 
