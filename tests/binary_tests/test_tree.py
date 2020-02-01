@@ -41,6 +41,7 @@ def test_base_case(values_with_key: ValuesListWithKey) -> None:
     result = binary.tree(key=key)
 
     assert len(result) == 0
+    assert not result
     assert all(value not in result
                for value in values)
 
