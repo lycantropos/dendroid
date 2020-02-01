@@ -39,6 +39,7 @@ def test_self_inverse(tree: Tree) -> None:
     result = tree ^ tree
 
     assert len(result) == 0
+    assert not result
 
 
 @given(strategies.empty_trees_with_trees)
