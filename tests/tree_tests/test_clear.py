@@ -19,5 +19,6 @@ def test_properties(tree: Tree) -> None:
     tree.clear()
 
     assert len(tree) == 0
+    assert not tree
     assert to_height(tree) == to_balanced_tree_height(len(tree)) == -1
     assert is_left_subtree_less_than_right_subtree(tree)
