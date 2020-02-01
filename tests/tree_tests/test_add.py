@@ -28,6 +28,7 @@ def test_properties(tree_with_value: Tuple[Tree, Domain]) -> None:
     tree.add(value)
 
     assert len(tree) > 0
+    assert tree
     assert (max(0, to_min_binary_tree_height(tree))
             <= to_height(tree)
             <= to_max_binary_tree_height(tree))
@@ -41,6 +42,7 @@ def test_base_case(tree_with_value: Tuple[Tree, Domain]) -> None:
     tree.add(value)
 
     assert len(tree) == 1
+    assert tree
     assert value in tree
 
 
