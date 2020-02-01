@@ -41,6 +41,7 @@ def test_base_case(tree_with_value: Tuple[Tree, Domain]) -> None:
     tree.discard(value)
 
     assert len(tree) == 0
+    assert not tree
     assert value not in tree
 
 
