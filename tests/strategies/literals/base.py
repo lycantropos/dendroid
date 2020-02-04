@@ -5,7 +5,8 @@ from operator import not_
 from hypothesis import strategies
 from lz.functional import (combine,
                            compose,
-                           identity)
+                           identity,
+                           to_constant)
 
 from tests.utils import leap_traverse
 from .factories import (to_values_lists_with_keys,
@@ -45,6 +46,10 @@ values_lists_with_keys |= ((values_lists_with_keys
 values_lists_with_keys |= (values_lists_with_keys
                            .map(compose(tuple, combine(leap_traverse,
                                                        identity))))
+values_lists_with_none_keys = (values_lists_with_keys
+                               .map(compose(tuple,
+                                            combine(identity,
+                                                    to_constant(None)))))
 empty_values_lists_with_keys = (values_with_keys_strategies
                                 .flatmap(partial(to_values_lists_with_keys,
                                                  sizes=[(0, 0)])))
