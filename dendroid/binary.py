@@ -197,10 +197,10 @@ class TreeBase(ABC, Generic[Domain]):
 
     def __and__(self, other: 'TreeBase[OtherDomain]') -> 'TreeBase[Domain]':
         """Returns intersection of the tree with given one."""
-        if not isinstance(other, TreeBase):
-            return NotImplemented
-        return self.from_iterable((value for value in self if value in other),
-                                  key=self.key)
+        return (self.from_iterable((value for value in self if value in other),
+                                   key=self.key)
+                if isinstance(other, TreeBase)
+                else NotImplemented)
 
     def __or__(self, other: 'TreeBase[OtherDomain]'
                ) -> 'TreeBase[Union[Domain, OtherDomain]]':
