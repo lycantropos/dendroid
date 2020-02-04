@@ -222,9 +222,9 @@ class TreeBase(ABC, Generic[Domain]):
     def __xor__(self, other: 'TreeBase[OtherDomain]'
                 ) -> 'TreeBase[Union[Domain, OtherDomain]]':
         """Returns symmetric difference of the tree with given one."""
-        if not isinstance(other, TreeBase):
-            return NotImplemented
-        return (self - other) | (other - self)
+        return ((self - other) | (other - self)
+                if isinstance(other, TreeBase)
+                else NotImplemented)
 
     def __iand__(self, other: 'TreeBase[OtherDomain]') -> 'TreeBase[Domain]':
         """Intersects the tree with given one in-place."""
