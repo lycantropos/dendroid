@@ -97,10 +97,17 @@ class TreeBase(ABC, Generic[Domain]):
 
     @classmethod
     @abstractmethod
-    def from_iterable(cls, values: Iterable[Domain],
+    def from_iterable(cls, _values: Iterable[Domain],
                       *,
                       key: Optional[SortingKey] = None) -> 'TreeBase[Domain]':
         """Constructs tree from given iterable using given sorting key."""
+
+    @property
+    def _values(self) -> Sequence[Domain]:
+        return list(self)
+
+    __repr__ = generate_repr(from_iterable,
+                             with_module_name=True)
 
     if sys.version_info < (3, 6, 4):
         # caused by https://github.com/python/typing/issues/498
@@ -399,9 +406,6 @@ class Tree(TreeBase[Domain]):
         self._root = root
         self._key = key
 
-    __repr__ = generate_repr(__init__,
-                             with_module_name=True)
-
     @property
     def root(self) -> Union[NIL, Node]:
         return self._root
@@ -532,10 +536,10 @@ class Tree(TreeBase[Domain]):
             return ComplexNode(self._key(value), value)
 
     @classmethod
-    def from_iterable(cls, values: Iterable[Domain],
+    def from_iterable(cls, _values: Iterable[Domain],
                       *,
                       key: Optional[SortingKey] = None) -> 'Tree[Domain]':
-        values = list(values)
+        values = list(_values)
         if not values:
             root = NIL
         elif key is None:
