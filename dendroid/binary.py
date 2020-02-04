@@ -205,10 +205,10 @@ class TreeBase(ABC, Generic[Domain]):
     def __or__(self, other: 'TreeBase[OtherDomain]'
                ) -> 'TreeBase[Union[Domain, OtherDomain]]':
         """Returns union of the tree with given one."""
-        if not isinstance(other, TreeBase):
-            return NotImplemented
-        return self.from_iterable(chain(self, other),
-                                  key=self.key)
+        return (self.from_iterable(chain(self, other),
+                                   key=self.key)
+                if isinstance(other, TreeBase)
+                else NotImplemented)
 
     def __sub__(self, other: 'TreeBase[OtherDomain]') -> 'TreeBase[Domain]':
         """Returns subtraction of the tree with given one."""
