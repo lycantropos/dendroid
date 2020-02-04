@@ -17,6 +17,7 @@ from tests.strategies import (empty_values_lists_with_keys,
                               to_values_lists_with_keys,
                               two_or_more_values_with_keys,
                               values_lists_with_keys,
+                              values_lists_with_none_keys,
                               values_with_keys_strategies)
 from tests.utils import (Tree,
                          TreesPair,
@@ -52,6 +53,8 @@ def to_tree(factory: Callable[..., Tree],
 empty_trees = strategies.builds(to_tree, factories,
                                 empty_values_lists_with_keys)
 trees = strategies.builds(to_tree, factories, values_lists_with_keys)
+trees_with_none_keys = strategies.builds(to_tree, factories,
+                                         values_lists_with_none_keys)
 
 
 def has_tree_two_or_more_nodes(tree: Tree) -> bool:
