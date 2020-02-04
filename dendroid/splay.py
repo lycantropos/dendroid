@@ -70,9 +70,6 @@ class Tree(TreeBase[Domain]):
         self._key = key
         self._header = SimpleNode(None)
 
-    __repr__ = generate_repr(__init__,
-                             with_module_name=True)
-
     @property
     def root(self) -> Union[NIL, Node]:
         return self._root
@@ -178,10 +175,10 @@ class Tree(TreeBase[Domain]):
         self._root = NIL
 
     @classmethod
-    def from_iterable(cls, values: Iterable[Domain],
+    def from_iterable(cls, _values: Iterable[Domain],
                       *,
                       key: Optional[SortingKey] = None) -> 'Tree[Domain]':
-        values = list(values)
+        values = list(_values)
         if not values:
             root = NIL
         elif key is None:
