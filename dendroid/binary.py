@@ -183,10 +183,10 @@ class TreeBase(ABC, Generic[Domain]):
 
     def __gt__(self, other: 'TreeBase[OtherDomain]') -> bool:
         """Checks if the tree is a strict superset of given one."""
-        if not isinstance(other, TreeBase):
-            return NotImplemented
         return (len(self) > len(other)
-                and self >= other and self != other)
+                and self >= other and self != other
+                if isinstance(other, TreeBase)
+                else NotImplemented)
 
     def __ge__(self, other: 'TreeBase[OtherDomain]') -> bool:
         """Checks if the tree is a superset of given one."""
