@@ -163,9 +163,9 @@ class TreeBase(ABC, Generic[Domain]):
 
     def __eq__(self, other: 'TreeBase[OtherDomain]') -> bool:
         """Checks if the tree is equal to given one."""
-        if not isinstance(other, TreeBase):
-            return NotImplemented
-        return len(self) == len(other) and self <= other <= self
+        return (len(self) == len(other) and self <= other <= self
+                if isinstance(other, TreeBase)
+                else NotImplemented)
 
     def __le__(self, other: 'TreeBase[OtherDomain]') -> bool:
         """Checks if the tree is a subset of given one."""
