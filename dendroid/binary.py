@@ -190,10 +190,10 @@ class TreeBase(ABC, Generic[Domain]):
 
     def __ge__(self, other: 'TreeBase[OtherDomain]') -> bool:
         """Checks if the tree is a superset of given one."""
-        if not isinstance(other, TreeBase):
-            return NotImplemented
         return (len(self) >= len(other)
-                and all(value in self for value in other))
+                and all(value in self for value in other)
+                if isinstance(other, TreeBase)
+                else NotImplemented)
 
     def __and__(self, other: 'TreeBase[OtherDomain]') -> 'TreeBase[Domain]':
         """Returns intersection of the tree with given one."""
