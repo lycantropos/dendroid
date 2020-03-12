@@ -11,7 +11,7 @@ from tests.strategies import (non_empty_values_lists_with_keys,
                               to_non_empty_trees_with_their_values,
                               two_or_more_values_with_keys,
                               values_lists_with_keys)
-from tests.utils import (ValuesListWithKey)
+from tests.utils import ValuesListWithKey
 
 
 def to_tree(values_list_with_key: Tuple[List[Domain], Optional[SortingKey]]
