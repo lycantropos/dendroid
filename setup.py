@@ -7,12 +7,6 @@ import dendroid
 
 project_base_url = 'https://github.com/lycantropos/dendroid/'
 
-setup_requires = [
-    'pytest-runner>=4.2',
-]
-install_requires = Path('requirements.txt').read_text()
-tests_require = Path('requirements-tests.txt').read_text()
-
 setup(name=dendroid.__name__,
       packages=find_packages(exclude=('tests', 'tests.*')),
       version=dendroid.__version__,
@@ -36,6 +30,4 @@ setup(name=dendroid.__name__,
       url=project_base_url,
       download_url=project_base_url + 'archive/master.zip',
       python_requires='>=3.5',
-      setup_requires=setup_requires,
-      install_requires=install_requires,
-      tests_require=tests_require)
+      install_requires=Path('requirements.txt').read_text())
