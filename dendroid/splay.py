@@ -153,7 +153,7 @@ class Tree(TreeBase[Domain]):
             return
         key = self._to_key(value)
         self._splay(key)
-        if key != self._root.key:
+        if key < self._root.key or key > self._root.key:
             return
         self._remove_root()
 
