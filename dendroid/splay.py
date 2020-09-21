@@ -137,16 +137,16 @@ class Tree(TreeBase[Domain]):
             return
         key = self._to_key(value)
         self._splay(key)
-        if key == self._root.key:
-            return
-        node = self._make_node(value)
         if key < self._root.key:
-            node.left, node.right, self._root.left = (
-                self._root.left, self._root, NIL)
+            node = self._make_node(value)
+            self._root, node.left, node.right, self._root.left = (
+                node, self._root.left, self._root, NIL)
+        elif key > self._root.key:
+            node = self._make_node(value)
+            self._root, node.left, node.right, self._root.right = (
+                node, self._root, self._root.right, NIL)
         else:
-            node.left, node.right, self._root.right = (
-                self._root, self._root.right, NIL)
-        self._root = node
+            return
 
     def discard(self, value: Domain) -> None:
         if self._root is NIL:
