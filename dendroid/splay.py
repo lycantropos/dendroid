@@ -5,14 +5,14 @@ from typing import (Iterable,
 
 from reprit.base import generate_repr
 
-from .binary import (NIL,
-                     Node,
-                     TreeBase,
-                     _to_unique_sorted_items,
-                     _to_unique_sorted_values)
+from .base import (NIL,
+                   TreeBase)
+from .binary import Node
 from .hints import (Domain,
                     Sortable,
                     SortingKey)
+from .utils import (_to_unique_sorted_items,
+                    _to_unique_sorted_values)
 
 
 class SimpleNode(Node):

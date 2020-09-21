@@ -3,9 +3,14 @@ from collections import deque
 from itertools import count
 from typing import (Any,
                     Iterable,
-                    Optional)
+                    List,
+                    Optional,
+                    Sequence,
+                    Tuple)
 
-from .hints import Domain
+from .hints import (Domain,
+                    Sortable,
+                    SortingKey)
 
 
 def to_balanced_tree_height(size: int) -> int:
@@ -41,3 +46,23 @@ def capacity(iterable: Iterable[Any]) -> int:
     deque(zip(iterable, counter),
           maxlen=0)
     return next(counter)
+
+
+def _to_unique_sorted_items(values: Sequence[Domain], sorting_key: SortingKey
+                            ) -> Sequence[Tuple[Sortable, Domain]]:
+    keys_indices = []  # type: List[Tuple[Sortable, int]]
+    for key, index in sorted((sorting_key(value), index)
+                             for index, value in enumerate(values)):
+        while keys_indices and keys_indices[-1][0] == key:
+            del keys_indices[-1]
+        keys_indices.append((key, index))
+    return [(key, values[index]) for key, index in keys_indices]
+
+
+def _to_unique_sorted_values(values: Sequence[Domain]) -> Sequence[Domain]:
+    result = []  # type: List[Domain]
+    for value in sorted(values):
+        while result and result[-1] == value:
+            del result[-1]
+        result.append(value)
+    return result
