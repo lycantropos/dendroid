@@ -6,16 +6,16 @@ from typing import (Iterable,
 
 from reprit.base import generate_repr
 
-from .binary import (NIL,
-                     Node as _Node,
-                     TreeBase,
-                     _to_unique_sorted_items,
-                     _to_unique_sorted_values)
+from .base import (NIL,
+                   TreeBase)
+from .binary import Node as _Node
 from .hints import (Domain,
                     Sortable,
                     SortingKey)
 from .utils import (_dereference_maybe,
                     _maybe_weakref,
+                    _to_unique_sorted_items,
+                    _to_unique_sorted_values,
                     to_balanced_tree_height)
 
 
