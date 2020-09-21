@@ -333,17 +333,9 @@ class TreeBase(ABC, Generic[Domain]):
 
     def isdisjoint(self, other: 'TreeBase[OtherDomain]') -> bool:
         """Checks if the tree has no intersection with given one."""
-
-        def _are_disjoint(left: TreeBase[Domain],
-                          right: TreeBase[OtherDomain]) -> bool:
-            for value in left:
-                if value in right:
-                    return False
-            return True
-
-        return (_are_disjoint(self, other)
+        return (all(value not in other for value in self)
                 if len(self) < len(other)
-                else _are_disjoint(other, self))
+                else all(value not in self for value in other))
 
     def _to_key(self, value: Domain) -> Sortable:
         return value if self.key is None else self.key(value)
