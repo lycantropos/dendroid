@@ -1,6 +1,7 @@
 import weakref
 from collections import deque
-from itertools import count
+from itertools import (count,
+                       groupby)
 from typing import (Any,
                     Iterable,
                     List,
@@ -8,16 +9,15 @@ from typing import (Any,
                     Sequence,
                     Tuple)
 
-from .hints import (Domain,
-                    Sortable,
-                    SortingKey)
+from .hints import (Key,
+                    Value)
 
 
 def to_balanced_tree_height(size: int) -> int:
     return size.bit_length() - 1
 
 
-def _maybe_weakref(object_: Optional[Domain]
+def _maybe_weakref(object_: Optional[Value]
                    ) -> Optional[weakref.ReferenceType]:
     return (object_
             if object_ is None
@@ -25,7 +25,7 @@ def _maybe_weakref(object_: Optional[Domain]
 
 
 def _dereference_maybe(maybe_reference: Optional[weakref.ref]
-                       ) -> Optional[Domain]:
+                       ) -> Optional[Value]:
     return (maybe_reference
             if maybe_reference is None
             else maybe_reference())
@@ -48,21 +48,24 @@ def capacity(iterable: Iterable[Any]) -> int:
     return next(counter)
 
 
-def _to_unique_sorted_items(values: Sequence[Domain], sorting_key: SortingKey
-                            ) -> Sequence[Tuple[Sortable, Domain]]:
-    keys_indices = []  # type: List[Tuple[Sortable, int]]
-    for key, index in sorted((sorting_key(value), index)
-                             for index, value in enumerate(values)):
-        while keys_indices and keys_indices[-1][0] == key:
-            del keys_indices[-1]
-        keys_indices.append((key, index))
-    return [(key, values[index]) for key, index in keys_indices]
+class AntisymmetricKeyIndex:
+    __slots__ = 'key', 'index'
+
+    def __init__(self, key_index: Tuple[Key, int]) -> None:
+        self.key, self.index = key_index
+
+    def __eq__(self, other: 'AntisymmetricKeyIndex') -> bool:
+        return not (self.key < other.key or other.key < self.key)
 
 
-def _to_unique_sorted_values(values: Sequence[Domain]) -> Sequence[Domain]:
-    result = []  # type: List[Domain]
-    for value in sorted(values):
-        while result and result[-1] == value:
-            del result[-1]
-        result.append(value)
-    return result
+def _to_unique_sorted_items(keys: Sequence[Key], values: Sequence[Value]
+                            ) -> Sequence[Tuple[Key, Value]]:
+    return [(index_key.key, values[index_key.index])
+            for index_key, _ in groupby(
+                sorted((key, index) for index, key in enumerate(keys)),
+                key=AntisymmetricKeyIndex)]
+
+
+def _to_unique_sorted_values(values: List[Value]) -> List[Value]:
+    values.sort()
+    return [value for value, _ in groupby(values)]
