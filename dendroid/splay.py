@@ -97,7 +97,7 @@ class Tree(TreeBase[Domain]):
             return False
         key = self._to_key(value)
         self._splay(key)
-        return self._root.key == key
+        return not (key < self._root.key or key > self._root.key)
 
     def __copy__(self) -> 'Tree[Domain]':
         return self.from_iterable(self,
