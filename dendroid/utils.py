@@ -13,22 +13,18 @@ from .hints import (Key,
                     Value)
 
 
-def to_balanced_tree_height(size: int) -> int:
-    return size.bit_length() - 1
+class AntisymmetricKeyIndex:
+    __slots__ = 'key', 'index'
+
+    def __init__(self, key_index: Tuple[Key, int]) -> None:
+        self.key, self.index = key_index
+
+    def __eq__(self, other: 'AntisymmetricKeyIndex') -> bool:
+        return are_keys_equal(self.key, other.key)
 
 
-def _maybe_weakref(object_: Optional[Value]
-                   ) -> Optional[weakref.ReferenceType]:
-    return (object_
-            if object_ is None
-            else weakref.ref(object_))
-
-
-def _dereference_maybe(maybe_reference: Optional[weakref.ref]
-                       ) -> Optional[Value]:
-    return (maybe_reference
-            if maybe_reference is None
-            else maybe_reference())
+def are_keys_equal(left: Key, right: Key) -> bool:
+    return not (left < right or right < left)
 
 
 def capacity(iterable: Iterable[Any]) -> int:
@@ -48,18 +44,22 @@ def capacity(iterable: Iterable[Any]) -> int:
     return next(counter)
 
 
-class AntisymmetricKeyIndex:
-    __slots__ = 'key', 'index'
-
-    def __init__(self, key_index: Tuple[Key, int]) -> None:
-        self.key, self.index = key_index
-
-    def __eq__(self, other: 'AntisymmetricKeyIndex') -> bool:
-        return are_keys_equal(self.key, other.key)
+def to_balanced_tree_height(size: int) -> int:
+    return size.bit_length() - 1
 
 
-def are_keys_equal(left: Key, right: Key) -> bool:
-    return not (left < right or right < left)
+def _dereference_maybe(maybe_reference: Optional[weakref.ref]
+                       ) -> Optional[Value]:
+    return (maybe_reference
+            if maybe_reference is None
+            else maybe_reference())
+
+
+def _maybe_weakref(object_: Optional[Value]
+                   ) -> Optional[weakref.ReferenceType]:
+    return (object_
+            if object_ is None
+            else weakref.ref(object_))
 
 
 def _to_unique_sorted_items(keys: Sequence[Key], values: Sequence[Value]
