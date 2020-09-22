@@ -112,6 +112,47 @@ class Tree(TreeBase[Key, Value]):
             else:
                 return parent
 
+    def popmax(self) -> Node:
+        node = self.root
+        if node is NIL:
+            raise KeyError
+        elif node.right is NIL:
+            self.root = node.left
+            return node
+        else:
+            while node.right.right is not NIL:
+                node = node.right
+            result, node.right = node.right, node.right.left
+            return result
+
+    def popmin(self) -> Node:
+        node = self.root
+        if node is NIL:
+            raise KeyError
+        elif node.left is NIL:
+            self.root = node.right
+            return node
+        else:
+            while node.left.left is not NIL:
+                node = node.left
+            result, node.left = node.left, node.left.right
+            return result
+
+    def predecessor(self, node: Node) -> AnyNode:
+        if node.left is NIL:
+            candidate, cursor, key = NIL, self.root, node.key
+            while cursor is not node:
+                if cursor.key < key:
+                    candidate, cursor = cursor, cursor.right
+                else:
+                    cursor = cursor.left
+            return candidate
+        else:
+            result = node.left
+            while result.right is not NIL:
+                result = result.right
+            return result
+
     def remove(self, node: Node) -> None:
         parent = self.root
         if parent is NIL:
@@ -175,47 +216,6 @@ class Tree(TreeBase[Key, Value]):
                             node.right.left)
                 else:
                     parent = parent.right
-
-    def popmax(self) -> Node:
-        node = self.root
-        if node is NIL:
-            raise KeyError
-        elif node.right is NIL:
-            self.root = node.left
-            return node
-        else:
-            while node.right.right is not NIL:
-                node = node.right
-            result, node.right = node.right, node.right.left
-            return result
-
-    def popmin(self) -> Node:
-        node = self.root
-        if node is NIL:
-            raise KeyError
-        elif node.left is NIL:
-            self.root = node.right
-            return node
-        else:
-            while node.left.left is not NIL:
-                node = node.left
-            result, node.left = node.left, node.left.right
-            return result
-
-    def predecessor(self, node: Node) -> AnyNode:
-        if node.left is NIL:
-            candidate, cursor, key = NIL, self.root, node.key
-            while cursor is not node:
-                if cursor.key < key:
-                    candidate, cursor = cursor, cursor.right
-                else:
-                    cursor = cursor.left
-            return candidate
-        else:
-            result = node.left
-            while result.right is not NIL:
-                result = result.right
-            return result
 
     def successor(self, node: Node) -> AnyNode:
         if node.right is NIL:
