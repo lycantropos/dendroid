@@ -23,8 +23,7 @@ from .hints import (Key,
                     Value)
 
 
-@_Node.register
-class Node:
+class Node(_Node):
     __slots__ = ('_key', 'value', 'height', '_parent', '_left', '_right',
                  '__weakref__')
 
