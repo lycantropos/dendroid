@@ -121,9 +121,7 @@ class Tree(TreeBase[Key, Value]):
         return node
 
     def next(self, key: Key) -> Node:
-        node = self.successor(self.find(key))
-        if node is NIL:
-            raise ValueError('No node found with key {!r}'.format(key))
+        node = TreeBase.next(self, key)
         self._splay(node.key)
         return node
 
@@ -157,9 +155,7 @@ class Tree(TreeBase[Key, Value]):
             return result
 
     def prev(self, key: Key) -> Node:
-        node = self.predecessor(self.find(key))
-        if node is NIL:
-            raise ValueError('No node found with key {!r}'.format(key))
+        node = TreeBase.prev(self, key)
         self._splay(node.key)
         return node
 
