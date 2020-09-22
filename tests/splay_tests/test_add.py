@@ -2,15 +2,17 @@ from typing import Tuple
 
 from hypothesis import given
 
-from dendroid import splay
-from dendroid.hints import Domain
+from dendroid.hints import Value
+from dendroid.utils import are_keys_equal
+from tests.utils import (Set,
+                         value_to_key)
 from . import strategies
 
 
-@given(strategies.trees_with_values)
-def test_properties(tree_with_value: Tuple[splay.Tree, Domain]) -> None:
-    tree, value = tree_with_value
+@given(strategies.sets_with_values)
+def test_properties(set_with_value: Tuple[Set, Value]) -> None:
+    set_, value = set_with_value
 
-    tree.add(value)
+    set_.add(value)
 
-    assert tree.root.key == tree._to_key(value)
+    assert are_keys_equal(value_to_key(set_, value), set_.tree.root.key)

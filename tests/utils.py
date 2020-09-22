@@ -24,9 +24,11 @@ from dendroid import (abcs,
                       red_black,
                       splay)
 from dendroid.abcs import Tree
-from dendroid.hints import (SortingKey,
+from dendroid.hints import (Key,
+                            SortingKey,
                             Value)
-from dendroid.sets import BaseSet as Set
+from dendroid.sets import (BaseSet as Set,
+                           KeyedSet)
 from dendroid.utils import to_balanced_tree_height
 
 AnyNode = TypeVar('AnyNode', binary.Node, avl.Node, red_black.Node, splay.Node,
@@ -204,3 +206,7 @@ def to_paths_to_leaves(root: AnyNode) -> Iterable[Sequence[AnyNode]]:
             queue.append(path + [last_node.right])
         if ended:
             yield path
+
+
+def value_to_key(set_: Set, value: Value) -> Key:
+    return set_.key(value) if isinstance(set_, KeyedSet) else value
