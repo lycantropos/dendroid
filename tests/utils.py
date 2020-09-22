@@ -24,7 +24,7 @@ from dendroid import (avl,
                       splay)
 from dendroid.core import abcs
 from dendroid.core.abcs import Tree
-from dendroid.core.mappings import Map
+from dendroid.core.maps import Map
 from dendroid.core.sets import (BaseSet as Set,
                                 KeyedSet)
 from dendroid.core.utils import (are_keys_equal,

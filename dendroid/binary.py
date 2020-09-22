@@ -11,7 +11,7 @@ from .core.abcs import (NIL,
                         AnyNode,
                         Node as _Node,
                         Tree as _Tree)
-from .core.mappings import map_constructor as _map_constructor
+from .core.maps import map_constructor as _map_constructor
 from .core.sets import set_constructor as _set_constructor
 from .core.utils import (are_keys_equal as _are_keys_equal,
                          to_unique_sorted_items as _to_unique_sorted_items,
