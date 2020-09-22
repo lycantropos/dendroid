@@ -23,6 +23,9 @@ class Map(BaseView, Generic[Key, Value]):
     def __contains__(self, key: Key) -> bool:
         return self.tree.find(key) is not NIL
 
+    def __copy__(self) -> 'Map[Key, Value]':
+        return Map(self.tree.__copy__())
+
     def __delitem__(self, key: Key) -> None:
         self.tree.pop(key)
 
