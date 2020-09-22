@@ -60,6 +60,11 @@ def all_equal(iterable: Iterable[Any]) -> bool:
     return next(groups, True) and not next(groups, False)
 
 
+def one(iterable: Iterable[bool]) -> bool:
+    iterator = iter(iterable)
+    return any(iterator) and not any(iterator)
+
+
 def pickle_round_trip(object_: Value) -> Value:
     return pickle.loads(pickle.dumps(object_))
 
