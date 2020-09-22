@@ -24,6 +24,7 @@ from dendroid import (avl,
                       splay)
 from dendroid.core import abcs
 from dendroid.core.abcs import Tree
+from dendroid.core.mappings import Map
 from dendroid.core.sets import (BaseSet as Set,
                                 KeyedSet)
 from dendroid.core.utils import (are_keys_equal,
@@ -35,6 +36,7 @@ from dendroid.hints import (Key,
 AnyNode = TypeVar('AnyNode', binary.Node, avl.Node, red_black.Node, splay.Node,
                   abcs.NIL)
 Strategy = SearchStrategy
+Map = Map
 Set = Set
 SetsPair = Tuple[Set, Set]
 SetsTriplet = Tuple[Set, Set, Set]

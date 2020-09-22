@@ -21,7 +21,7 @@ def test_elements(set_: Set) -> None:
     assert all(value in set_ for value in result)
 
 
-@given(strategies.sets_with_two_or_more_nodes)
+@given(strategies.sets_with_two_or_more_values)
 def test_order(set_: Set) -> None:
     result = reversed(set_)
 
