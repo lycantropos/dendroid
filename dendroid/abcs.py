@@ -21,8 +21,6 @@ NIL = None
 
 
 class Node(ABC):
-    __slots__ = ()
-
     left = NIL  # type: Union[NIL, 'Node']
     right = NIL  # type: Union[NIL, 'Node']
 

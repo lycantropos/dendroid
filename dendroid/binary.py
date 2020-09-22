@@ -20,15 +20,16 @@ from .utils import (_to_unique_sorted_items,
                     are_keys_equal)
 
 
-class Node(NodeBase):
-    __slots__ = '_key', '_value', 'left', 'right'
+@NodeBase.register
+class Node:
+    __slots__ = '_key', 'value', 'left', 'right'
 
     def __init__(self,
                  key: Key,
                  value: Value,
                  left: Union[NIL, 'Node'] = NIL,
                  right: Union[NIL, 'Node'] = NIL) -> None:
-        self._key, self._value, self.left, self.right = key, value, left, right
+        self._key, self.value, self.left, self.right = key, value, left, right
 
     __repr__ = generate_repr(__init__)
 
@@ -39,14 +40,6 @@ class Node(NodeBase):
     @property
     def key(self) -> Key:
         return self._key
-
-    @property
-    def value(self) -> Value:
-        return self._value
-
-    @value.setter
-    def value(self, value: Value) -> None:
-        self._value = value
 
 
 class Tree(TreeBase[Key, Value]):
