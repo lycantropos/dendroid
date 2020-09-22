@@ -5,56 +5,57 @@ from typing import (List,
 from hypothesis import strategies
 
 from dendroid import splay
-from dendroid.hints import (Domain,
-                            SortingKey)
+from dendroid.hints import (SortingKey,
+                            Value)
 from tests.strategies import (non_empty_values_lists_with_keys,
-                              to_non_empty_trees_with_their_values,
+                              to_non_empty_sets_with_their_values,
                               two_or_more_values_with_keys,
                               values_lists_with_keys)
-from tests.utils import ValuesListWithKey
+from tests.utils import (Set,
+                         ValuesListWithKey)
 
 
-def to_tree(values_list_with_key: Tuple[List[Domain], Optional[SortingKey]]
-            ) -> splay.Tree:
+def to_set(values_list_with_key: Tuple[List[Value], Optional[SortingKey]]
+           ) -> Set:
     values_list, key = values_list_with_key
-    return splay.tree(*values_list,
+    return splay.set_(*values_list,
                       key=key)
 
 
-trees = strategies.builds(to_tree, values_lists_with_keys)
-non_empty_trees = strategies.builds(to_tree, non_empty_values_lists_with_keys)
-non_empty_trees_with_their_values = (
-    non_empty_trees.flatmap(to_non_empty_trees_with_their_values))
+sets = strategies.builds(to_set, values_lists_with_keys)
+non_empty_sets = strategies.builds(to_set, non_empty_values_lists_with_keys)
+non_empty_sets_with_their_values = (
+    non_empty_sets.flatmap(to_non_empty_sets_with_their_values))
 
 
-def is_value_non_max(tree_with_value: Tuple[splay.Tree, Domain]) -> bool:
-    tree, value = tree_with_value
-    return value != tree.max()
+def is_value_non_max(set_with_value: Tuple[Set, Value]) -> bool:
+    set_, value = set_with_value
+    return value != set_.max()
 
 
-non_empty_trees_with_their_non_max_values = (non_empty_trees_with_their_values
-                                             .filter(is_value_non_max))
+non_empty_sets_with_their_non_max_values = (non_empty_sets_with_their_values
+                                            .filter(is_value_non_max))
 
 
-def is_value_non_min(tree_with_value: Tuple[splay.Tree, Domain]) -> bool:
-    tree, value = tree_with_value
+def is_value_non_min(set_with_value: Tuple[Set, Value]) -> bool:
+    tree, value = set_with_value
     return value != tree.min()
 
 
-non_empty_trees_with_their_non_min_values = (non_empty_trees_with_their_values
-                                             .filter(is_value_non_min))
+non_empty_sets_with_their_non_min_values = (non_empty_sets_with_their_values
+                                            .filter(is_value_non_min))
 
 
-def to_tree_with_value(values_list_with_key: ValuesListWithKey
-                       ) -> Tuple[splay.Tree, Domain]:
+def to_set_with_value(values_list_with_key: ValuesListWithKey
+                      ) -> Tuple[Set, Value]:
     values_list, key = values_list_with_key
     *rest_values_list, value = values_list
-    tree = splay.tree(*rest_values_list,
+    set_ = splay.set_(*rest_values_list,
                       key=key)
-    return tree, value
+    return set_, value
 
 
-trees_with_values = strategies.builds(to_tree_with_value,
-                                      non_empty_values_lists_with_keys)
-non_empty_trees_with_values = strategies.builds(to_tree_with_value,
-                                                two_or_more_values_with_keys)
+sets_with_values = strategies.builds(to_set_with_value,
+                                     non_empty_values_lists_with_keys)
+non_empty_sets_with_values = strategies.builds(to_set_with_value,
+                                               two_or_more_values_with_keys)
