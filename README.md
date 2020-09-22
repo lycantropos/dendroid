@@ -71,32 +71,32 @@ Usage
 
 ```python
 >>> from dendroid import avl, red_black, splay
->>> avl_tree, red_black_tree, splay_tree = (avl.tree(), 
-...                                         red_black.tree(), 
-...                                         splay.tree())
->>> 1 not in avl_tree and 1 not in red_black_tree and 1 not in splay_tree
+>>> avl_set, red_black_set, splay_set = (avl.set_(), 
+...                                      red_black.set_(), 
+...                                      splay.set_())
+>>> 1 not in avl_set and 1 not in red_black_set and 1 not in splay_set
 True
->>> len(avl_tree) == len(red_black_tree) == len(splay_tree) == 0
+>>> len(avl_set) == len(red_black_set) == len(splay_set) == 0
 True
->>> list(avl_tree) == list(red_black_tree) == list(splay_tree) == []
+>>> list(avl_set) == list(red_black_set) == list(splay_set) == []
 True
->>> avl_tree.add(1)
->>> red_black_tree.add(1)
->>> splay_tree.add(1)
->>> 1 in avl_tree and 1 in red_black_tree and 1 in splay_tree
+>>> avl_set.add(1)
+>>> red_black_set.add(1)
+>>> splay_set.add(1)
+>>> 1 in avl_set and 1 in red_black_set and 1 in splay_set
 True
->>> len(avl_tree) == len(red_black_tree) == len(splay_tree) == 1
+>>> len(avl_set) == len(red_black_set) == len(splay_set) == 1
 True
->>> list(avl_tree) == list(red_black_tree) == list(splay_tree) == [1]
+>>> list(avl_set) == list(red_black_set) == list(splay_set) == [1]
 True
->>> avl_tree.remove(1)
->>> red_black_tree.remove(1)
->>> splay_tree.remove(1)
->>> 1 not in avl_tree and 1 not in red_black_tree and 1 not in splay_tree
+>>> avl_set.remove(1)
+>>> red_black_set.remove(1)
+>>> splay_set.remove(1)
+>>> 1 not in avl_set and 1 not in red_black_set and 1 not in splay_set
 True
->>> len(avl_tree) == len(red_black_tree) == len(splay_tree) == 0
+>>> len(avl_set) == len(red_black_set) == len(splay_set) == 0
 True
->>> list(avl_tree) == list(red_black_tree) == list(splay_tree) == []
+>>> list(avl_set) == list(red_black_set) == list(splay_set) == []
 True
 
 ```
