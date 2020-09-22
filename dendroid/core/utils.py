@@ -9,8 +9,8 @@ from typing import (Any,
                     Sequence,
                     Tuple)
 
-from .hints import (Key,
-                    Value)
+from dendroid.hints import (Key,
+                            Value)
 
 
 class AntisymmetricKeyIndex:
@@ -48,28 +48,28 @@ def to_balanced_tree_height(size: int) -> int:
     return size.bit_length() - 1
 
 
-def _dereference_maybe(maybe_reference: Optional[weakref.ref]
-                       ) -> Optional[Value]:
+def dereference_maybe(maybe_reference: Optional[weakref.ref]
+                      ) -> Optional[Value]:
     return (maybe_reference
             if maybe_reference is None
             else maybe_reference())
 
 
-def _maybe_weakref(object_: Optional[Value]
-                   ) -> Optional[weakref.ReferenceType]:
+def maybe_weakref(object_: Optional[Value]
+                  ) -> Optional[weakref.ReferenceType]:
     return (object_
             if object_ is None
             else weakref.ref(object_))
 
 
-def _to_unique_sorted_items(keys: Sequence[Key], values: Sequence[Value]
-                            ) -> Sequence[Tuple[Key, Value]]:
+def to_unique_sorted_items(keys: Sequence[Key], values: Sequence[Value]
+                           ) -> Sequence[Tuple[Key, Value]]:
     return [(index_key.key, values[-index_key.index])
             for index_key, _ in groupby(
                 sorted([(key, -index) for index, key in enumerate(keys)]),
                 key=AntisymmetricKeyIndex)]
 
 
-def _to_unique_sorted_values(values: List[Value]) -> List[Value]:
+def to_unique_sorted_values(values: List[Value]) -> List[Value]:
     values.sort()
     return [value for value, _ in groupby(values)]

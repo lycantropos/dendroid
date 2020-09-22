@@ -9,21 +9,21 @@ from typing import (Any,
 
 from reprit.base import generate_repr
 
-from .abcs import (NIL,
-                   Node as NodeBase,
-                   Tree as TreeBase)
+from .core.abcs import (NIL,
+                        Node as _Node,
+                        Tree as _Tree)
+from .core.mappings import map_constructor as _map_constructor
+from .core.sets import set_constructor as _set_constructor
+from .core.utils import (dereference_maybe as _dereference_maybe,
+                         maybe_weakref as _maybe_weakref,
+                         to_balanced_tree_height as _to_balanced_tree_height,
+                         to_unique_sorted_items as _to_unique_sorted_items,
+                         to_unique_sorted_values as _to_unique_sorted_values)
 from .hints import (Key,
                     Value)
-from .mappings import map_constructor
-from .sets import set_constructor
-from .utils import (_dereference_maybe,
-                    _maybe_weakref,
-                    _to_unique_sorted_items,
-                    _to_unique_sorted_values,
-                    to_balanced_tree_height)
 
 
-@NodeBase.register
+@_Node.register
 class Node:
     __slots__ = ('_key', 'value', 'is_black', '_parent', '_left', '_right',
                  '__weakref__')
@@ -104,7 +104,7 @@ def _is_node_black(node: Union[NIL, Node]) -> bool:
     return node is NIL or node.is_black
 
 
-class Tree(TreeBase[Key, Value]):
+class Tree(_Tree[Key, Value]):
     @staticmethod
     def predecessor(node: Node) -> Node:
         if node.left is NIL:
@@ -144,7 +144,7 @@ class Tree(TreeBase[Key, Value]):
             def to_node(start_index: int,
                         end_index: int,
                         depth: int,
-                        height: int = to_balanced_tree_height(len(keys)),
+                        height: int = _to_balanced_tree_height(len(keys)),
                         constructor: Callable[..., Node] = Node.from_simple
                         ) -> Node:
                 middle_index = (start_index + end_index) // 2
@@ -165,7 +165,7 @@ class Tree(TreeBase[Key, Value]):
             def to_node(start_index: int,
                         end_index: int,
                         depth: int,
-                        height: int = to_balanced_tree_height(len(items)),
+                        height: int = _to_balanced_tree_height(len(items)),
                         constructor: Callable[..., Node] = Node) -> Node:
                 middle_index = (start_index + end_index) // 2
                 return constructor(
@@ -334,5 +334,5 @@ class Tree(TreeBase[Key, Value]):
             parent.right = replacement
 
 
-map_ = partial(map_constructor, Tree.from_components)
-set_ = partial(set_constructor, Tree.from_components)
+map_ = partial(_map_constructor, Tree.from_components)
+set_ = partial(_set_constructor, Tree.from_components)
