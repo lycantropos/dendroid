@@ -61,13 +61,13 @@ empty_maps = strategies.builds(to_map, factories, strategies.builds(list))
 maps = strategies.builds(to_map, factories, items_lists)
 
 
-def map_has_two_or_more_values(map_: Map) -> bool:
+def map_has_two_or_more_items(map_: Map) -> bool:
     return len(map_) >= 2
 
 
 maps_with_two_or_more_items = (strategies.builds(to_map, factories,
                                                  two_or_more_items)
-                               .filter(map_has_two_or_more_values))
+                               .filter(map_has_two_or_more_items))
 
 
 def to_map_with_item(factory: Callable[..., Map],
@@ -78,6 +78,7 @@ def to_map_with_item(factory: Callable[..., Map],
 
 empty_maps_with_items = strategies.builds(to_map_with_item, factories,
                                           single_items)
-maps_with_items = strategies.builds(to_map_with_item, factories, items_lists)
+maps_with_items = strategies.builds(to_map_with_item, factories,
+                                    non_empty_items_lists)
 non_empty_maps_with_items = strategies.builds(to_map_with_item, factories,
-                                              non_empty_items_lists)
+                                              two_or_more_items)
