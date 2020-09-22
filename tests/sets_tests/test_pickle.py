@@ -1,7 +1,7 @@
 from hypothesis import given
 
-from dendroid.sets import Set
-from tests.utils import pickle_round_trip
+from tests.utils import (Set,
+                         pickle_round_trip)
 from . import strategies
 
 

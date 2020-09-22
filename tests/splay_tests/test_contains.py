@@ -3,8 +3,8 @@ from typing import Tuple
 from hypothesis import given
 
 from dendroid.hints import Value
-from dendroid.utils import are_keys_equal
 from tests.utils import (Set,
+                         are_keys_equal,
                          implication,
                          to_height,
                          to_max_binary_tree_height,

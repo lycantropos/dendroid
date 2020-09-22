@@ -2,7 +2,7 @@ import copy
 
 from hypothesis import given
 
-from dendroid.sets import Set
+from tests.utils import Set
 from . import strategies
 
 

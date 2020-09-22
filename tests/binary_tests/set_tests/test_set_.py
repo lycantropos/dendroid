@@ -1,11 +1,11 @@
 from hypothesis import given
 
 from dendroid import binary
-from dendroid.utils import to_balanced_tree_height
 from tests import strategies
 from tests.utils import (Set,
                          ValuesListWithKey,
                          is_left_subtree_less_than_right_subtree,
+                         to_balanced_tree_height,
                          to_height)
 
 

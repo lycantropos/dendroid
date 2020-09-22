@@ -1,7 +1,7 @@
 from hypothesis import given
 
-from dendroid.utils import are_keys_equal
 from tests.utils import (Set,
+                         are_keys_equal,
                          value_to_key)
 from . import strategies
 
