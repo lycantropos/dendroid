@@ -4,6 +4,7 @@ from functools import singledispatch
 from itertools import (groupby,
                        islice)
 from typing import (Any,
+                    Callable,
                     Iterable,
                     List,
                     Optional,
@@ -17,25 +18,27 @@ from lz import left
 from lz.functional import compose
 from lz.iterating import interleave
 
-from dendroid import (avl,
-                      base,
+from dendroid import (abcs,
+                      avl,
                       binary,
                       red_black,
                       splay)
-from dendroid.hints import (Domain,
-                            SortingKey)
+from dendroid.abcs import Tree
+from dendroid.hints import (SortingKey,
+                            Value)
+from dendroid.sets import BaseSet as Set
 from dendroid.utils import to_balanced_tree_height
 
 AnyNode = TypeVar('AnyNode', binary.Node, avl.Node, red_black.Node, splay.Node,
-                  base.NIL)
+                  abcs.NIL)
 Strategy = SearchStrategy
-Tree = base.TreeBase
-TreesPair = Tuple[Tree, Tree]
-TreesTriplet = Tuple[Tree, Tree, Tree]
-ValuesListWithKey = Tuple[List[Domain], Optional[SortingKey]]
-ValuesListsPairWithKey = Tuple[List[Domain], List[Domain],
-                               Optional[SortingKey]]
-ValuesListsTripletWithKey = Tuple[List[Domain], List[Domain], List[Domain],
+Set = Set
+SetsPair = Tuple[Set, Set]
+SetsTriplet = Tuple[Set, Set, Set]
+Tree = Tree
+ValuesListWithKey = Tuple[List[Value], Optional[SortingKey]]
+ValuesListsPairWithKey = Tuple[List[Value], List[Value], Optional[SortingKey]]
+ValuesListsTripletWithKey = Tuple[List[Value], List[Value], List[Value],
                                   Optional[SortingKey]]
 
 
@@ -52,31 +55,30 @@ def all_equal(iterable: Iterable[Any]) -> bool:
     return next(groups, True) and not next(groups, False)
 
 
-def pickle_round_trip(object_: Domain) -> Domain:
+def pickle_round_trip(object_: Value) -> Value:
     return pickle.loads(pickle.dumps(object_))
 
 
-def leap_traverse(values: List[Domain]) -> List[Domain]:
+def leap_traverse(values: List[Value]) -> List[Value]:
     return list(islice(interleave([values, reversed(values)]), len(values)))
 
 
-def to_tree_including_value(tree: Tree, value: Domain) -> Tree:
-    return tree.from_iterable(left.attach(tree, value),
-                              key=tree.key)
+def to_set_including_value(set_: Set, value: Value) -> Set:
+    return set_.from_iterable(left.attach(set_, value))
 
 
 def is_left_subtree_less_than_right_subtree(tree: Tree) -> bool:
-    if tree.root is base.NIL:
+    if tree.root is abcs.NIL:
         return True
-    queue = [(tree.root, tree._to_key(tree.min()), tree._to_key(tree.max()))]
+    queue = [(tree.root, tree.min().key, tree.max().key)]
     while queue:
         node, left_end, right_end = queue.pop()
-        if node.left is not base.NIL:
+        if node.left is not abcs.NIL:
             if left_end <= node.left.key < right_end:
                 queue.append((node.left, left_end, node.key))
             else:
                 return False
-        if node.right is not base.NIL:
+        if node.right is not abcs.NIL:
             if node.key < node.right.key <= right_end:
                 queue.append((node.right, node.key, right_end))
             else:
@@ -94,9 +96,9 @@ def is_node_parent_to_children(node: Union[avl.Node, red_black.Node]) -> bool:
     return _is_child_node(node.left, node) and _is_child_node(node.right, node)
 
 
-def _is_child_node(node: Union[avl.Node, red_black.Node, base.NIL],
+def _is_child_node(node: Union[avl.Node, red_black.Node, abcs.NIL],
                    parent: Union[avl.Node, red_black.Node]) -> bool:
-    return node is base.NIL or node.parent is parent
+    return node is abcs.NIL or node.parent is parent
 
 
 def to_height(tree: Tree) -> int:
@@ -109,7 +111,8 @@ def to_node_height(node: AnyNode) -> int:
             - 1)
 
 
-to_min_binary_tree_height = compose(to_balanced_tree_height, len)
+to_min_binary_tree_height = compose(to_balanced_tree_height,
+                                    len)  # type: Callable[[Tree], int]
 
 
 @singledispatch
@@ -173,30 +176,30 @@ def to_black_nodes_count(path: Sequence[red_black.Node]) -> int:
 
 
 def iter_nodes(root: AnyNode) -> Iterable[AnyNode]:
-    if root is base.NIL:
+    if root is abcs.NIL:
         return
     queue = [root]
     while queue:
         node = queue.pop()
         yield node
-        if node.left is not base.NIL:
+        if node.left is not abcs.NIL:
             queue.append(node.left)
-        if node.right is not base.NIL:
+        if node.right is not abcs.NIL:
             queue.append(node.right)
 
 
 def to_paths_to_leaves(root: AnyNode) -> Iterable[Sequence[AnyNode]]:
-    if root is base.NIL:
+    if root is abcs.NIL:
         return
     queue = [[root]]
     while queue:
         path = queue.pop()
         last_node = path[-1]
         ended = True
-        if last_node.left is not base.NIL:
+        if last_node.left is not abcs.NIL:
             ended = False
             queue.append(path + [last_node.left])
-        if last_node.right is not base.NIL:
+        if last_node.right is not abcs.NIL:
             ended = False
             queue.append(path + [last_node.right])
         if ended:
