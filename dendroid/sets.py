@@ -54,11 +54,8 @@ class Set(BaseSet[Value]):
     def __contains__(self, value: Value) -> bool:
         return self.tree.find(value) is not NIL
 
-    if sys.version_info < (3, 6, 4):
-        # caused by https://github.com/python/typing/issues/498
-
-        def __copy__(self) -> 'Set[Value]':
-            return Set(self.tree.__copy__())
+    def __copy__(self) -> 'Set[Value]':
+        return Set(self.tree.__copy__())
 
     def add(self, value: Value) -> None:
         self.tree.insert(value, value)
@@ -94,11 +91,8 @@ class KeyedSet(BaseSet[Value]):
     def __contains__(self, value: Value) -> bool:
         return bool(self.tree) and self.tree.find(self.key(value)) is not NIL
 
-    if sys.version_info < (3, 6, 4):
-        # caused by https://github.com/python/typing/issues/498
-
-        def __copy__(self) -> 'KeyedSet[Value]':
-            return KeyedSet(self.tree.__copy__(), self.key)
+    def __copy__(self) -> 'KeyedSet[Value]':
+        return KeyedSet(self.tree.__copy__(), self.key)
 
     def add(self, value: Value) -> None:
         self.tree.insert(self.key(value), value)
