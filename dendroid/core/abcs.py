@@ -6,6 +6,7 @@ from itertools import chain
 from typing import (Generic,
                     Iterable,
                     Iterator,
+                    List,
                     Optional,
                     TypeVar,
                     Union)
@@ -47,9 +48,6 @@ class Tree(ABC, Generic[Key, Value]):
 
     def __init__(self, root: AnyNode) -> None:
         self.root = root
-
-    __repr__ = generate_repr(__init__,
-                             with_module_name=True)
 
     def __bool__(self) -> bool:
         """Checks if the tree has nodes."""
@@ -97,6 +95,17 @@ class Tree(ABC, Generic[Key, Value]):
                         values: Optional[Iterable[Value]] = None
                         ) -> 'Tree[Key, Value]':
         """Constructs tree from given components."""
+
+    __repr__ = generate_repr(from_components,
+                             with_module_name=True)
+
+    @property
+    def keys(self) -> List[Key]:
+        return [node.key for node in self]
+
+    @property
+    def values(self) -> List[Value]:
+        return [node.value for node in self]
 
     def clear(self) -> None:
         self.root = NIL
