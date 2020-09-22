@@ -20,7 +20,6 @@ finite_numbers_orders = (maybe_infinite_numbers_orders
 strings_orders = strategies.sampled_from([identity, str.lower, str.upper,
                                           str.title, str.capitalize,
                                           str.casefold, str.swapcase])
-
 base_values_with_orders_strategies = strategies.sampled_from(
         [(strategies.integers(), finite_numbers_orders),
          (strategies.floats(allow_nan=False), maybe_infinite_numbers_orders),
@@ -34,7 +33,6 @@ values_with_orders_strategies = (strategies
                                  .recursive(base_values_with_orders_strategies,
                                             to_values_tuples_with_orders,
                                             max_leaves=10))
-
 values_with_orders = (values_with_orders_strategies
                       .flatmap(to_values_with_orders))
 values_lists_with_orders = (values_with_orders_strategies

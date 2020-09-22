@@ -132,7 +132,8 @@ class Tree(_Tree[Key, Value]):
             return result
 
     @classmethod
-    def from_components(cls, keys: Iterable[Key],
+    def from_components(cls,
+                        keys: Iterable[Key],
                         values: Optional[Iterable[Value]] = None
                         ) -> 'Tree[Key, Value]':
         keys = list(keys)
