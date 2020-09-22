@@ -124,7 +124,7 @@ class Tree(TreeBase[Key, Value]):
         if node is NIL:
             raise ValueError('No node found with key {!r}'.format(key))
         self._splay(node.key)
-        return node.value
+        return node
 
     def popmax(self) -> Node:
         if self.root is NIL:
