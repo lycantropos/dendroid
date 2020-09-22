@@ -8,23 +8,23 @@ from typing import (List,
 
 from hypothesis import strategies
 
-from dendroid.hints import (Domain,
-                            Sortable,
-                            SortingKey)
-from tests.utils import (Strategy,
-                         Tree,
+from dendroid.hints import (Key,
+                            SortingKey,
+                            Value)
+from tests.utils import (Set,
+                         Strategy,
                          ValuesListWithKey,
                          ValuesListsPairWithKey,
                          ValuesListsTripletWithKey)
 
 
 def to_values_tuples_with_keys(
-        values_with_keys: Strategy[Tuple[Strategy[Domain],
+        values_with_keys: Strategy[Tuple[Strategy[Value],
                                          Strategy[SortingKey]]]
-) -> Strategy[Tuple[Strategy[Tuple[Domain, ...]], Strategy[SortingKey]]]:
+) -> Strategy[Tuple[Strategy[Tuple[Value, ...]], Strategy[SortingKey]]]:
     def to_values_tuples_with_key(
-            values_with_keys_list: List[Strategy[Tuple[Domain, SortingKey]]]
-    ) -> Tuple[Strategy[Tuple[Domain, ...]], Strategy[SortingKey]]:
+            values_with_keys_list: List[Strategy[Tuple[Value, SortingKey]]]
+    ) -> Tuple[Strategy[Tuple[Value, ...]], Strategy[SortingKey]]:
         def combine_keys(keys: Tuple[SortingKey, ...]) -> SortingKey:
             return partial(combine, keys)
 
@@ -38,19 +38,19 @@ def to_values_tuples_with_keys(
 
 
 def combine(keys: Sequence[SortingKey],
-            values: Sequence[Domain]) -> Tuple[Sortable, ...]:
+            values: Sequence[Value]) -> Tuple[Key, ...]:
     return tuple(key(value) for key, value in zip(keys, values))
 
 
-def to_values_with_keys(values_with_keys: Tuple[Strategy[Domain],
+def to_values_with_keys(values_with_keys: Tuple[Strategy[Value],
                                                 Strategy[SortingKey]]
-                        ) -> Strategy[Tuple[Domain, Optional[SortingKey]]]:
+                        ) -> Strategy[Tuple[Value, Optional[SortingKey]]]:
     values, keys = values_with_keys
     return strategies.tuples(values, strategies.none() | keys)
 
 
 def to_values_lists_with_keys(
-        values_with_keys: Tuple[Strategy[Domain],
+        values_with_keys: Tuple[Strategy[Value],
                                 Strategy[SortingKey]],
         *,
         sizes: Sequence[Tuple[int, Optional[int]]] = ((0, None),)
@@ -65,7 +65,7 @@ def to_values_lists_with_keys(
     return strategies.tuples(*lists_strategies, strategies.none() | keys)
 
 
-def to_non_empty_trees_with_their_values(tree: Tree
-                                         ) -> Strategy[Tuple[Tree, Domain]]:
-    return strategies.tuples(strategies.just(tree),
-                             strategies.sampled_from(list(tree)))
+def to_non_empty_sets_with_their_values(set_: Set
+                                        ) -> Strategy[Tuple[Set, Value]]:
+    return strategies.tuples(strategies.just(set_),
+                             strategies.sampled_from(list(set_)))
