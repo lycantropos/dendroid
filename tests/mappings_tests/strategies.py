@@ -9,12 +9,14 @@ from dendroid import (avl,
                       binary,
                       red_black,
                       splay)
-from dendroid.hints import Item
+from dendroid.hints import (Item,
+                            Key)
 from tests.strategies import (non_empty_values_lists_with_orders,
                               single_values_with_orders,
                               two_or_more_values_with_orders,
                               values_lists_with_orders)
 from tests.utils import (Map,
+                         Strategy,
                          ValuesListWithOrder)
 
 
@@ -59,6 +61,7 @@ def to_map(factory: Callable[..., Map], items: ValuesListWithOrder) -> Map:
 
 empty_maps = strategies.builds(to_map, factories, strategies.builds(list))
 maps = strategies.builds(to_map, factories, items_lists)
+non_empty_maps = strategies.builds(to_map, factories, non_empty_items_lists)
 
 
 def map_has_two_or_more_items(map_: Map) -> bool:
@@ -68,6 +71,16 @@ def map_has_two_or_more_items(map_: Map) -> bool:
 maps_with_two_or_more_items = (strategies.builds(to_map, factories,
                                                  two_or_more_items)
                                .filter(map_has_two_or_more_items))
+
+
+def to_map_with_key(factory: Callable[..., Map],
+                    items: List[Item]) -> Tuple[Map, Key]:
+    *rest_items, (key, _) = items
+    return factory(*rest_items), key
+
+
+empty_maps_with_keys = strategies.builds(to_map_with_key, factories,
+                                         single_items)
 
 
 def to_map_with_item(factory: Callable[..., Map],
@@ -82,3 +95,13 @@ maps_with_items = strategies.builds(to_map_with_item, factories,
                                     non_empty_items_lists)
 non_empty_maps_with_items = strategies.builds(to_map_with_item, factories,
                                               two_or_more_items)
+
+
+def to_non_empty_maps_with_their_keys(map_: Map
+                                      ) -> Strategy[Tuple[Map, Key]]:
+    return strategies.tuples(strategies.just(map_),
+                             strategies.sampled_from(list(map_)))
+
+
+non_empty_maps_with_their_keys = (non_empty_maps
+                                  .flatmap(to_non_empty_maps_with_their_keys))
