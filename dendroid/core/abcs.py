@@ -1,4 +1,5 @@
 from abc import (ABC,
+                 ABCMeta,
                  abstractmethod)
 from collections import abc
 from copy import deepcopy
@@ -21,7 +22,9 @@ from .utils import capacity
 NIL = None
 
 
-class Node(ABC):
+class Node(metaclass=ABCMeta):
+    __slots__ = 'value',
+
     left = NIL  # type: Union[NIL, 'Node']
     right = NIL  # type: Union[NIL, 'Node']
 
@@ -33,11 +36,6 @@ class Node(ABC):
     @abstractmethod
     def key(self) -> Key:
         """Comparisons key."""
-
-    @property
-    @abstractmethod
-    def value(self) -> Value:
-        """Contained value."""
 
 
 AnyNode = Union[NIL, Node]
