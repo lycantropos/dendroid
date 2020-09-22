@@ -64,7 +64,7 @@ def _maybe_weakref(object_: Optional[Value]
 
 def _to_unique_sorted_items(keys: Sequence[Key], values: Sequence[Value]
                             ) -> Sequence[Tuple[Key, Value]]:
-    return [(index_key.key, values[index_key.index])
+    return [(index_key.key, values[-index_key.index])
             for index_key, _ in groupby(
                 sorted([(key, -index) for index, key in enumerate(keys)]),
                 key=AntisymmetricKeyIndex)]
