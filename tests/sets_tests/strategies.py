@@ -33,7 +33,6 @@ def to_degenerate_factory(factory: Callable[..., Set]) -> Callable[..., Set]:
     @wraps(factory)
     def wrapper(*values: Value,
                 key: Optional[SortingKey] = None) -> Set:
-        print('degenerate', factory)
         result = factory(key=key)
         for value in values:
             result.add(value)
