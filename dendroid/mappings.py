@@ -119,9 +119,6 @@ class Map(BaseView, Generic[Key, Value]):
         return ValuesView(self.tree)
 
 
-def to_map_constructor(tree_constructor: Callable[..., Tree]
-                       ) -> Callable[..., Map[Key, Value]]:
-    def map_(*items: Item) -> Map[Key, Value]:
-        return Map(tree_constructor(*zip(*items)))
-
-    return map_
+def map_constructor(tree_constructor: Callable[..., Tree],
+                    *items: Item) -> Map[Key, Value]:
+    return Map(tree_constructor(*zip(*items)))

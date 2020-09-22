@@ -13,7 +13,7 @@ from .abcs import (NIL,
                    Tree as TreeBase)
 from .hints import (Key,
                     Value)
-from .mappings import to_map_constructor
+from .mappings import map_constructor
 from .sets import set_constructor
 from .utils import (_to_unique_sorted_items,
                     _to_unique_sorted_values,
@@ -233,5 +233,5 @@ class Tree(TreeBase[Key, Value]):
             return result
 
 
-map_ = to_map_constructor(Tree.from_components)
+map_ = partial(map_constructor, Tree.from_components)
 set_ = partial(set_constructor, Tree.from_components)
