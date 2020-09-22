@@ -29,6 +29,13 @@ class Map(BaseView, Generic[Key, Value]):
     def __delitem__(self, key: Key) -> None:
         self.tree.pop(key)
 
+    def __eq__(self, other: 'Map[Key, Value]') -> bool:
+        return (self.keys() == other.keys()
+                and all(other[key] == value
+                        for key, value in self.items())
+                if isinstance(other, Map)
+                else NotImplemented)
+
     def __getitem__(self, key: Key) -> Value:
         node = self.tree.find(key)
         if node is NIL:
