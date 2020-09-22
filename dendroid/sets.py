@@ -35,11 +35,11 @@ class BaseSet(BaseView, MutableSet[Value]):
 
     @abstractmethod
     def next(self, value: Value) -> Value:
-        return self.tree.next(value).value
+        """Returns first value greater than the given one."""
 
     @abstractmethod
     def prev(self, value: Value) -> Value:
-        return self.tree.prev(value).value
+        """Returns last value lesser than the given one."""
 
     def popmax(self) -> Value:
         return self.tree.popmax().value
