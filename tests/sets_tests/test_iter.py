@@ -22,7 +22,7 @@ def test_elements(set_: Set) -> None:
                for element in result)
 
 
-@given(strategies.sets_with_two_or_more_nodes)
+@given(strategies.sets_with_two_or_more_values)
 def test_order(set_: Set) -> None:
     result = iter(set_)
 

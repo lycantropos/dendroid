@@ -60,13 +60,13 @@ sets_with_none_orders = strategies.builds(to_set, factories,
                                           values_lists_with_none_orders)
 
 
-def has_three_two_or_more_values(set_: Set) -> bool:
-    return len(set_) > 2
+def set_has_two_or_more_values(set_: Set) -> bool:
+    return len(set_) >= 2
 
 
-sets_with_two_or_more_nodes = (
+sets_with_two_or_more_values = (
     (strategies.builds(to_set, factories, two_or_more_values_with_orders)
-     .filter(has_three_two_or_more_values)))
+     .filter(set_has_two_or_more_values)))
 
 
 def to_empty_set_with_set(set_: Set) -> SetsPair:
