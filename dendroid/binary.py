@@ -137,9 +137,7 @@ class Tree(TreeBase[Key, Value]):
                 # search in left subtree
                 if parent.left is NIL:
                     return
-                elif key < parent.left.key:
-                    parent = parent.left
-                else:
+                elif are_keys_equal(key, parent.left.key):
                     # remove `parent.left`
                     node = parent.left.left
                     if node is NIL:
@@ -154,13 +152,13 @@ class Tree(TreeBase[Key, Value]):
                          node.right) = (
                             node.right, parent.left.left, parent.left.right,
                             node.right.left)
+                else:
+                    parent = parent.left
             else:
                 # search in right subtree
                 if parent.right is NIL:
                     return
-                elif parent.right.key < key:
-                    parent = parent.right
-                else:
+                elif are_keys_equal(key, parent.right.key):
                     # remove `parent.right`
                     node = parent.right.left
                     if node is NIL:
@@ -175,6 +173,8 @@ class Tree(TreeBase[Key, Value]):
                          node.right) = (
                             node.right, parent.right.left, parent.right.right,
                             node.right.left)
+                else:
+                    parent = parent.right
 
     def popmax(self) -> Node:
         node = self.root
