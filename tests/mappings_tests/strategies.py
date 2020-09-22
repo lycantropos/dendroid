@@ -1,6 +1,7 @@
 from functools import wraps
 from typing import (Callable,
-                    List)
+                    List,
+                    Tuple)
 
 from hypothesis import strategies
 
@@ -9,7 +10,9 @@ from dendroid import (avl,
                       red_black,
                       splay)
 from dendroid.hints import Item
-from tests.strategies import (two_or_more_values_with_orders,
+from tests.strategies import (non_empty_values_lists_with_orders,
+                              single_values_with_orders,
+                              two_or_more_values_with_orders,
                               values_lists_with_orders)
 from tests.utils import (Map,
                          ValuesListWithOrder)
@@ -42,6 +45,10 @@ def values_lists_with_orders_to_items_lists(values_list_with_order
 
 items_lists = (values_lists_with_orders
                .map(values_lists_with_orders_to_items_lists))
+single_items = (single_values_with_orders
+                .map(values_lists_with_orders_to_items_lists))
+non_empty_items_lists = (non_empty_values_lists_with_orders
+                         .map(values_lists_with_orders_to_items_lists))
 two_or_more_items = (two_or_more_values_with_orders
                      .map(values_lists_with_orders_to_items_lists))
 
@@ -61,3 +68,16 @@ def map_has_two_or_more_values(map_: Map) -> bool:
 maps_with_two_or_more_items = (strategies.builds(to_map, factories,
                                                  two_or_more_items)
                                .filter(map_has_two_or_more_values))
+
+
+def to_map_with_item(factory: Callable[..., Map],
+                     items: List[Item]) -> Tuple[Map, Item]:
+    *rest_items, item = items
+    return factory(*rest_items), item
+
+
+empty_maps_with_items = strategies.builds(to_map_with_item, factories,
+                                          single_items)
+maps_with_items = strategies.builds(to_map_with_item, factories, items_lists)
+non_empty_maps_with_items = strategies.builds(to_map_with_item, factories,
+                                              non_empty_items_lists)
