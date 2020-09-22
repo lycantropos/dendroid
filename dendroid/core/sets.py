@@ -1,4 +1,3 @@
-import sys
 from abc import abstractmethod
 from typing import (Callable,
                     Iterable,
@@ -7,11 +6,11 @@ from typing import (Callable,
 
 from reprit.base import generate_repr
 
+from dendroid.hints import (SortingKey,
+                            Value)
 from .abcs import (NIL,
                    MutableSet,
                    Tree)
-from .hints import (SortingKey,
-                    Value)
 from .views import BaseView
 
 

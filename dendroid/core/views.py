@@ -5,12 +5,13 @@ from typing import (Generic,
 
 from reprit.base import generate_repr
 
+from dendroid.hints import (Item,
+                            Key,
+                            Value)
 from .abcs import (NIL,
                    AbstractSet,
+                   Self,
                    Tree)
-from .hints import (Item,
-                    Key,
-                    Value)
 
 
 @abc.Sized.register
@@ -40,7 +41,7 @@ class ItemsView(BaseView, AbstractSet[Item]):
         for node in reversed(self.tree):
             yield node.item
 
-    def from_iterable(self, iterable: Iterable[Item]) -> 'ItemsView[Item]':
+    def from_iterable(self: Self, iterable: Iterable[Item]) -> Self:
         return ItemsView(self.tree.from_components(*zip(*iterable)))
 
 
@@ -56,7 +57,7 @@ class KeysView(BaseView, AbstractSet[Key]):
         for node in reversed(self.tree):
             yield node.key
 
-    def from_iterable(self, values: Iterable[Key]) -> 'KeysView[Key]':
+    def from_iterable(self: Self, values: Iterable[Key]) -> Self:
         return KeysView(self.tree.from_components(values))
 
 

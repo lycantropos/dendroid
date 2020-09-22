@@ -12,9 +12,9 @@ from typing import (Generic,
 
 from reprit.base import generate_repr
 
-from .hints import (Item,
-                    Key,
-                    Value)
+from dendroid.hints import (Item,
+                            Key,
+                            Value)
 from .utils import capacity
 
 NIL = None

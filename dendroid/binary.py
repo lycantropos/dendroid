@@ -7,20 +7,20 @@ from typing import (Any,
 
 from reprit.base import generate_repr
 
-from .abcs import (NIL,
-                   AnyNode,
-                   Node as NodeBase,
-                   Tree as TreeBase)
+from .core.abcs import (NIL,
+                        AnyNode,
+                        Node as _Node,
+                        Tree as _Tree)
+from .core.mappings import map_constructor as _map_constructor
+from .core.sets import set_constructor as _set_constructor
+from .core.utils import (are_keys_equal as _are_keys_equal,
+                         to_unique_sorted_items as _to_unique_sorted_items,
+                         to_unique_sorted_values as _to_unique_sorted_values)
 from .hints import (Key,
                     Value)
-from .mappings import map_constructor
-from .sets import set_constructor
-from .utils import (_to_unique_sorted_items,
-                    _to_unique_sorted_values,
-                    are_keys_equal)
 
 
-@NodeBase.register
+@_Node.register
 class Node:
     __slots__ = '_key', 'value', 'left', 'right'
 
@@ -42,7 +42,7 @@ class Node:
         return self._key
 
 
-class Tree(TreeBase[Key, Value]):
+class Tree(_Tree[Key, Value]):
     @classmethod
     def from_components(cls,
                         keys: Iterable[Key],
@@ -151,7 +151,7 @@ class Tree(TreeBase[Key, Value]):
         if parent is NIL:
             return
         key = node.key
-        if are_keys_equal(key, parent.key):
+        if _are_keys_equal(key, parent.key):
             if parent.left is NIL:
                 self.root = parent.right
             else:
@@ -171,7 +171,7 @@ class Tree(TreeBase[Key, Value]):
                 # search in left subtree
                 if parent.left is NIL:
                     return
-                elif are_keys_equal(key, parent.left.key):
+                elif _are_keys_equal(key, parent.left.key):
                     # remove `parent.left`
                     node = parent.left.left
                     if node is NIL:
@@ -192,7 +192,7 @@ class Tree(TreeBase[Key, Value]):
                 # search in right subtree
                 if parent.right is NIL:
                     return
-                elif are_keys_equal(key, parent.right.key):
+                elif _are_keys_equal(key, parent.right.key):
                     # remove `parent.right`
                     node = parent.right.left
                     if node is NIL:
@@ -226,5 +226,5 @@ class Tree(TreeBase[Key, Value]):
             return result
 
 
-map_ = partial(map_constructor, Tree.from_components)
-set_ = partial(set_constructor, Tree.from_components)
+map_ = partial(_map_constructor, Tree.from_components)
+set_ = partial(_set_constructor, Tree.from_components)

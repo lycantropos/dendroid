@@ -4,21 +4,21 @@ from typing import (Callable,
                     Iterator,
                     Optional)
 
-from .abcs import (NIL,
-                   AnyNode,
-                   Tree as TreeBase)
 from .binary import Node
+from .core.abcs import (NIL,
+                        AnyNode,
+                        Tree as _Tree)
+from .core.mappings import map_constructor as _map_constructor
+from .core.sets import set_constructor as _set_constructor
+from .core.utils import (to_unique_sorted_items as _to_unique_sorted_items,
+                         to_unique_sorted_values as _to_unique_sorted_values)
 from .hints import (Key,
                     Value)
-from .mappings import map_constructor
-from .sets import set_constructor
-from .utils import (_to_unique_sorted_items,
-                    _to_unique_sorted_values)
 
 Node = Node
 
 
-class Tree(TreeBase[Key, Value]):
+class Tree(_Tree[Key, Value]):
     __slots__ = '_header',
 
     def __init__(self, root: AnyNode) -> None:
@@ -121,7 +121,7 @@ class Tree(TreeBase[Key, Value]):
         return node
 
     def next(self, key: Key) -> Node:
-        node = TreeBase.next(self, key)
+        node = _Tree.next(self, key)
         self._splay(node.key)
         return node
 
@@ -155,7 +155,7 @@ class Tree(TreeBase[Key, Value]):
             return result
 
     def prev(self, key: Key) -> Node:
-        node = TreeBase.prev(self, key)
+        node = _Tree.prev(self, key)
         self._splay(node.key)
         return node
 
@@ -230,5 +230,5 @@ class Tree(TreeBase[Key, Value]):
         return replacement
 
 
-map_ = partial(map_constructor, Tree.from_components)
-set_ = partial(set_constructor, Tree.from_components)
+map_ = partial(_map_constructor, Tree.from_components)
+set_ = partial(_set_constructor, Tree.from_components)

@@ -6,11 +6,11 @@ from typing import (Callable,
                     Optional,
                     Union)
 
+from dendroid.hints import (Item,
+                            Key,
+                            Value)
 from .abcs import (NIL,
                    Tree)
-from .hints import (Item,
-                    Key,
-                    Value)
 from .views import (BaseView,
                     ItemsView,
                     KeysView,
