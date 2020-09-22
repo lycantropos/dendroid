@@ -15,7 +15,8 @@ from .hints import (Key,
 from .mappings import to_map_constructor
 from .sets import to_set_constructor
 from .utils import (_to_unique_sorted_items,
-                    _to_unique_sorted_values)
+                    _to_unique_sorted_values,
+                    are_keys_equal)
 
 
 class Node(NodeBase):
@@ -115,7 +116,7 @@ class Tree(TreeBase[Key, Value]):
         if parent is NIL:
             return
         key = node.key
-        if not (parent.key < key or key < parent.key):
+        if are_keys_equal(key, parent.key):
             if parent.left is NIL:
                 self.root = parent.right
             else:

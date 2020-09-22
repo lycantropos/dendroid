@@ -55,7 +55,11 @@ class AntisymmetricKeyIndex:
         self.key, self.index = key_index
 
     def __eq__(self, other: 'AntisymmetricKeyIndex') -> bool:
-        return not (self.key < other.key or other.key < self.key)
+        return are_keys_equal(self.key, other.key)
+
+
+def are_keys_equal(left: Key, right: Key) -> bool:
+    return not (left < right or right < left)
 
 
 def _to_unique_sorted_items(keys: Sequence[Key], values: Sequence[Value]
