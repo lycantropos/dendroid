@@ -6,7 +6,7 @@ from typing import (Callable,
 
 from reprit.base import generate_repr
 
-from dendroid.hints import (SortingKey,
+from dendroid.hints import (Order,
                             Value)
 from .abcs import (NIL,
                    MutableSet,
@@ -81,7 +81,7 @@ class Set(BaseSet[Value]):
 class KeyedSet(BaseSet[Value]):
     __slots__ = 'key',
 
-    def __init__(self, tree: Tree, key: SortingKey) -> None:
+    def __init__(self, tree: Tree, key: Order) -> None:
         super().__init__(tree)
         self.key = key
 
@@ -120,7 +120,7 @@ class KeyedSet(BaseSet[Value]):
 
 def set_constructor(tree_constructor: Callable[..., Tree],
                     *values: Value,
-                    key: Optional[SortingKey] = None) -> BaseSet[Value]:
+                    key: Optional[Order] = None) -> BaseSet[Value]:
     return (Set(tree_constructor(values))
             if key is None
             else KeyedSet(tree_constructor([key(value) for value in values],

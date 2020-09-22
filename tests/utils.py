@@ -26,9 +26,10 @@ from dendroid.core import abcs
 from dendroid.core.abcs import Tree
 from dendroid.core.sets import (BaseSet as Set,
                                 KeyedSet)
-from dendroid.core.utils import are_keys_equal, to_balanced_tree_height
+from dendroid.core.utils import (are_keys_equal,
+                                 to_balanced_tree_height)
 from dendroid.hints import (Key,
-                            SortingKey,
+                            Order,
                             Value)
 
 AnyNode = TypeVar('AnyNode', binary.Node, avl.Node, red_black.Node, splay.Node,
@@ -38,10 +39,10 @@ Set = Set
 SetsPair = Tuple[Set, Set]
 SetsTriplet = Tuple[Set, Set, Set]
 Tree = Tree
-ValuesListWithKey = Tuple[List[Value], Optional[SortingKey]]
-ValuesListsPairWithKey = Tuple[List[Value], List[Value], Optional[SortingKey]]
-ValuesListsTripletWithKey = Tuple[List[Value], List[Value], List[Value],
-                                  Optional[SortingKey]]
+ValuesListWithOrder = Tuple[List[Value], Optional[Order]]
+ValuesListsPairWithOrder = Tuple[List[Value], List[Value], Optional[Order]]
+ValuesListsTripletWithOrder = Tuple[List[Value], List[Value], List[Value],
+                                    Optional[Order]]
 
 
 def equivalence(left_statement: bool, right_statement: bool) -> bool:

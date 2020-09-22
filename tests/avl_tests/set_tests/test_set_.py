@@ -3,7 +3,7 @@ from hypothesis import given
 from dendroid import avl
 from tests import strategies
 from tests.utils import (Set,
-                         ValuesListWithKey,
+                         ValuesListWithOrder,
                          are_balance_factors_normalized,
                          are_nodes_heights_correct,
                          are_nodes_parents_to_children,
@@ -12,22 +12,22 @@ from tests.utils import (Set,
                          to_height)
 
 
-@given(strategies.values_lists_with_keys)
-def test_basic(values_with_key: ValuesListWithKey) -> None:
-    values, key = values_with_key
+@given(strategies.values_lists_with_orders)
+def test_basic(values_with_order: ValuesListWithOrder) -> None:
+    values, order = values_with_order
 
     result = avl.set_(*values,
-                      key=key)
+                      key=order)
 
     assert isinstance(result, Set)
 
 
-@given(strategies.values_lists_with_keys)
-def test_properties(values_with_key: ValuesListWithKey) -> None:
-    values, key = values_with_key
+@given(strategies.values_lists_with_orders)
+def test_properties(values_with_order: ValuesListWithOrder) -> None:
+    values, order = values_with_order
 
     result = avl.set_(*values,
-                      key=key)
+                      key=order)
 
     result_tree = result.tree
     assert len(result) <= len(values)
@@ -40,31 +40,32 @@ def test_properties(values_with_key: ValuesListWithKey) -> None:
     assert are_balance_factors_normalized(result_tree)
 
 
-@given(strategies.values_lists_with_keys)
-def test_base_case(values_with_key: ValuesListWithKey) -> None:
-    values, key = values_with_key
+@given(strategies.values_lists_with_orders)
+def test_base_case(values_with_order: ValuesListWithOrder) -> None:
+    values, order = values_with_order
 
-    result = avl.set_(key=key)
+    result = avl.set_(key=order)
 
     assert len(result) == 0
     assert not result
     assert all(value not in result for value in values)
 
 
-@given(strategies.non_empty_values_lists_with_keys)
-def test_step(values_with_key: ValuesListWithKey) -> None:
-    values, key = values_with_key
+@given(strategies.non_empty_values_lists_with_orders)
+def test_step(values_with_order: ValuesListWithOrder) -> None:
+    values, order = values_with_order
     *values, value = values
 
     result = avl.set_(*values,
-                      key=key)
+                      key=order)
     next_result = avl.set_(*values, value,
-                           key=key)
+                           key=order)
 
     assert next_result
     assert len(next_result) == (len(result)
                                 + (value not in values
-                                   if key is None
-                                   else key(value) not in map(key, values)))
+                                   if order is None
+                                   else order(value) not in map(order,
+                                                                values)))
     assert value in next_result
     assert all(value in next_result for value in result)

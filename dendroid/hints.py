@@ -4,5 +4,5 @@ from typing import (Callable,
 
 Key = TypeVar('Key')
 Value = TypeVar('Value')
-SortingKey = Callable[[Value], Key]
+Order = Callable[[Value], Key]
 Item = Tuple[Key, Value]

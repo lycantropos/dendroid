@@ -3,7 +3,7 @@ from hypothesis import given
 from dendroid import red_black
 from tests import strategies
 from tests.utils import (Set,
-                         ValuesListWithKey,
+                         ValuesListWithOrder,
                          are_nodes_parents_to_children,
                          do_paths_to_leaves_have_same_black_nodes_count,
                          do_red_nodes_have_black_children,
@@ -13,9 +13,9 @@ from tests.utils import (Set,
                          to_height)
 
 
-@given(strategies.values_lists_with_keys)
-def test_basic(values_with_key: ValuesListWithKey) -> None:
-    values, key = values_with_key
+@given(strategies.values_lists_with_orders)
+def test_basic(values_with_order: ValuesListWithOrder) -> None:
+    values, key = values_with_order
 
     result = red_black.set_(*values,
                             key=key)
@@ -23,9 +23,9 @@ def test_basic(values_with_key: ValuesListWithKey) -> None:
     assert isinstance(result, Set)
 
 
-@given(strategies.values_lists_with_keys)
-def test_properties(values_with_key: ValuesListWithKey) -> None:
-    values, key = values_with_key
+@given(strategies.values_lists_with_orders)
+def test_properties(values_with_order: ValuesListWithOrder) -> None:
+    values, key = values_with_order
 
     result = red_black.set_(*values,
                             key=key)
@@ -42,9 +42,9 @@ def test_properties(values_with_key: ValuesListWithKey) -> None:
     assert do_paths_to_leaves_have_same_black_nodes_count(result_tree)
 
 
-@given(strategies.values_lists_with_keys)
-def test_base_case(values_with_key: ValuesListWithKey) -> None:
-    values, key = values_with_key
+@given(strategies.values_lists_with_orders)
+def test_base_case(values_with_order: ValuesListWithOrder) -> None:
+    values, key = values_with_order
 
     result = red_black.set_(key=key)
 
@@ -53,9 +53,9 @@ def test_base_case(values_with_key: ValuesListWithKey) -> None:
     assert all(value not in result for value in values)
 
 
-@given(strategies.non_empty_values_lists_with_keys)
-def test_step(values_with_key: ValuesListWithKey) -> None:
-    values, key = values_with_key
+@given(strategies.non_empty_values_lists_with_orders)
+def test_step(values_with_order: ValuesListWithOrder) -> None:
+    values, key = values_with_order
     *values, value = values
 
     result = red_black.set_(*values,
