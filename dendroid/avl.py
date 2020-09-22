@@ -24,7 +24,8 @@ from .utils import (_dereference_maybe,
 
 
 class Node(NodeBase):
-    __slots__ = '_key', '_value', 'height', '_parent', '_left', '_right'
+    __slots__ = ('_key', '_value', 'height', '_parent', '_left', '_right',
+                 '__weakref__')
 
     def __init__(self,
                  key: Key,
