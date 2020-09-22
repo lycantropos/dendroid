@@ -23,8 +23,9 @@ from .utils import (_dereference_maybe,
                     _to_unique_sorted_values)
 
 
-class Node(NodeBase):
-    __slots__ = ('_key', '_value', 'height', '_parent', '_left', '_right',
+@NodeBase.register
+class Node:
+    __slots__ = ('_key', 'value', 'height', '_parent', '_left', '_right',
                  '__weakref__')
 
     def __init__(self,
@@ -33,11 +34,8 @@ class Node(NodeBase):
                  left: Union[NIL, 'Node'] = NIL,
                  right: Union[NIL, 'Node'] = NIL,
                  parent: Optional['Node'] = None) -> None:
-        self._key = key
-        self._value = value
-        self.left = left
-        self.right = right
-        self.parent = parent
+        self._key, self.value = key, value
+        self.left, self.right, self.parent = left, right, parent
         self.height = max(_to_height(self._left), _to_height(self._right)) + 1
 
     __repr__ = recursive_repr()(generate_repr(__init__))
@@ -45,11 +43,11 @@ class Node(NodeBase):
     State = Tuple[Any, ...]
 
     def __getstate__(self) -> State:
-        return (self._key, self._value, self.height,
+        return (self._key, self.value, self.height,
                 self.parent, self._left, self._right)
 
     def __setstate__(self, state: State) -> None:
-        (self._key, self._value, self.height,
+        (self._key, self.value, self.height,
          self.parent, self._left, self._right) = state
 
     @classmethod
@@ -89,14 +87,6 @@ class Node(NodeBase):
     def right(self, node: Union[NIL, 'Node']) -> None:
         self._right = node
         _set_parent(node, self)
-
-    @property
-    def value(self) -> Value:
-        return self._value
-
-    @value.setter
-    def value(self, value: Value) -> None:
-        self._value = value
 
 
 def _to_height(node: Union[NIL, Node]) -> int:

@@ -10,8 +10,8 @@ from typing import (Any,
 from reprit.base import generate_repr
 
 from .abcs import (NIL,
+                   Node as NodeBase,
                    Tree as TreeBase)
-from .binary import Node as NodeBase
 from .hints import (Key,
                     Value)
 from .mappings import map_constructor
@@ -23,8 +23,9 @@ from .utils import (_dereference_maybe,
                     to_balanced_tree_height)
 
 
-class Node(NodeBase):
-    __slots__ = ('_key', '_value', 'is_black', '_parent', '_left', '_right',
+@NodeBase.register
+class Node:
+    __slots__ = ('_key', 'value', 'is_black', '_parent', '_left', '_right',
                  '__weakref__')
 
     def __init__(self,
@@ -34,7 +35,7 @@ class Node(NodeBase):
                  left: Union[NIL, 'Node'] = NIL,
                  right: Union[NIL, 'Node'] = NIL,
                  parent: Optional['Node'] = None) -> None:
-        self._key, self._value, self.is_black = key, value, is_black
+        self._key, self.value, self.is_black = key, value, is_black
         self.left, self.right, self._parent = left, right, parent
 
     __repr__ = recursive_repr()(generate_repr(__init__))
@@ -42,11 +43,11 @@ class Node(NodeBase):
     State = Tuple[Any, ...]
 
     def __getstate__(self) -> State:
-        return (self._key, self._value, self.is_black,
+        return (self._key, self.value, self.is_black,
                 self.parent, self._left, self._right)
 
     def __setstate__(self, state: State) -> None:
-        (self._key, self._value, self.is_black,
+        (self._key, self.value, self.is_black,
          self.parent, self._left, self._right) = state
 
     @classmethod
@@ -82,14 +83,6 @@ class Node(NodeBase):
     def right(self, node: Union[NIL, 'Node']) -> None:
         self._right = node
         _set_parent(node, self)
-
-    @property
-    def value(self) -> Value:
-        return self._value
-
-    @value.setter
-    def value(self, value: Value) -> None:
-        self._value = value
 
 
 def _set_parent(node: Union[NIL, Node], parent: Optional[Node]) -> None:
