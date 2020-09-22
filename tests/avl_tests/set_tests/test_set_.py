@@ -1,7 +1,6 @@
 from hypothesis import given
 
 from dendroid import avl
-from dendroid.utils import to_balanced_tree_height
 from tests import strategies
 from tests.utils import (Set,
                          ValuesListWithKey,
@@ -9,6 +8,7 @@ from tests.utils import (Set,
                          are_nodes_heights_correct,
                          are_nodes_parents_to_children,
                          is_left_subtree_less_than_right_subtree,
+                         to_balanced_tree_height,
                          to_height)
 
 

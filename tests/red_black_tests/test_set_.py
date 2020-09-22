@@ -1,7 +1,6 @@
 from hypothesis import given
 
 from dendroid import red_black
-from dendroid.utils import to_balanced_tree_height
 from tests import strategies
 from tests.utils import (Set,
                          ValuesListWithKey,
@@ -10,6 +9,7 @@ from tests.utils import (Set,
                          do_red_nodes_have_black_children,
                          is_left_subtree_less_than_right_subtree,
                          is_root_black,
+                         to_balanced_tree_height,
                          to_height)
 
 

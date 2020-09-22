@@ -18,18 +18,18 @@ from lz import left
 from lz.functional import compose
 from lz.iterating import interleave
 
-from dendroid import (abcs,
-                      avl,
+from dendroid import (avl,
                       binary,
                       red_black,
                       splay)
-from dendroid.abcs import Tree
+from dendroid.core import abcs
+from dendroid.core.abcs import Tree
+from dendroid.core.sets import (BaseSet as Set,
+                                KeyedSet)
+from dendroid.core.utils import are_keys_equal, to_balanced_tree_height
 from dendroid.hints import (Key,
                             SortingKey,
                             Value)
-from dendroid.sets import (BaseSet as Set,
-                           KeyedSet)
-from dendroid.utils import to_balanced_tree_height
 
 AnyNode = TypeVar('AnyNode', binary.Node, avl.Node, red_black.Node, splay.Node,
                   abcs.NIL)
@@ -67,6 +67,10 @@ def leap_traverse(values: List[Value]) -> List[Value]:
 
 def to_set_including_value(set_: Set, value: Value) -> Set:
     return set_.from_iterable(left.attach(set_, value))
+
+
+are_keys_equal = are_keys_equal
+to_balanced_tree_height = to_balanced_tree_height
 
 
 def is_left_subtree_less_than_right_subtree(tree: Tree) -> bool:
