@@ -9,7 +9,8 @@ from typing import (Any,
                     Sequence,
                     Tuple)
 
-from dendroid.hints import (Key,
+from dendroid.hints import (Item,
+                            Key,
                             Value)
 
 
@@ -73,3 +74,8 @@ def to_unique_sorted_items(keys: Sequence[Key], values: Sequence[Value]
 def to_unique_sorted_values(values: List[Value]) -> List[Value]:
     values.sort()
     return [value for value, _ in groupby(values)]
+
+
+def split_items(items: Sequence[Item]) -> Tuple[Sequence[Key],
+                                                Sequence[Value]]:
+    return tuple(zip(*items)) if items else ((), ())

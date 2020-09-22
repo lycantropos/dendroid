@@ -11,6 +11,7 @@ from dendroid.hints import (Item,
                             Value)
 from .abcs import (NIL,
                    Tree)
+from .utils import split_items
 from .views import (BaseView,
                     ItemsView,
                     KeysView,
@@ -119,6 +120,7 @@ class Map(BaseView, Generic[Key, Value]):
         return ValuesView(self.tree)
 
 
-def map_constructor(tree_constructor: Callable[..., Tree],
+def map_constructor(tree_constructor
+                    : Callable[[Iterable[Key], Iterable[Value]], Tree],
                     *items: Item) -> Map[Key, Value]:
-    return Map(tree_constructor(*zip(*items)))
+    return Map(tree_constructor(*split_items(items)))
