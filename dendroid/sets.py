@@ -125,15 +125,11 @@ class KeyedSet(BaseSet[Value]):
         self.tree.pop(self.key(value))
 
 
-def to_set_constructor(tree_constructor: Callable[..., Tree]
-                       ) -> Callable[..., BaseSet[Value]]:
-    def set_(*values: Value,
-             key: Optional[SortingKey] = None) -> BaseSet[Value]:
-        return (Set(tree_constructor(values))
-                if key is None
-                else KeyedSet(tree_constructor([key(value)
-                                                for value in values],
-                                               values),
-                              key))
-
-    return set_
+def set_constructor(tree_constructor: Callable[..., Tree],
+                    *values: Value,
+                    key: Optional[SortingKey] = None) -> BaseSet[Value]:
+    return (Set(tree_constructor(values))
+            if key is None
+            else KeyedSet(tree_constructor([key(value) for value in values],
+                                           values),
+                          key))

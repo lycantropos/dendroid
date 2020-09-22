@@ -1,3 +1,4 @@
+from functools import partial
 from typing import (Callable,
                     Iterable,
                     Iterator,
@@ -10,7 +11,7 @@ from .binary import Node
 from .hints import (Key,
                     Value)
 from .mappings import to_map_constructor
-from .sets import to_set_constructor
+from .sets import set_constructor
 from .utils import (_to_unique_sorted_items,
                     _to_unique_sorted_values)
 
@@ -234,4 +235,4 @@ class Tree(TreeBase[Key, Value]):
 
 
 map_ = to_map_constructor(Tree.from_components)
-set_ = to_set_constructor(Tree.from_components)
+set_ = partial(set_constructor, Tree.from_components)
