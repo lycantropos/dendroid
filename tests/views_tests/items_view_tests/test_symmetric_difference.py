@@ -61,15 +61,6 @@ def test_right_neutral_element(empty_tree_with_tree: ItemsViewsPair) -> None:
     assert result == items_view
 
 
-@given(strategies.items_views_pairs)
-def test_commutativity(items_views_pair: ItemsViewsPair) -> None:
-    left_items_view, right_items_view = items_views_pair
-
-    result = left_items_view ^ right_items_view
-
-    assert result == right_items_view ^ left_items_view
-
-
 @given(strategies.items_views_triplets)
 def test_associativity(items_views_triplet: ItemsViewsTriplet) -> None:
     left_items_view, mid_tree, right_items_view = items_views_triplet
