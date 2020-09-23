@@ -139,12 +139,8 @@ class Map(Generic[Key, Value]):
 
     def update(self,
                other: Union['Map[Key, Value]', Iterable[Item]] = ()) -> None:
-        if isinstance(other, Map):
-            for key in other:
-                self[key] = other[key]
-        else:
-            for key, value in other:
-                self[key] = value
+        for key, value in (other.items() if isinstance(other, Map) else other):
+            self[key] = value
 
     def values(self) -> ValuesView[Value]:
         return ValuesView(self.tree)
