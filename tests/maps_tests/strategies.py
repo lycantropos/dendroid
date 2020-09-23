@@ -100,8 +100,18 @@ non_empty_maps_with_items = strategies.builds(to_map_with_item, factories,
 def to_non_empty_maps_with_their_keys(map_: Map
                                       ) -> Strategy[Tuple[Map, Key]]:
     return strategies.tuples(strategies.just(map_),
-                             strategies.sampled_from(list(map_)))
+                             strategies.sampled_from(list(map_.keys())))
 
 
 non_empty_maps_with_their_keys = (non_empty_maps
                                   .flatmap(to_non_empty_maps_with_their_keys))
+
+
+def to_non_empty_maps_with_their_items(map_: Map
+                                       ) -> Strategy[Tuple[Map, Item]]:
+    return strategies.tuples(strategies.just(map_),
+                             strategies.sampled_from(list(map_.items())))
+
+
+non_empty_maps_with_their_items = (
+    non_empty_maps.flatmap(to_non_empty_maps_with_their_items))
