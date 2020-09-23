@@ -32,6 +32,8 @@ def test_properties(sets_pair: SetsPair) -> None:
             <= to_height(result_tree)
             <= min(to_height(left_set.tree) + to_height(right_set.tree) + 1,
                    to_max_binary_tree_height(result_tree)))
+    assert all((value in left_set) is not (value in right_set)
+               for value in result)
     assert is_left_subtree_less_than_right_subtree(result_tree)
 
 
