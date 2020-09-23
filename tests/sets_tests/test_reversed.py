@@ -18,7 +18,7 @@ def test_size(set_: Set) -> None:
 def test_elements(set_: Set) -> None:
     result = reversed(set_)
 
-    assert all(value in set_ for value in result)
+    assert all(element in set_ for element in result)
 
 
 @given(strategies.sets_with_two_or_more_values)
