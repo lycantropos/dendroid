@@ -10,6 +10,7 @@ from typing import (Any,
                     List,
                     Optional,
                     Sequence,
+                    Sized,
                     Tuple,
                     TypeVar,
                     Union)
@@ -75,6 +76,10 @@ def one(iterable: Iterable[bool]) -> bool:
 
 def pickle_round_trip(object_: Value) -> Value:
     return pickle.loads(pickle.dumps(object_))
+
+
+def has_size_two_or_more(sized: Sized) -> bool:
+    return len(sized) >= 2
 
 
 def leap_traverse(values: List[Value]) -> List[Value]:
