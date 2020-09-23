@@ -7,8 +7,25 @@ from hypothesis import given
 from dendroid.hints import Key
 from tests.utils import (Map,
                          are_keys_equal,
-                         one)
+                         is_left_subtree_less_than_right_subtree,
+                         one,
+                         to_height,
+                         to_max_binary_tree_height,
+                         to_min_binary_tree_height)
 from . import strategies
+
+
+@given(strategies.non_empty_maps_with_their_keys)
+def test_properties(map_with_key: Tuple[Map, Key]) -> None:
+    map_, key = map_with_key
+
+    map_[key]
+
+    tree = map_.tree
+    assert (to_min_binary_tree_height(tree)
+            <= to_height(tree)
+            <= to_max_binary_tree_height(tree))
+    assert is_left_subtree_less_than_right_subtree(tree)
 
 
 @given(strategies.non_empty_maps_with_their_keys)
