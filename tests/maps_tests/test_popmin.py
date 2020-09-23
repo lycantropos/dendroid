@@ -36,4 +36,5 @@ def test_step(map_: Map) -> None:
 
     assert result not in map_.values()
     assert result in original.values()
+    assert result == original.tree.min().value
     assert len(map_) == len(original) - 1
