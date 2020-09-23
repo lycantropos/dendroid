@@ -1,7 +1,8 @@
 import math
 import pickle
 from functools import singledispatch
-from itertools import (groupby,
+from itertools import (chain,
+                       groupby,
                        islice)
 from typing import (Any,
                     Callable,
@@ -29,6 +30,7 @@ from dendroid.core.sets import (BaseSet as Set,
                                 KeyedSet)
 from dendroid.core.utils import (are_keys_equal,
                                  to_balanced_tree_height)
+from dendroid.core.views import KeysView
 from dendroid.hints import (Key,
                             Order,
                             Value)
@@ -36,6 +38,9 @@ from dendroid.hints import (Key,
 AnyNode = TypeVar('AnyNode', binary.Node, avl.Node, red_black.Node, splay.Node,
                   abcs.NIL)
 Strategy = SearchStrategy
+KeysView = KeysView
+KeysViewsPair = Tuple[KeysView, KeysView]
+KeysViewsTriplet = Tuple[KeysView, KeysView, KeysView]
 Map = Map
 MapsPair = Tuple[Map, Map]
 Set = Set
@@ -74,10 +79,6 @@ def pickle_round_trip(object_: Value) -> Value:
 
 def leap_traverse(values: List[Value]) -> List[Value]:
     return list(islice(interleave([values, reversed(values)]), len(values)))
-
-
-def to_set_including_value(set_: Set, value: Value) -> Set:
-    return set_.from_iterable(left.attach(set_, value))
 
 
 are_keys_equal = are_keys_equal
@@ -231,3 +232,12 @@ def map_value_to_key(map_: Map, value: Value) -> Key:
 
 def set_value_to_key(set_: Set, value: Value) -> Key:
     return set_.key(value) if isinstance(set_, KeyedSet) else value
+
+
+def to_keys_view_including_key(keys_view: KeysView[Key],
+                               key: Key) -> KeysView[Key]:
+    return keys_view.from_iterable(chain(keys_view, (key,)))
+
+
+def to_set_including_value(set_: Set, value: Value) -> Set:
+    return set_.from_iterable(left.attach(set_, value))
