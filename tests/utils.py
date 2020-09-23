@@ -24,8 +24,9 @@ from dendroid import (avl,
                       binary,
                       red_black,
                       splay)
-from dendroid.core import abcs
-from dendroid.core.abcs import Tree
+from dendroid.core.abcs import (NIL,
+                                Node,
+                                Tree)
 from dendroid.core.maps import Map
 from dendroid.core.sets import (BaseSet as Set,
                                 KeyedSet)
@@ -40,7 +41,7 @@ from dendroid.hints import (Item,
                             Value)
 
 AnyNode = TypeVar('AnyNode', binary.Node, avl.Node, red_black.Node, splay.Node,
-                  abcs.NIL)
+                  NIL)
 Strategy = SearchStrategy
 ItemsView = ItemsView
 ItemsViewsPair = Tuple[ItemsView, ItemsView]
@@ -50,10 +51,13 @@ KeysViewsPair = Tuple[KeysView, KeysView]
 KeysViewsTriplet = Tuple[KeysView, KeysView, KeysView]
 Map = Map
 MapsPair = Tuple[Map, Map]
+Node = Node
 Set = Set
 SetsPair = Tuple[Set, Set]
 SetsTriplet = Tuple[Set, Set, Set]
 Tree = Tree
+TreesPair = Tuple[Tree, Tree]
+TreesTriplet = Tuple[Tree, Tree, Tree]
 ValuesListWithOrder = Tuple[List[Value], Optional[Order]]
 ValuesListsPairWithOrder = Tuple[List[Value], List[Value], Optional[Order]]
 ValuesListsTripletWithOrder = Tuple[List[Value], List[Value], List[Value],
@@ -63,6 +67,8 @@ ValuesListsWithOrder = Union[ValuesListWithOrder, ValuesListsPairWithOrder,
 ValuesView = ValuesView
 ValuesViewsPair = Tuple[ValuesView, ValuesView]
 ValuesViewsTriplet = Tuple[ValuesView, ValuesView, ValuesView]
+
+NIL = NIL
 
 
 def equivalence(left_statement: bool, right_statement: bool) -> bool:
@@ -108,17 +114,17 @@ to_balanced_tree_height = to_balanced_tree_height
 
 
 def is_left_subtree_less_than_right_subtree(tree: Tree) -> bool:
-    if tree.root is abcs.NIL:
+    if tree.root is NIL:
         return True
     queue = [(tree.root, tree.min().key, tree.max().key)]
     while queue:
         node, left_end, right_end = queue.pop()
-        if node.left is not abcs.NIL:
+        if node.left is not NIL:
             if left_end <= node.left.key < right_end:
                 queue.append((node.left, left_end, node.key))
             else:
                 return False
-        if node.right is not abcs.NIL:
+        if node.right is not NIL:
             if node.key < node.right.key <= right_end:
                 queue.append((node.right, node.key, right_end))
             else:
@@ -136,9 +142,9 @@ def is_node_parent_to_children(node: Union[avl.Node, red_black.Node]) -> bool:
     return _is_child_node(node.left, node) and _is_child_node(node.right, node)
 
 
-def _is_child_node(node: Union[avl.Node, red_black.Node, abcs.NIL],
+def _is_child_node(node: Union[avl.Node, red_black.Node, NIL],
                    parent: Union[avl.Node, red_black.Node]) -> bool:
-    return node is abcs.NIL or node.parent is parent
+    return node is NIL or node.parent is parent
 
 
 def to_height(tree: Tree) -> int:
@@ -216,30 +222,30 @@ def to_black_nodes_count(path: Sequence[red_black.Node]) -> int:
 
 
 def iter_nodes(root: AnyNode) -> Iterable[AnyNode]:
-    if root is abcs.NIL:
+    if root is NIL:
         return
     queue = [root]
     while queue:
         node = queue.pop()
         yield node
-        if node.left is not abcs.NIL:
+        if node.left is not NIL:
             queue.append(node.left)
-        if node.right is not abcs.NIL:
+        if node.right is not NIL:
             queue.append(node.right)
 
 
 def to_paths_to_leaves(root: AnyNode) -> Iterable[Sequence[AnyNode]]:
-    if root is abcs.NIL:
+    if root is NIL:
         return
     queue = [[root]]
     while queue:
         path = queue.pop()
         last_node = path[-1]
         ended = True
-        if last_node.left is not abcs.NIL:
+        if last_node.left is not NIL:
             ended = False
             queue.append(path + [last_node.left])
-        if last_node.right is not abcs.NIL:
+        if last_node.right is not NIL:
             ended = False
             queue.append(path + [last_node.right])
         if ended:
