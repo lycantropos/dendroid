@@ -47,20 +47,20 @@ def test_idempotence(set_: Set) -> None:
 
 
 @given(strategies.empty_sets_with_sets)
-def test_left_absorbing_element(empty_tree_with_tree: SetsPair) -> None:
-    empty_tree, set_ = empty_tree_with_tree
+def test_left_absorbing_element(empty_set_with_set: SetsPair) -> None:
+    empty_set, set_ = empty_set_with_set
 
-    result = empty_tree & set_
+    result = empty_set & set_
 
     assert len(result) == 0
     assert not result
 
 
 @given(strategies.empty_sets_with_sets)
-def test_right_absorbing_element(empty_tree_with_tree: SetsPair) -> None:
-    empty_tree, set_ = empty_tree_with_tree
+def test_right_absorbing_element(empty_set_with_set: SetsPair) -> None:
+    empty_set, set_ = empty_set_with_set
 
-    result = set_ & empty_tree
+    result = set_ & empty_set
 
     assert len(result) == 0
     assert not result
@@ -86,29 +86,29 @@ def test_commutativity(sets_pair: SetsPair) -> None:
 
 @given(strategies.sets_triplets)
 def test_associativity(sets_triplet: SetsTriplet) -> None:
-    left_set, mid_tree, right_set = sets_triplet
+    left_set, mid_set, right_set = sets_triplet
 
-    result = (left_set & mid_tree) & right_set
+    result = (left_set & mid_set) & right_set
 
-    assert result == left_set & (mid_tree & right_set)
+    assert result == left_set & (mid_set & right_set)
 
 
 @given(strategies.sets_triplets)
 def test_difference_operand(sets_triplet: SetsTriplet) -> None:
-    left_set, mid_tree, right_set = sets_triplet
+    left_set, mid_set, right_set = sets_triplet
 
-    result = (left_set - mid_tree) & right_set
+    result = (left_set - mid_set) & right_set
 
-    assert result == (left_set & right_set) - mid_tree
+    assert result == (left_set & right_set) - mid_set
 
 
 @given(strategies.sets_triplets)
 def test_distribution_over_union(sets_triplet: SetsTriplet) -> None:
-    left_set, mid_tree, right_set = sets_triplet
+    left_set, mid_set, right_set = sets_triplet
 
-    result = left_set & (mid_tree | right_set)
+    result = left_set & (mid_set | right_set)
 
-    assert result == (left_set & mid_tree) | (left_set & right_set)
+    assert result == (left_set & mid_set) | (left_set & right_set)
 
 
 @given(strategies.sets_pairs)
