@@ -110,7 +110,7 @@ def test_union_subtrahend(items_views_triplet: ItemsViewsTriplet) -> None:
 
 
 @given(strategies.items_views_pairs)
-def test_connection_with_subitems_view_relation(items_views_pair: ItemsViewsPair
+def test_connection_with_subset_relation(items_views_pair: ItemsViewsPair
                                                 ) -> None:
     left_items_view, right_items_view = items_views_pair
 
