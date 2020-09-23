@@ -32,7 +32,8 @@ from dendroid.core.sets import (BaseSet as Set,
 from dendroid.core.utils import (are_keys_equal,
                                  to_balanced_tree_height)
 from dendroid.core.views import (ItemsView,
-                                 KeysView)
+                                 KeysView,
+                                 ValuesView)
 from dendroid.hints import (Item,
                             Key,
                             Order,
@@ -59,6 +60,9 @@ ValuesListsTripletWithOrder = Tuple[List[Value], List[Value], List[Value],
                                     Optional[Order]]
 ValuesListsWithOrder = Union[ValuesListWithOrder, ValuesListsPairWithOrder,
                              ValuesListsTripletWithOrder]
+ValuesView = ValuesView
+ValuesViewsPair = Tuple[ValuesView, ValuesView]
+ValuesViewsTriplet = Tuple[ValuesView, ValuesView, ValuesView]
 
 
 def equivalence(left_statement: bool, right_statement: bool) -> bool:
