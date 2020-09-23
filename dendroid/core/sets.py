@@ -11,13 +11,22 @@ from dendroid.hints import (Order,
 from .abcs import (NIL,
                    MutableSet,
                    Tree)
-from .views import BaseView
 
 
-class BaseSet(BaseView, MutableSet[Value]):
+class BaseSet(MutableSet[Value]):
+    __slots__ = 'tree',
+
+    def __init__(self, tree: Tree) -> None:
+        self.tree = tree
+
+    __repr__ = generate_repr(__init__)
+
     def __iter__(self) -> Iterator[Value]:
         for node in self.tree:
             yield node.value
+
+    def __len__(self) -> int:
+        return len(self.tree)
 
     def __reversed__(self) -> Iterator[Value]:
         for node in reversed(self.tree):
