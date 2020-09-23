@@ -31,14 +31,19 @@ from dendroid.core.sets import (BaseSet as Set,
                                 KeyedSet)
 from dendroid.core.utils import (are_keys_equal,
                                  to_balanced_tree_height)
-from dendroid.core.views import KeysView
-from dendroid.hints import (Key,
+from dendroid.core.views import (ItemsView,
+                                 KeysView)
+from dendroid.hints import (Item,
+                            Key,
                             Order,
                             Value)
 
 AnyNode = TypeVar('AnyNode', binary.Node, avl.Node, red_black.Node, splay.Node,
                   abcs.NIL)
 Strategy = SearchStrategy
+ItemsView = ItemsView
+ItemsViewsPair = Tuple[ItemsView, ItemsView]
+ItemsViewsTriplet = Tuple[ItemsView, ItemsView, ItemsView]
 KeysView = KeysView
 KeysViewsPair = Tuple[KeysView, KeysView]
 KeysViewsTriplet = Tuple[KeysView, KeysView, KeysView]
@@ -87,6 +92,14 @@ def leap_traverse(values: List[Value]) -> List[Value]:
 
 
 are_keys_equal = are_keys_equal
+
+
+def are_items_equal(left: Item, right: Item) -> bool:
+    left_key, left_value = left
+    right_key, right_value = right
+    return are_keys_equal(left_key, right_key) and left_value == right_value
+
+
 to_balanced_tree_height = to_balanced_tree_height
 
 
@@ -237,6 +250,11 @@ def map_value_to_key(map_: Map, value: Value) -> Key:
 
 def set_value_to_key(set_: Set, value: Value) -> Key:
     return set_.key(value) if isinstance(set_, KeyedSet) else value
+
+
+def to_items_view_including_item(items_view: ItemsView,
+                                 item: Item) -> ItemsView:
+    return items_view.from_iterable(chain(items_view, (item,)))
 
 
 def to_keys_view_including_key(keys_view: KeysView[Key],
