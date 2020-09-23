@@ -119,8 +119,8 @@ items_views_triplets = strategies.builds(
 
 
 def to_items_views_pair_with_item(factory: Callable[..., ItemsView],
-                                  items_lists_pair: Tuple[
-                                      List[Item], List[Item]]
+                                  items_lists_pair
+                                  : Tuple[List[Item], List[Item]]
                                   ) -> Tuple[ItemsView, ItemsView, Item]:
     (*first_items, item), second_items = items_lists_pair
     return factory(*first_items), factory(*second_items), item
