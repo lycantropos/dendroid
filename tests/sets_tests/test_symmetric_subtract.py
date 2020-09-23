@@ -44,19 +44,19 @@ def test_self_inverse(set_: Set) -> None:
 
 
 @given(strategies.empty_sets_with_sets)
-def test_left_neutral_element(empty_tree_with_tree: SetsPair) -> None:
-    empty_tree, set_ = empty_tree_with_tree
+def test_left_neutral_element(empty_set_with_set: SetsPair) -> None:
+    empty_set, set_ = empty_set_with_set
 
-    result = empty_tree ^ set_
+    result = empty_set ^ set_
 
     assert result == set_
 
 
 @given(strategies.empty_sets_with_sets)
-def test_right_neutral_element(empty_tree_with_tree: SetsPair) -> None:
-    empty_tree, set_ = empty_tree_with_tree
+def test_right_neutral_element(empty_set_with_set: SetsPair) -> None:
+    empty_set, set_ = empty_set_with_set
 
-    result = set_ ^ empty_tree
+    result = set_ ^ empty_set
 
     assert result == set_
 
@@ -72,11 +72,11 @@ def test_commutativity(sets_pair: SetsPair) -> None:
 
 @given(strategies.sets_triplets)
 def test_associativity(sets_triplet: SetsTriplet) -> None:
-    left_set, mid_tree, right_set = sets_triplet
+    left_set, mid_set, right_set = sets_triplet
 
-    result = (left_set ^ mid_tree) ^ right_set
+    result = (left_set ^ mid_set) ^ right_set
 
-    assert result == left_set ^ (mid_tree ^ right_set)
+    assert result == left_set ^ (mid_set ^ right_set)
 
 
 @given(strategies.sets_pairs)
@@ -110,9 +110,9 @@ def test_expressing_union_as_symmetric_difference(sets_pair: SetsPair
 
 @given(strategies.sets_triplets)
 def test_repeated(sets_triplet: SetsTriplet) -> None:
-    left_set, mid_tree, right_set = sets_triplet
+    left_set, mid_set, right_set = sets_triplet
 
-    result = (left_set ^ mid_tree) ^ (mid_tree ^ right_set)
+    result = (left_set ^ mid_set) ^ (mid_set ^ right_set)
 
     assert result == left_set ^ right_set
 
