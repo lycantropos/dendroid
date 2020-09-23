@@ -15,23 +15,21 @@ def test_reflexivity(set_: Set) -> None:
 
 @given(strategies.sets_pairs)
 def test_symmetry(sets_pair: SetsPair) -> None:
-    first_tree, second_tree = sets_pair
+    first_set, second_set = sets_pair
 
-    assert equivalence(first_tree == second_tree,
-                       second_tree == first_tree)
+    assert equivalence(first_set == second_set, second_set == first_set)
 
 
 @given(strategies.sets_triplets)
 def test_transitivity(sets_triplet: SetsTriplet) -> None:
-    first_tree, second_tree, third_tree = sets_triplet
+    first_set, second_set, third_set = sets_triplet
 
-    assert implication(first_tree == second_tree and second_tree == third_tree,
-                       first_tree == third_tree)
+    assert implication(first_set == second_set and second_set == third_set,
+                       first_set == third_set)
 
 
 @given(strategies.sets_pairs)
 def test_connection_with_inequality(sets_pair: SetsPair) -> None:
-    first_tree, second_tree = sets_pair
+    first_set, second_set = sets_pair
 
-    assert equivalence(not first_tree == second_tree,
-                       first_tree != second_tree)
+    assert equivalence(not first_set == second_set, first_set != second_set)
