@@ -22,5 +22,5 @@ def test_evaluation(set_: Set) -> None:
 
     type_ = type(set_)
     # `math` module is required for `inf` object
-    assert eval(result, sys.modules, {**vars(math),
-                                      type_.__qualname__: type_}) == set_
+    assert eval(result, sys.modules,
+                {**vars(math), type_.__qualname__: type_}) == set_
