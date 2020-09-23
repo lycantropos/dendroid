@@ -12,7 +12,7 @@ from . import strategies
 
 
 @given(strategies.sets_pairs)
-def test_basic(sets_pair: SetsPair) -> None:
+def test_type(sets_pair: SetsPair) -> None:
     left_set, right_set = sets_pair
 
     result = left_set - right_set

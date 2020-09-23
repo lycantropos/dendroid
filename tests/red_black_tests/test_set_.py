@@ -14,7 +14,7 @@ from tests.utils import (Set,
 
 
 @given(strategies.values_lists_with_orders)
-def test_basic(values_with_order: ValuesListWithOrder) -> None:
+def test_type(values_with_order: ValuesListWithOrder) -> None:
     values, key = values_with_order
 
     result = red_black.set_(*values,

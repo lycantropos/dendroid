@@ -10,7 +10,7 @@ from tests.utils import (Set,
 
 
 @given(strategies.values_lists_with_orders)
-def test_basic(values_with_order: ValuesListWithOrder) -> None:
+def test_type(values_with_order: ValuesListWithOrder) -> None:
     values, order = values_with_order
 
     result = splay.set_(*values,

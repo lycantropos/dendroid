@@ -8,7 +8,7 @@ from . import strategies
 
 
 @given(strategies.sets)
-def test_basic(set_: Set) -> None:
+def test_type(set_: Set) -> None:
     result = set_.clear()
 
     assert result is None
