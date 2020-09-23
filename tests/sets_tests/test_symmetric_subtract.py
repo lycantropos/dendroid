@@ -34,6 +34,8 @@ def test_properties(sets_pair: SetsPair) -> None:
                    to_max_binary_tree_height(result_tree)))
     assert all((value in left_set) is not (value in right_set)
                for value in result)
+    assert ((left_set <= right_set or not result.isdisjoint(left_set))
+            and (right_set <= left_set or not result.isdisjoint(right_set)))
     assert is_left_subtree_less_than_right_subtree(result_tree)
 
 
