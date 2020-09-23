@@ -146,10 +146,7 @@ class Tree(_Tree[Key, Value]):
             return result
 
     def remove(self, node: Node) -> None:
-        parent = self.root
-        if parent is NIL:
-            return
-        key = node.key
+        parent, key = self.root, node.key
         if _are_keys_equal(key, parent.key):
             if parent.left is NIL:
                 self.root = parent.right
