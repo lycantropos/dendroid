@@ -33,6 +33,8 @@ def test_properties(items_views_pair: ItemsViewsPair) -> None:
             <= min(to_height(left_items_view.tree) + to_height(
                     right_items_view.tree) + 1,
                    to_max_binary_tree_height(result_tree)))
+    assert all((value in left_items_view) is not (value in right_items_view)
+               for value in result)
     assert is_left_subtree_less_than_right_subtree(result_tree)
 
 
