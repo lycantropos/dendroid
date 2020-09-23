@@ -78,10 +78,10 @@ class Map(BaseView, Generic[Key, Value]):
         return self.tree.max().item
 
     def min(self) -> Value:
-        return self.tree.max().value
+        return self.tree.min().value
 
     def minitem(self) -> Item:
-        return self.tree.max().item
+        return self.tree.min().item
 
     def next(self, key: Key) -> Value:
         return self.tree.next(key).value
@@ -108,10 +108,10 @@ class Map(BaseView, Generic[Key, Value]):
         return self.tree.popmax().item
 
     def popmin(self) -> Value:
-        return self.tree.popmax().value
+        return self.tree.popmin().value
 
     def popminitem(self) -> Item:
-        return self.tree.popmax().item
+        return self.tree.popmin().item
 
     popitem = popminitem
 
