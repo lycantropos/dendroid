@@ -85,26 +85,6 @@ def test_associativity(items_views_triplet: ItemsViewsTriplet) -> None:
     assert result == left_items_view & (mid_tree & right_items_view)
 
 
-@given(strategies.items_views_triplets)
-def test_difference_operand(items_views_triplet: ItemsViewsTriplet) -> None:
-    left_items_view, mid_tree, right_items_view = items_views_triplet
-
-    result = (left_items_view - mid_tree) & right_items_view
-
-    assert result == (left_items_view & right_items_view) - mid_tree
-
-
-@given(strategies.items_views_triplets)
-def test_distribution_over_union(items_views_triplet: ItemsViewsTriplet
-                                 ) -> None:
-    left_items_view, mid_tree, right_items_view = items_views_triplet
-
-    result = left_items_view & (mid_tree | right_items_view)
-
-    assert result == ((left_items_view & mid_tree)
-                      | (left_items_view & right_items_view))
-
-
 @given(strategies.items_views_pairs)
 def test_connection_with_subset_relation(items_views_pair: ItemsViewsPair
                                          ) -> None:
