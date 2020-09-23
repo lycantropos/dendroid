@@ -1,5 +1,6 @@
 from hypothesis import given
 
+from dendroid import binary
 from tests.utils import (ItemsView,
                          ItemsViewsPair,
                          ItemsViewsTriplet,
@@ -33,10 +34,8 @@ def test_properties(items_views_pair: ItemsViewsPair) -> None:
             <= min(to_height(left_items_view.tree)
                    + to_height(right_items_view.tree) + 1,
                    to_max_binary_tree_height(result_tree)))
-    assert (all(value in result
-                for value in left_items_view)
-            and all(value in result
-                    for value in right_items_view))
+    assert all(value in left_items_view or value in right_items_view
+               for value in result)
     assert ((not left_items_view or not result.isdisjoint(left_items_view))
             and (not right_items_view
                  or not result.isdisjoint(right_items_view)))
@@ -113,14 +112,3 @@ def test_connection_with_subset_relation(items_views_pair: ItemsViewsPair
     result = left_items_view | right_items_view
 
     assert left_items_view <= result and right_items_view <= result
-
-
-@given(strategies.items_views_pairs)
-def test_connection_with_disjoint(items_views_pair: ItemsViewsPair) -> None:
-    left_items_view, right_items_view = items_views_pair
-
-    result = left_items_view | right_items_view
-
-    assert equivalence(left_items_view.isdisjoint(right_items_view),
-                       len(result)
-                       == len(left_items_view) + len(right_items_view))
