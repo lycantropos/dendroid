@@ -8,7 +8,7 @@ from tests.utils import (Set,
                          implication,
                          to_height,
                          to_max_binary_tree_height,
-                         value_to_key)
+                         set_value_to_key)
 from . import strategies
 
 
@@ -17,7 +17,7 @@ def test_properties(set_with_value: Tuple[Set, Value]) -> None:
     set_, value = set_with_value
 
     assert implication(value in set_,
-                       are_keys_equal(value_to_key(set_, value),
+                       are_keys_equal(set_value_to_key(set_, value),
                                       set_.tree.root.key))
 
 

@@ -2,7 +2,7 @@ from hypothesis import given
 
 from tests.utils import (Set,
                          are_keys_equal,
-                         value_to_key)
+                         set_value_to_key)
 from . import strategies
 
 
@@ -10,5 +10,5 @@ from . import strategies
 def test_properties(set_: Set) -> None:
     result = set_.max()
 
-    assert are_keys_equal(value_to_key(set_, result), set_.tree.root.key)
+    assert are_keys_equal(set_value_to_key(set_, result), set_.tree.root.key)
     assert result is set_.tree.root.value

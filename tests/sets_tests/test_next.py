@@ -5,7 +5,7 @@ from hypothesis import given
 
 from dendroid.hints import Value
 from tests.utils import (Set,
-                         value_to_key)
+                         set_value_to_key)
 from . import strategies
 
 
@@ -22,8 +22,8 @@ def test_step(set_with_value: Tuple[Set, Value]) -> None:
     set_, value = set_with_value
 
     assert (value == set_.max()
-            or (value_to_key(set_, value)
-                < value_to_key(set_, set_.next(value))))
+            or (set_value_to_key(set_, value)
+                < set_value_to_key(set_, set_.next(value))))
 
 
 @given(strategies.non_empty_sets_with_external_values)

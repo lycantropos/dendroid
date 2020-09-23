@@ -3,10 +3,10 @@ from hypothesis import given
 
 from tests.utils import (Set,
                          is_left_subtree_less_than_right_subtree,
+                         set_value_to_key,
                          to_height,
                          to_max_binary_tree_height,
-                         to_min_binary_tree_height,
-                         value_to_key)
+                         to_min_binary_tree_height)
 from . import strategies
 
 
@@ -32,5 +32,5 @@ def test_step(set_: Set) -> None:
     result = set_.popmin()
 
     assert result not in set_
-    assert all(value_to_key(set_, result) < value_to_key(set_, value)
+    assert all(set_value_to_key(set_, result) < set_value_to_key(set_, value)
                for value in set_)
