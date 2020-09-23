@@ -71,32 +71,87 @@ Usage
 
 ```python
 >>> from dendroid import avl, red_black, splay
->>> avl_set, red_black_set, splay_set = (avl.set_(), 
-...                                      red_black.set_(), 
-...                                      splay.set_())
->>> 1 not in avl_set and 1 not in red_black_set and 1 not in splay_set
+>>> from random import sample
+>>> min_value, max_value = -100, 100
+>>> size = (max_value - min_value) // 2
+>>> values = sample(range(min_value, max_value), size)
+>>> avl_set, red_black_set, splay_set = (avl.set_(*values),
+...                                      red_black.set_(*values),
+...                                      splay.set_(*values))
+>>> len(avl_set) == len(red_black_set) == len(splay_set) == size
 True
->>> len(avl_set) == len(red_black_set) == len(splay_set) == 0
+>>> max_value not in avl_set and max_value not in red_black_set and max_value not in splay_set
 True
->>> list(avl_set) == list(red_black_set) == list(splay_set) == []
+>>> list(avl_set) == list(red_black_set) == list(splay_set) == sorted(values)
 True
->>> avl_set.add(1)
->>> red_black_set.add(1)
->>> splay_set.add(1)
->>> 1 in avl_set and 1 in red_black_set and 1 in splay_set
+>>> avl_set.add(max_value)
+>>> red_black_set.add(max_value)
+>>> splay_set.add(max_value)
+>>> len(avl_set) == len(red_black_set) == len(splay_set) == size + 1
 True
->>> len(avl_set) == len(red_black_set) == len(splay_set) == 1
+>>> max_value in avl_set and max_value in red_black_set and max_value in splay_set
 True
->>> list(avl_set) == list(red_black_set) == list(splay_set) == [1]
+>>> list(avl_set) == list(red_black_set) == list(splay_set) == sorted(values) + [max_value]
 True
->>> avl_set.remove(1)
->>> red_black_set.remove(1)
->>> splay_set.remove(1)
->>> 1 not in avl_set and 1 not in red_black_set and 1 not in splay_set
+>>> prev_max_value = max(values)
+>>> avl_set.prev(max_value) == red_black_set.prev(max_value) == splay_set.prev(max_value) == prev_max_value
 True
->>> len(avl_set) == len(red_black_set) == len(splay_set) == 0
+>>> avl_set.next(prev_max_value) == red_black_set.next(prev_max_value) == splay_set.next(prev_max_value) == max_value
 True
->>> list(avl_set) == list(red_black_set) == list(splay_set) == []
+>>> avl_set.remove(max_value)
+>>> red_black_set.remove(max_value)
+>>> splay_set.remove(max_value)
+>>> len(avl_set) == len(red_black_set) == len(splay_set) == len(values)
+True
+>>> max_value not in avl_set and max_value not in red_black_set and max_value not in splay_set
+True
+>>> list(avl_set) == list(red_black_set) == list(splay_set) == sorted(values)
+True
+>>> avl_set.max() == red_black_set.max() == splay_set.max() == max(values)
+True
+>>> avl_set.min() == red_black_set.min() == splay_set.min() == min(values)
+True
+>>> avl_set.max() == red_black_set.max() == splay_set.max() == max(values)
+True
+>>> avl_set.min() == red_black_set.min() == splay_set.min() == min(values)
+True
+>>> avl_set.add(max_value)
+>>> red_black_set.add(max_value)
+>>> splay_set.add(max_value)
+>>> avl_set.popmax() == red_black_set.popmax() == splay_set.popmax() == max_value
+True
+>>> avl_set.add(min_value)
+>>> red_black_set.add(min_value)
+>>> splay_set.add(min_value)
+>>> avl_set.popmin() == red_black_set.popmin() == splay_set.popmin() == min_value
+True
+>>> min_key, max_key = min_value, max_value
+>>> keys = sample(range(min_key, max_key), size)
+>>> items = list(zip(keys, values))
+>>> avl_map, red_black_map, splay_map = (avl.map_(*items),
+...                                      red_black.map_(*items),
+...                                      splay.map_(*items))
+>>> len(avl_map) == len(red_black_map) == len(splay_map) == size
+True
+>>> max_key not in avl_map and max_key not in red_black_map and max_key not in splay_map
+True
+>>> list(avl_map) == list(red_black_map) == list(splay_map) == sorted(keys)
+True
+>>> avl_map[max_key] = red_black_map[max_key] = splay_map[max_key] = max_value
+>>> len(avl_map) == len(red_black_map) == len(splay_map) == size + 1
+True
+>>> max_key in avl_map and max_key in red_black_map and max_key in splay_map
+True
+>>> avl_map[max_key] == red_black_map[max_key] == splay_map[max_key] == max_value
+True
+>>> list(avl_map) == list(red_black_map) == list(splay_map) == sorted(keys) + [max_key]
+True
+>>> del avl_map[max_key], red_black_map[max_key], splay_map[max_key]
+>>> len(avl_map) == len(red_black_map) == len(splay_map) == size
+True
+>>> max_key not in avl_map and max_key not in red_black_map and max_key not in splay_map
+True
+>>> list(avl_map) == list(red_black_map) == list(splay_map) == sorted(keys)
 True
 
 ```
