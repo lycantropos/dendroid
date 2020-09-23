@@ -220,5 +220,11 @@ def to_paths_to_leaves(root: AnyNode) -> Iterable[Sequence[AnyNode]]:
             yield path
 
 
+def map_value_to_key(map_: Map, value: Value) -> Key:
+    return next(candidate_key
+                for candidate_key, candidate_value in map_.items()
+                if candidate_value is value)
+
+
 def set_value_to_key(set_: Set, value: Value) -> Key:
     return set_.key(value) if isinstance(set_, KeyedSet) else value

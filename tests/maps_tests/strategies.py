@@ -81,6 +81,8 @@ def to_map_with_key(factory: Callable[..., Map],
 
 empty_maps_with_keys = strategies.builds(to_map_with_key, factories,
                                          single_items)
+non_empty_maps_with_keys = strategies.builds(to_map_with_key, factories,
+                                             two_or_more_items)
 
 
 def to_map_with_item(factory: Callable[..., Map],
@@ -115,3 +117,12 @@ def to_non_empty_maps_with_their_items(map_: Map
 
 non_empty_maps_with_their_items = (
     non_empty_maps.flatmap(to_non_empty_maps_with_their_items))
+
+
+def is_key_external(map_with_key: Tuple[Map, Key]) -> bool:
+    map_, key = map_with_key
+    return key not in map_
+
+
+non_empty_maps_with_external_keys = (non_empty_maps_with_keys
+                                     .filter(is_key_external))
