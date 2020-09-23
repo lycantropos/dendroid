@@ -13,7 +13,7 @@ from . import strategies
 
 @given(strategies.non_empty_maps)
 def test_properties(map_: Map) -> None:
-    map_.popmax()
+    map_.popmin()
 
     tree = map_.tree
     assert (to_min_binary_tree_height(tree)
@@ -25,14 +25,14 @@ def test_properties(map_: Map) -> None:
 @given(strategies.empty_maps)
 def test_base_case(map_: Map) -> None:
     with pytest.raises(KeyError):
-        map_.popmax()
+        map_.popmin()
 
 
 @given(strategies.non_empty_maps)
 def test_step(map_: Map) -> None:
     original = copy(map_)
 
-    result = map_.popmax()
+    result = map_.popmin()
 
     assert result not in map_.values()
     assert result in original.values()
