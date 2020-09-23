@@ -29,4 +29,3 @@ def test_elements(map_: Map) -> None:
     assert all(any(value is candidate for _, candidate in map_.items())
                for value in result)
     assert all(value in result for _, value in map_.items())
-    assert list(result) == [value for _, value in map_.items()]
