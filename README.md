@@ -146,12 +146,27 @@ True
 True
 >>> list(avl_map) == list(red_black_map) == list(splay_map) == sorted(keys) + [max_key]
 True
+>>> prev_max_key, prev_max_value = items[max(range(size), key=keys.__getitem__)]
+>>> avl_map.prev(max_key) == red_black_map.prev(max_key) == splay_map.prev(max_key) == prev_max_value
+True
+>>> avl_map.next(prev_max_key) == red_black_map.next(prev_max_key) == splay_map.next(prev_max_key) == max_value
+True
 >>> del avl_map[max_key], red_black_map[max_key], splay_map[max_key]
 >>> len(avl_map) == len(red_black_map) == len(splay_map) == size
 True
 >>> max_key not in avl_map and max_key not in red_black_map and max_key not in splay_map
 True
 >>> list(avl_map) == list(red_black_map) == list(splay_map) == sorted(keys)
+True
+>>> avl_map.max() == red_black_map.max() == splay_map.max() == values[max(range(size), key=keys.__getitem__)]
+True
+>>> avl_map.min() == red_black_map.min() == splay_map.min() == values[min(range(size), key=keys.__getitem__)]
+True
+>>> avl_map[max_key] = red_black_map[max_key] = splay_map[max_key] = max_value
+>>> avl_map.popmax() == red_black_map.popmax() == splay_map.popmax() == max_value
+True
+>>> avl_map[min_key] = red_black_map[min_key] = splay_map[min_key] = min_value
+>>> avl_map.popmin() == red_black_map.popmin() == splay_map.popmin() == min_value
 True
 
 ```
