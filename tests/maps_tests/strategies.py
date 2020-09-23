@@ -55,7 +55,7 @@ two_or_more_items = (two_or_more_values_with_orders
                      .map(values_lists_with_orders_to_items_lists))
 
 
-def to_map(factory: Callable[..., Map], items: ValuesListWithOrder) -> Map:
+def to_map(factory: Callable[..., Map], items: List[Item]) -> Map:
     return factory(*items)
 
 
