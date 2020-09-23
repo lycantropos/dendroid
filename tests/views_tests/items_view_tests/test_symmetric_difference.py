@@ -2,7 +2,6 @@ from hypothesis import given
 
 from tests.utils import (ItemsView,
                          ItemsViewsPair,
-                         ItemsViewsTriplet,
                          equivalence,
                          is_left_subtree_less_than_right_subtree,
                          to_height,
@@ -61,15 +60,6 @@ def test_right_neutral_element(empty_tree_with_tree: ItemsViewsPair) -> None:
     result = items_view ^ empty_tree
 
     assert result == items_view
-
-
-@given(strategies.items_views_triplets)
-def test_associativity(items_views_triplet: ItemsViewsTriplet) -> None:
-    left_items_view, mid_tree, right_items_view = items_views_triplet
-
-    result = (left_items_view ^ mid_tree) ^ right_items_view
-
-    assert result == left_items_view ^ (mid_tree ^ right_items_view)
 
 
 @given(strategies.items_views_pairs)
