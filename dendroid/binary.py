@@ -158,16 +158,13 @@ class Tree(_Tree[Key, Value]):
                     while node.right.right is not NIL:
                         node = node.right
                     (self.root, node.right.left, node.right.right,
-                     node.right) = (
-                        node.right, self.root.left, self.root.right,
-                        node.right.left)
+                     node.right) = (node.right, self.root.left,
+                                    self.root.right, node.right.left)
             return
         while True:
             if key < parent.key:
                 # search in left subtree
-                if parent.left is NIL:
-                    return
-                elif _are_keys_equal(key, parent.left.key):
+                if _are_keys_equal(key, parent.left.key):
                     # remove `parent.left`
                     node = parent.left.left
                     if node is NIL:
@@ -179,32 +176,29 @@ class Tree(_Tree[Key, Value]):
                         while node.right.right is not NIL:
                             node = node.right
                         (parent.left, node.right.left, node.right.right,
-                         node.right) = (
-                            node.right, parent.left.left, parent.left.right,
-                            node.right.left)
+                         node.right) = (node.right, parent.left.left,
+                                        parent.left.right, node.right.left)
+                    return
                 else:
                     parent = parent.left
-            else:
-                # search in right subtree
-                if parent.right is NIL:
+            # search in right subtree
+            elif _are_keys_equal(key, parent.right.key):
+                # remove `parent.right`
+                node = parent.right.left
+                if node is NIL:
+                    parent.right = parent.right.right
                     return
-                elif _are_keys_equal(key, parent.right.key):
-                    # remove `parent.right`
-                    node = parent.right.left
-                    if node is NIL:
-                        parent.right = parent.right.right
-                        return
-                    elif node.right is NIL:
-                        parent.right, node.right = node, parent.right.right
-                    else:
-                        while node.right.right is not NIL:
-                            node = node.right
-                        (parent.right, node.right.left, node.right.right,
-                         node.right) = (
-                            node.right, parent.right.left, parent.right.right,
-                            node.right.left)
+                elif node.right is NIL:
+                    parent.right, node.right = node, parent.right.right
                 else:
-                    parent = parent.right
+                    while node.right.right is not NIL:
+                        node = node.right
+                    (parent.right, node.right.left, node.right.right,
+                     node.right) = (node.right, parent.right.left,
+                                    parent.right.right, node.right.left)
+                return
+            else:
+                parent = parent.right
 
     def successor(self, node: Node) -> AnyNode:
         if node.right is NIL:
