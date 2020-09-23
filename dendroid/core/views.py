@@ -12,6 +12,7 @@ from .abcs import (NIL,
                    AbstractSet,
                    Self,
                    Tree)
+from .utils import split_items
 
 
 @abc.Sized.register
@@ -42,7 +43,8 @@ class ItemsView(BaseView, AbstractSet[Item]):
             yield node.item
 
     def from_iterable(self: Self, iterable: Iterable[Item]) -> Self:
-        return ItemsView(self.tree.from_components(*zip(*iterable)))
+        keys, values = split_items(list(iterable))
+        return ItemsView(self.tree.from_components(keys, values))
 
 
 class KeysView(BaseView, AbstractSet[Key]):
