@@ -32,8 +32,8 @@ def test_properties(keys_views_pair: KeysViewsPair) -> None:
             <= min(to_height(left_keys_view.tree),
                    to_height(right_keys_view.tree),
                    to_max_binary_tree_height(result_tree)))
-    assert all(value in left_keys_view and value in right_keys_view
-               for value in result)
+    assert all(key in left_keys_view and key in right_keys_view
+               for key in result)
     assert (not result
             or not result.isdisjoint(left_keys_view)
             and not result.isdisjoint(right_keys_view))
