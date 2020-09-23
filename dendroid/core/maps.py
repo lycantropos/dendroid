@@ -6,20 +6,28 @@ from typing import (Callable,
                     Optional,
                     Union)
 
+from reprit.base import generate_repr
+
 from dendroid.hints import (Item,
                             Key,
                             Value)
 from .abcs import (NIL,
                    Tree)
 from .utils import split_items
-from .views import (BaseView,
-                    ItemsView,
+from .views import (ItemsView,
                     KeysView,
                     ValuesView)
 
 
 @abc.MutableMapping.register
-class Map(BaseView, Generic[Key, Value]):
+class Map(Generic[Key, Value]):
+    __slots__ = 'tree',
+
+    def __init__(self, tree: Tree) -> None:
+        self.tree = tree
+
+    __repr__ = generate_repr(__init__)
+
     def __contains__(self, key: Key) -> bool:
         return self.tree.find(key) is not NIL
 
