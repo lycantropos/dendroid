@@ -1,4 +1,3 @@
-from copy import copy
 from typing import Tuple
 
 from hypothesis import given
@@ -7,7 +6,8 @@ from dendroid.hints import Value
 from tests.utils import (Set,
                          SetsPair,
                          equivalence,
-                         implication)
+                         implication,
+                         to_set_including_value)
 from . import strategies
 
 
@@ -30,14 +30,13 @@ def test_base_case(empty_set_with_set: SetsPair) -> None:
 @given(strategies.sets_pairs_with_values)
 def test_step(two_sets_with_value: Tuple[Set, Set, Value]) -> None:
     left_set, right_set, value = two_sets_with_value
-    original = copy(left_set)
 
-    left_set.add(value)
+    next_left_set = to_set_including_value(left_set, value)
 
-    assert implication(not original.isdisjoint(right_set),
-                       not left_set.isdisjoint(right_set))
-    assert implication(original.isdisjoint(right_set),
-                       equivalence(left_set.isdisjoint(right_set),
+    assert implication(not left_set.isdisjoint(right_set),
+                       not next_left_set.isdisjoint(right_set))
+    assert implication(left_set.isdisjoint(right_set),
+                       equivalence(next_left_set.isdisjoint(right_set),
                                    value not in right_set))
 
 
