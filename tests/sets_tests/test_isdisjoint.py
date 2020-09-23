@@ -13,18 +13,18 @@ from . import strategies
 
 @given(strategies.sets_pairs)
 def test_type(sets_pair: SetsPair) -> None:
-    first_tree, second_tree = sets_pair
+    first_set, second_set = sets_pair
 
-    result = first_tree.isdisjoint(second_tree)
+    result = first_set.isdisjoint(second_set)
 
     assert isinstance(result, bool)
 
 
 @given(strategies.empty_sets_with_sets)
-def test_base_case(empty_tree_with_tree: SetsPair) -> None:
-    empty_tree, set_ = empty_tree_with_tree
+def test_base_case(empty_set_with_set: SetsPair) -> None:
+    empty_set, set_ = empty_set_with_set
 
-    assert empty_tree.isdisjoint(set_)
+    assert empty_set.isdisjoint(set_)
 
 
 @given(strategies.sets_pairs_with_values)
@@ -43,7 +43,7 @@ def test_step(two_sets_with_value: Tuple[Set, Set, Value]) -> None:
 
 @given(strategies.sets_pairs)
 def test_symmetry(sets_pair: SetsPair) -> None:
-    first_tree, second_tree = sets_pair
+    first_set, second_set = sets_pair
 
-    assert equivalence(first_tree.isdisjoint(second_tree),
-                       second_tree.isdisjoint(first_tree))
+    assert equivalence(first_set.isdisjoint(second_set),
+                       second_set.isdisjoint(first_set))
