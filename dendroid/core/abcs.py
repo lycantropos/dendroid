@@ -205,7 +205,6 @@ Self = TypeVar('Self')
 
 
 @abc.Set.register
-@abc.Sized.register
 class AbstractSet(Generic[Value]):
     def __and__(self: Self, other: Self) -> Self:
         """Returns intersection of the set with given one."""
