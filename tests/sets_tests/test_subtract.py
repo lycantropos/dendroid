@@ -39,7 +39,6 @@ def test_self_inverse(set_: Set) -> None:
     result = set_ - set_
 
     assert len(result) == 0
-    assert not result
 
 
 @given(strategies.empty_sets_with_sets)
@@ -49,7 +48,6 @@ def test_left_absorbing_element(empty_tree_with_tree: SetsPair) -> None:
     result = empty_tree - set_
 
     assert len(result) == 0
-    assert not result
 
 
 @given(strategies.empty_sets_with_sets)
