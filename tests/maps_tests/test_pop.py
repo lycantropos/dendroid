@@ -49,8 +49,8 @@ def test_step(map_with_key: Tuple[Map, Key]) -> None:
 
 
 @given(strategies.empty_maps_with_items)
-def test_base_case_with_default(map_with_key: Tuple[Map, Item]) -> None:
-    map_, (key, default) = map_with_key
+def test_base_case_with_default(map_with_item: Tuple[Map, Item]) -> None:
+    map_, (key, default) = map_with_item
 
     result = map_.pop(key, default)
 
@@ -58,8 +58,8 @@ def test_base_case_with_default(map_with_key: Tuple[Map, Item]) -> None:
 
 
 @given(strategies.non_empty_maps_with_items)
-def test_step_with_default(map_with_key: Tuple[Map, Item]) -> None:
-    map_, (key, default) = map_with_key
+def test_step_with_default(map_with_item: Tuple[Map, Item]) -> None:
+    map_, (key, default) = map_with_item
     original = copy(map_)
 
     result = map_.pop(key, default)
