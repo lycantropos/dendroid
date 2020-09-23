@@ -45,6 +45,8 @@ ValuesListWithOrder = Tuple[List[Value], Optional[Order]]
 ValuesListsPairWithOrder = Tuple[List[Value], List[Value], Optional[Order]]
 ValuesListsTripletWithOrder = Tuple[List[Value], List[Value], List[Value],
                                     Optional[Order]]
+ValuesListsWithOrder = Union[ValuesListWithOrder, ValuesListsPairWithOrder,
+                             ValuesListsTripletWithOrder]
 
 
 def equivalence(left_statement: bool, right_statement: bool) -> bool:

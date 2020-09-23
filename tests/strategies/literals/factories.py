@@ -3,8 +3,7 @@ from operator import itemgetter
 from typing import (List,
                     Optional,
                     Sequence,
-                    Tuple,
-                    Union)
+                    Tuple)
 
 from hypothesis import strategies
 
@@ -13,9 +12,7 @@ from dendroid.hints import (Key,
                             Value)
 from tests.utils import (Set,
                          Strategy,
-                         ValuesListWithOrder,
-                         ValuesListsPairWithOrder,
-                         ValuesListsTripletWithOrder)
+                         ValuesListsWithOrder)
 
 
 def to_values_tuples_with_orders(
@@ -55,8 +52,7 @@ def to_values_lists_with_orders(
         : Tuple[Strategy[Value], Strategy[Order]],
         *,
         sizes: Sequence[Tuple[int, Optional[int]]] = ((0, None),)
-) -> Strategy[Union[ValuesListWithOrder, ValuesListsPairWithOrder,
-                    ValuesListsTripletWithOrder]]:
+) -> Strategy[ValuesListsWithOrder]:
     values, orders = values_with_orders
     lists_strategies = [strategies.lists(values,
                                          min_size=min_size,
