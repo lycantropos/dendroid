@@ -23,10 +23,8 @@ from tests.strategies import (empty_values_lists_with_orders,
                               values_with_orders_strategies)
 from tests.utils import (Set,
                          SetsPair,
-                         SetsTriplet,
                          ValuesListWithOrder,
-                         ValuesListsPairWithOrder,
-                         ValuesListsTripletWithOrder)
+                         ValuesListsPairWithOrder)
 
 
 def to_degenerate_factory(factory: Callable[..., Set]) -> Callable[..., Set]:
@@ -126,40 +124,22 @@ non_empty_sets_with_their_values = (
     non_empty_sets.flatmap(to_non_empty_sets_with_their_values))
 
 
-def to_sets_pair(factory: Callable[..., Set],
-                 values_lists_pair_with_order: ValuesListsPairWithOrder
-                 ) -> SetsPair:
-    first_values_list, second_values_list, order = values_lists_pair_with_order
-    first_set = factory(*first_values_list,
-                        key=order)
-    second_set = factory(*second_values_list,
+def to_sets_tuple(factory: Callable[..., Set],
+                  values_lists_pair_with_order: ValuesListsPairWithOrder
+                  ) -> Tuple[Set, ...]:
+    *values_lists, order = values_lists_pair_with_order
+    return tuple(factory(*values_list,
                          key=order)
-    return first_set, second_set
+                 for values_list in values_lists)
 
 
-sets_pairs = strategies.builds(to_sets_pair,
+sets_pairs = strategies.builds(to_sets_tuple,
                                factories,
                                values_with_orders_strategies
                                .flatmap(partial(to_values_lists_with_orders,
                                                 sizes=[(0, None)] * 2)))
-
-
-def to_sets_triplet(factory: Callable[..., Set],
-                    values_lists_triplet_with_order
-                    : ValuesListsTripletWithOrder) -> SetsTriplet:
-    (first_values_list, second_values_list,
-     third_values_list, order) = values_lists_triplet_with_order
-    first_set = factory(*first_values_list,
-                        key=order)
-    second_set = factory(*second_values_list,
-                         key=order)
-    third_set = factory(*third_values_list,
-                        key=order)
-    return first_set, second_set, third_set
-
-
 sets_triplets = strategies.builds(
-        to_sets_triplet, factories,
+        to_sets_tuple, factories,
         (values_with_orders_strategies
          .flatmap(partial(to_values_lists_with_orders,
                           sizes=[(0, None)] * 3))))
