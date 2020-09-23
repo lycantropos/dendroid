@@ -17,8 +17,7 @@ def test_size(items_view: ItemsView) -> None:
 def test_elements(items_view: ItemsView) -> None:
     result = iter(items_view)
 
-    assert all(element in items_view
-               for element in result)
+    assert all(element in items_view for element in result)
 
 
 @given(strategies.items_views_with_two_or_more_values)

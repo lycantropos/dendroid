@@ -16,5 +16,4 @@ def test_size(values_view: ValuesView) -> None:
 def test_elements(values_view: ValuesView) -> None:
     result = iter(values_view)
 
-    assert all(element in values_view
-               for element in result)
+    assert all(element in values_view for element in result)

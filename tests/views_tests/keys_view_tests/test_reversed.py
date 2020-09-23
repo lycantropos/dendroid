@@ -17,7 +17,7 @@ def test_size(keys_view: KeysView) -> None:
 def test_elements(keys_view: KeysView) -> None:
     result = reversed(keys_view)
 
-    assert all(value in keys_view for value in result)
+    assert all(element in keys_view for element in result)
 
 
 @given(strategies.keys_views_with_two_or_more_values)
