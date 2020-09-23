@@ -37,6 +37,7 @@ AnyNode = TypeVar('AnyNode', binary.Node, avl.Node, red_black.Node, splay.Node,
                   abcs.NIL)
 Strategy = SearchStrategy
 Map = Map
+MapsPair = Tuple[Map, Map]
 Set = Set
 SetsPair = Tuple[Set, Set]
 SetsTriplet = Tuple[Set, Set, Set]

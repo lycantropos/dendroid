@@ -1,4 +1,5 @@
-from functools import wraps
+from functools import (partial,
+                       wraps)
 from typing import (Callable,
                     List,
                     Tuple)
@@ -13,11 +14,15 @@ from dendroid.hints import (Item,
                             Key)
 from tests.strategies import (non_empty_values_lists_with_orders,
                               single_values_with_orders,
+                              to_values_lists_with_orders,
                               two_or_more_values_with_orders,
-                              values_lists_with_orders)
+                              values_lists_with_orders,
+                              values_with_orders_strategies)
 from tests.utils import (Map,
+                         MapsPair,
                          Strategy,
-                         ValuesListWithOrder)
+                         ValuesListWithOrder,
+                         ValuesListsWithOrder)
 
 
 def to_degenerate_factory(factory: Callable[..., Map]) -> Callable[..., Map]:
@@ -36,9 +41,9 @@ factories = strategies.sampled_from([binary.map_, avl.map_, red_black.map_,
 factories |= factories.map(to_degenerate_factory)
 
 
-def values_lists_with_orders_to_items_lists(values_list_with_order
-                                            : ValuesListWithOrder
-                                            ) -> List[Item]:
+def values_list_with_order_to_items_list(values_list_with_order
+                                         : ValuesListWithOrder
+                                         ) -> List[Item]:
     values_list, order = values_list_with_order
     return ([(value, value) for value in values_list]
             if order is None
@@ -46,13 +51,13 @@ def values_lists_with_orders_to_items_lists(values_list_with_order
 
 
 items_lists = (values_lists_with_orders
-               .map(values_lists_with_orders_to_items_lists))
+               .map(values_list_with_order_to_items_list))
 single_items = (single_values_with_orders
-                .map(values_lists_with_orders_to_items_lists))
+                .map(values_list_with_order_to_items_list))
 non_empty_items_lists = (non_empty_values_lists_with_orders
-                         .map(values_lists_with_orders_to_items_lists))
+                         .map(values_list_with_order_to_items_list))
 two_or_more_items = (two_or_more_values_with_orders
-                     .map(values_lists_with_orders_to_items_lists))
+                     .map(values_list_with_order_to_items_list))
 
 
 def to_map(factory: Callable[..., Map], items: List[Item]) -> Map:
@@ -126,3 +131,44 @@ def is_key_external(map_with_key: Tuple[Map, Key]) -> bool:
 
 non_empty_maps_with_external_keys = (non_empty_maps_with_keys
                                      .filter(is_key_external))
+
+
+def values_lists_with_order_to_items_lists(values_lists_with_order
+                                           : ValuesListsWithOrder
+                                           ) -> Tuple[List[Item], ...]:
+    *values_lists, order = values_lists_with_order
+    return (tuple([(value, value) for value in values_list]
+                  for values_list in values_lists)
+            if order is None
+            else tuple([(order(value), value) for value in values_list]
+                       for values_list in values_lists))
+
+
+def to_map_with_items_list(factory: Callable[..., Map],
+                           items_lists_pair: Tuple[List[Item], List[Item]]
+                           ) -> Tuple[Map, List[Item]]:
+    first_items_list, second_items_list = items_lists_pair
+    return factory(*first_items_list), second_items_list
+
+
+maps_with_items_lists = strategies.builds(
+        to_map_with_items_list, factories,
+        (values_with_orders_strategies
+         .flatmap(partial(to_values_lists_with_orders,
+                          sizes=[(0, None)] * 2))
+         .map(values_lists_with_order_to_items_lists)))
+
+
+def to_maps_pair(factory: Callable[..., Map],
+                 items_lists_pair: Tuple[List[Item], List[Item]]
+                 ) -> MapsPair:
+    first_items_list, second_items_list = items_lists_pair
+    return factory(*first_items_list), factory(*second_items_list)
+
+
+maps_pairs = strategies.builds(to_maps_pair, factories,
+                               values_with_orders_strategies
+                               .flatmap(partial(to_values_lists_with_orders,
+                                                sizes=[(0, None)] * 2))
+                               .map(values_lists_with_order_to_items_lists))
+maps_with_items_lists_or_maps = maps_with_items_lists | maps_pairs
