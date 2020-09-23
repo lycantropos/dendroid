@@ -97,4 +97,4 @@ def test_connection_with_subset_relation(items_views_pair: ItemsViewsPair
 
     result = left_items_view | right_items_view
 
-    assert left_items_view <= result and right_items_view <= result
+    assert right_items_view <= result
