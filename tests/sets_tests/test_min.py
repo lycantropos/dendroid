@@ -2,7 +2,7 @@ import pytest
 from hypothesis import given
 
 from tests.utils import (Set,
-                         value_to_key)
+                         set_value_to_key)
 from . import strategies
 
 
@@ -17,5 +17,6 @@ def test_step(set_: Set) -> None:
     result = set_.min()
 
     assert result in set_
-    assert all(not value_to_key(set_, value) < value_to_key(set_, result)
+    assert all(not set_value_to_key(set_, value)
+                   < set_value_to_key(set_, result)
                for value in set_)

@@ -3,7 +3,7 @@ from lz.iterating import (capacity,
                           pairwise)
 
 from tests.utils import (Set,
-                         value_to_key)
+                         set_value_to_key)
 from . import strategies
 
 
@@ -25,5 +25,6 @@ def test_elements(set_: Set) -> None:
 def test_order(set_: Set) -> None:
     result = reversed(set_)
 
-    assert all(value_to_key(set_, value) > value_to_key(set_, next_value)
+    assert all(set_value_to_key(set_, next_value)
+               < set_value_to_key(set_, value)
                for value, next_value in pairwise(result))

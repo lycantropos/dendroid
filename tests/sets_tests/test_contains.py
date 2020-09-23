@@ -6,8 +6,8 @@ from dendroid.hints import Value
 from tests.utils import (Set,
                          are_keys_equal,
                          equivalence,
-                         to_set_including_value,
-                         value_to_key)
+                         set_value_to_key,
+                         to_set_including_value)
 from . import strategies
 
 
@@ -27,5 +27,5 @@ def test_step(set_with_values_pair: Tuple[Set, Tuple[Value, Value]]
 
     assert equivalence(value in next_set,
                        value in set_
-                       or are_keys_equal(value_to_key(set_, value),
-                                         value_to_key(set_, extra_value)))
+                       or are_keys_equal(set_value_to_key(set_, value),
+                                         set_value_to_key(set_, extra_value)))

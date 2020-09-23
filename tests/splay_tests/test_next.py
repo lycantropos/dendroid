@@ -5,7 +5,7 @@ from hypothesis import given
 from dendroid.hints import Value
 from tests.utils import (Set,
                          are_keys_equal,
-                         value_to_key)
+                         set_value_to_key)
 from . import strategies
 
 
@@ -15,5 +15,5 @@ def test_properties(set_with_value: Tuple[Set, Value]) -> None:
 
     result = set_.next(value)
 
-    assert are_keys_equal(value_to_key(set_, result), set_.tree.root.key)
+    assert are_keys_equal(set_value_to_key(set_, result), set_.tree.root.key)
     assert result is set_.tree.root.value
