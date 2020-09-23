@@ -112,15 +112,6 @@ def test_expressing_union_as_symmetric_difference(items_views_pair
     assert result == left_items_view | right_items_view
 
 
-@given(strategies.items_views_triplets)
-def test_repeated(items_views_triplet: ItemsViewsTriplet) -> None:
-    left_items_view, mid_tree, right_items_view = items_views_triplet
-
-    result = (left_items_view ^ mid_tree) ^ (mid_tree ^ right_items_view)
-
-    assert result == left_items_view ^ right_items_view
-
-
 @given(strategies.items_views_pairs)
 def test_connection_with_disjoint(items_views_pair: ItemsViewsPair) -> None:
     left_items_view, right_items_view = items_views_pair
