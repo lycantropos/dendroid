@@ -116,3 +116,19 @@ keys_views_triplets = strategies.builds(
          .flatmap(partial(to_values_lists_with_orders,
                           sizes=[(0, None)] * 3))
          .map(values_lists_with_order_to_items_lists)))
+
+
+def to_keys_views_pair_with_key(factory: Callable[..., KeysView],
+                                items_lists_pair: Tuple[List[Item], List[Item]]
+                                ) -> Tuple[KeysView, KeysView, Key]:
+    (*first_items, (key, _)), second_items = items_lists_pair
+    return factory(*first_items), factory(*second_items), key
+
+
+keys_views_pairs_with_keys = (
+    strategies.builds(to_keys_views_pair_with_key,
+                      factories,
+                      values_with_orders_strategies
+                      .flatmap(partial(to_values_lists_with_orders,
+                                       sizes=[(1, None), (0, None)]))
+                      .map(values_lists_with_order_to_items_lists)))
