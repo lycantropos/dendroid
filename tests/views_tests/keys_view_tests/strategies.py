@@ -1,6 +1,7 @@
 from functools import partial
 from typing import (Callable,
-                    List, Tuple)
+                    List,
+                    Tuple)
 
 from hypothesis import strategies
 from lz.functional import compose
@@ -9,7 +10,8 @@ from dendroid import (avl,
                       binary,
                       red_black,
                       splay)
-from dendroid.hints import (Item, Key)
+from dendroid.hints import (Item,
+                            Key)
 from tests.strategies import (non_empty_values_lists_with_orders,
                               single_values_with_orders,
                               to_values_lists_with_orders,
@@ -18,7 +20,9 @@ from tests.strategies import (non_empty_values_lists_with_orders,
                               values_with_orders_strategies)
 from tests.utils import (KeysView,
                          Map,
-                         ValuesListWithOrder, ValuesListsWithOrder)
+                         ValuesListWithOrder,
+                         ValuesListsWithOrder,
+                         has_size_two_or_more)
 
 factories = (strategies.sampled_from([binary.map_, avl.map_, red_black.map_,
                                       splay.map_])
@@ -51,8 +55,14 @@ def to_keys_view(factory: Callable[..., KeysView],
 empty_keys_views = strategies.builds(to_keys_view, factories,
                                      strategies.builds(list))
 keys_views = strategies.builds(to_keys_view, factories, items_lists)
+empty_keys_views_with_keys_views = strategies.tuples(empty_keys_views,
+                                                     keys_views)
 non_empty_keys_views = strategies.builds(to_keys_view, factories,
                                          non_empty_items_lists)
+keys_views_with_two_or_more_values = (strategies.builds(to_keys_view,
+                                                        factories,
+                                                        two_or_more_items)
+                                      .filter(has_size_two_or_more))
 
 
 def to_keys_view_with_key(factory: Callable[..., KeysView],
