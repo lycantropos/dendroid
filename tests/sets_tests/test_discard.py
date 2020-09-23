@@ -13,7 +13,7 @@ from . import strategies
 
 
 @given(strategies.sets_with_values)
-def test_basic(set_with_value: Tuple[Set, Value]) -> None:
+def test_type(set_with_value: Tuple[Set, Value]) -> None:
     set_, value = set_with_value
 
     result = set_.discard(value)
