@@ -8,7 +8,9 @@ from lz.functional import (combine,
                            identity,
                            to_constant)
 
-from tests.utils import leap_traverse
+from tests.utils import (Strategy,
+                         ValuesListWithOrder,
+                         leap_traverse)
 from .factories import (to_values_lists_with_orders,
                         to_values_tuples_with_orders,
                         to_values_with_orders)
@@ -35,19 +37,23 @@ values_with_orders_strategies = (strategies
                                             max_leaves=10))
 values_with_orders = (values_with_orders_strategies
                       .flatmap(to_values_with_orders))
-values_lists_with_orders = (values_with_orders_strategies
-                            .flatmap(to_values_lists_with_orders))
-values_lists_with_orders |= ((values_lists_with_orders
-                              .map(compose(tuple,
-                                           combine(partial(sorted,
-                                                           reverse=True),
-                                                   identity))))
-                             | (values_lists_with_orders
-                                .map(compose(tuple, combine(sorted,
+
+
+def to_different_values_orders(lists_with_orders: Strategy[ValuesListWithOrder]
+                               ) -> Strategy[ValuesListWithOrder]:
+    return (lists_with_orders
+            | (lists_with_orders.map(compose(tuple,
+                                             combine(partial(sorted,
+                                                             reverse=True),
+                                                     identity))))
+            | (lists_with_orders.map(compose(tuple, combine(sorted,
+                                                            identity))))
+            | (lists_with_orders.map(compose(tuple, combine(leap_traverse,
                                                             identity)))))
-values_lists_with_orders |= (values_lists_with_orders
-                             .map(compose(tuple, combine(leap_traverse,
-                                                         identity))))
+
+
+values_lists_with_orders = to_different_values_orders(
+        values_with_orders_strategies.flatmap(to_values_lists_with_orders))
 values_lists_with_none_orders = (values_lists_with_orders
                                  .map(compose(tuple,
                                               combine(identity,
@@ -55,12 +61,14 @@ values_lists_with_none_orders = (values_lists_with_orders
 empty_values_lists_with_orders = (
     values_with_orders_strategies.flatmap(partial(to_values_lists_with_orders,
                                                   sizes=[(0, 0)])))
-non_empty_values_lists_with_orders = (
-    values_with_orders_strategies.flatmap(partial(to_values_lists_with_orders,
-                                                  sizes=[(1, None)])))
+non_empty_values_lists_with_orders = to_different_values_orders(
+        (values_with_orders_strategies
+         .flatmap(partial(to_values_lists_with_orders,
+                          sizes=[(1, None)]))))
 single_values_with_orders = (values_with_orders_strategies
                              .flatmap(partial(to_values_lists_with_orders,
                                               sizes=[(1, 1)])))
-two_or_more_values_with_orders = (
-    values_with_orders_strategies.flatmap(partial(to_values_lists_with_orders,
-                                                  sizes=[(2, None)])))
+two_or_more_values_with_orders = to_different_values_orders(
+        (values_with_orders_strategies
+         .flatmap(partial(to_values_lists_with_orders,
+                          sizes=[(2, None)]))))

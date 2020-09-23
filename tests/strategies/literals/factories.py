@@ -48,8 +48,7 @@ def to_values_with_orders(values_with_orders: Tuple[Strategy[Value],
 
 
 def to_values_lists_with_orders(
-        values_with_orders
-        : Tuple[Strategy[Value], Strategy[Order]],
+        values_with_orders: Tuple[Strategy[Value], Strategy[Order]],
         *,
         sizes: Sequence[Tuple[int, Optional[int]]] = ((0, None),)
 ) -> Strategy[ValuesListsWithOrder]:
