@@ -24,7 +24,8 @@ from tests.strategies import (empty_values_lists_with_orders,
 from tests.utils import (Set,
                          SetsPair,
                          ValuesListWithOrder,
-                         ValuesListsPairWithOrder)
+                         ValuesListsPairWithOrder,
+                         has_size_two_or_more)
 
 
 def to_degenerate_factory(factory: Callable[..., Set]) -> Callable[..., Set]:
@@ -56,15 +57,9 @@ empty_sets = strategies.builds(to_set, factories,
 sets = strategies.builds(to_set, factories, values_lists_with_orders)
 sets_with_none_orders = strategies.builds(to_set, factories,
                                           values_lists_with_none_orders)
-
-
-def set_has_two_or_more_values(set_: Set) -> bool:
-    return len(set_) >= 2
-
-
 sets_with_two_or_more_values = (
     (strategies.builds(to_set, factories, two_or_more_values_with_orders)
-     .filter(set_has_two_or_more_values)))
+     .filter(has_size_two_or_more)))
 
 
 def to_empty_set_with_set(set_: Set) -> SetsPair:

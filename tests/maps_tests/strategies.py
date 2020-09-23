@@ -22,7 +22,8 @@ from tests.utils import (Map,
                          MapsPair,
                          Strategy,
                          ValuesListWithOrder,
-                         ValuesListsWithOrder)
+                         ValuesListsWithOrder,
+                         has_size_two_or_more)
 
 
 def to_degenerate_factory(factory: Callable[..., Map]) -> Callable[..., Map]:
@@ -67,15 +68,9 @@ def to_map(factory: Callable[..., Map], items: List[Item]) -> Map:
 empty_maps = strategies.builds(to_map, factories, strategies.builds(list))
 maps = strategies.builds(to_map, factories, items_lists)
 non_empty_maps = strategies.builds(to_map, factories, non_empty_items_lists)
-
-
-def map_has_two_or_more_items(map_: Map) -> bool:
-    return len(map_) >= 2
-
-
 maps_with_two_or_more_items = (strategies.builds(to_map, factories,
                                                  two_or_more_items)
-                               .filter(map_has_two_or_more_items))
+                               .filter(has_size_two_or_more))
 
 
 def to_map_with_key(factory: Callable[..., Map],
