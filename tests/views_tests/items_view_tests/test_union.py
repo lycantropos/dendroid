@@ -1,10 +1,8 @@
 from hypothesis import given
 
-from dendroid import binary
 from tests.utils import (ItemsView,
                          ItemsViewsPair,
                          ItemsViewsTriplet,
-                         equivalence,
                          is_left_subtree_less_than_right_subtree,
                          to_height,
                          to_max_binary_tree_height,
@@ -36,9 +34,6 @@ def test_properties(items_views_pair: ItemsViewsPair) -> None:
                    to_max_binary_tree_height(result_tree)))
     assert all(value in left_items_view or value in right_items_view
                for value in result)
-    assert ((not left_items_view or not result.isdisjoint(left_items_view))
-            and (not right_items_view
-                 or not result.isdisjoint(right_items_view)))
     assert is_left_subtree_less_than_right_subtree(result_tree)
 
 
@@ -74,15 +69,6 @@ def test_absorption_identity(items_views_pair: ItemsViewsPair) -> None:
     result = left_items_view | (left_items_view & right_items_view)
 
     assert result == left_items_view
-
-
-@given(strategies.items_views_pairs)
-def test_commutativity(items_views_pair: ItemsViewsPair) -> None:
-    left_items_view, right_items_view = items_views_pair
-
-    result = left_items_view | right_items_view
-
-    assert result == right_items_view | left_items_view
 
 
 @given(strategies.items_views_triplets)
