@@ -8,7 +8,7 @@ from . import strategies
 
 
 @given(strategies.sets)
-def test_type(set_: Set) -> None:
+def test_basic(set_: Set) -> None:
     result = repr(set_)
 
     type_ = type(set_)
