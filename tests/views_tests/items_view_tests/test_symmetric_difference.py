@@ -2,7 +2,6 @@ from hypothesis import given
 
 from tests.utils import (ItemsView,
                          ItemsViewsPair,
-                         equivalence,
                          is_left_subtree_less_than_right_subtree,
                          to_height,
                          to_max_binary_tree_height,
@@ -82,24 +81,3 @@ def test_equivalent_using_difference_of_union_and_intersection(
               - (right_items_view & left_items_view))
 
     assert result == left_items_view ^ right_items_view
-
-
-@given(strategies.items_views_pairs)
-def test_expressing_union_as_symmetric_difference(items_views_pair
-                                                  : ItemsViewsPair) -> None:
-    left_items_view, right_items_view = items_views_pair
-
-    result = ((left_items_view ^ right_items_view)
-              ^ (left_items_view & right_items_view))
-
-    assert result == left_items_view | right_items_view
-
-
-@given(strategies.items_views_pairs)
-def test_connection_with_disjoint(items_views_pair: ItemsViewsPair) -> None:
-    left_items_view, right_items_view = items_views_pair
-
-    result = left_items_view ^ right_items_view
-
-    assert equivalence(left_items_view.isdisjoint(right_items_view),
-                       result == left_items_view | right_items_view)
