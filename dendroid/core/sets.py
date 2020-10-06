@@ -154,10 +154,18 @@ class KeyedSet(BaseSet[Value]):
                         self.key)
 
     def next(self, value: Value) -> Value:
-        return self.tree.next(self.key(value)).value
+        key = self.key(value)
+        try:
+            return self.tree.next(key).value
+        except KeyError as error:
+            raise ValueError(value) from error
 
     def prev(self, value: Value) -> Value:
-        return self.tree.prev(self.key(value)).value
+        key = self.key(value)
+        try:
+            return self.tree.prev(key).value
+        except KeyError as error:
+            raise ValueError(value) from error
 
     def remove(self, value: Value) -> None:
         self.tree.pop(self.key(value))
