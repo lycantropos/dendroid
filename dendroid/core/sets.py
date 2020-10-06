@@ -44,10 +44,16 @@ class BaseSet(MutableSet[Value]):
         """Returns first value not greater than the given one."""
 
     def max(self) -> Value:
-        return self.tree.max().value
+        node = self.tree.max()
+        if node is NIL:
+            raise ValueError('Set is empty')
+        return node.value
 
     def min(self) -> Value:
-        return self.tree.min().value
+        node = self.tree.min()
+        if node is NIL:
+            raise ValueError('Set is empty')
+        return node.value
 
     @abstractmethod
     def next(self, value: Value) -> Value:
@@ -100,10 +106,22 @@ class Set(BaseSet[Value]):
         return Set(self.tree.from_components(iterable))
 
     def next(self, value: Value) -> Value:
-        return self.tree.next(value).value
+        node = self.tree.find(value)
+        if node is NIL:
+            raise ValueError('{!r} is not in set'.format(value))
+        node = self.tree.successor(node)
+        if node is NIL:
+            raise ValueError('Corresponds to maximum')
+        return node.value
 
     def prev(self, value: Value) -> Value:
-        return self.tree.prev(value).value
+        node = self.tree.find(value)
+        if node is NIL:
+            raise ValueError('{!r} is not in set'.format(value))
+        node = self.tree.predecessor(node)
+        if node is NIL:
+            raise ValueError('Corresponds to minimum')
+        return node.value
 
     def remove(self, value: Value) -> None:
         self.tree.pop(value)
@@ -155,17 +173,23 @@ class KeyedSet(BaseSet[Value]):
 
     def next(self, value: Value) -> Value:
         key = self.key(value)
-        try:
-            return self.tree.next(key).value
-        except KeyError as error:
-            raise ValueError(value) from error
+        node = self.tree.find(key)
+        if node is NIL:
+            raise ValueError('{!r} is not in set'.format(value))
+        node = self.tree.successor(node)
+        if node is NIL:
+            raise ValueError('Corresponds to maximum')
+        return node.value
 
     def prev(self, value: Value) -> Value:
         key = self.key(value)
-        try:
-            return self.tree.prev(key).value
-        except KeyError as error:
-            raise ValueError(value) from error
+        node = self.tree.find(key)
+        if node is NIL:
+            raise ValueError('{!r} is not in set'.format(value))
+        node = self.tree.predecessor(node)
+        if node is NIL:
+            raise ValueError('Corresponds to minimum')
+        return node.value
 
     def remove(self, value: Value) -> None:
         self.tree.pop(self.key(value))
