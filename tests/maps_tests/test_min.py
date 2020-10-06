@@ -7,7 +7,7 @@ from . import strategies
 
 @given(strategies.empty_maps)
 def test_base_case(map_: Map) -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(KeyError):
         map_.min()
 
 

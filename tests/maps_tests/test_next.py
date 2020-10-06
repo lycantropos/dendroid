@@ -14,7 +14,7 @@ from . import strategies
 def test_base_case(map_with_key: Tuple[Map, Key]) -> None:
     map_, key = map_with_key
 
-    with pytest.raises(ValueError):
+    with pytest.raises(KeyError):
         map_.next(key)
 
 
@@ -29,7 +29,7 @@ def test_step(map_with_value: Tuple[Map, Item]) -> None:
 def test_external_value(map_with_key: Tuple[Map, Key]) -> None:
     map_, key = map_with_key
 
-    with pytest.raises(ValueError):
+    with pytest.raises(KeyError):
         map_.next(key)
 
 
@@ -37,5 +37,5 @@ def test_external_value(map_with_key: Tuple[Map, Key]) -> None:
 def test_maximum_key(map_: Map) -> None:
     maximum_key = max(map_)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(KeyError):
         map_.next(maximum_key)
