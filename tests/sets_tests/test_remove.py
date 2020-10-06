@@ -32,7 +32,7 @@ def test_properties(set_with_value: Tuple[Set, Value]) -> None:
 def test_base_case(set_with_value: Tuple[Set, Value]) -> None:
     set_, value = set_with_value
 
-    with pytest.raises(KeyError):
+    with pytest.raises(ValueError):
         set_.remove(value)
 
 

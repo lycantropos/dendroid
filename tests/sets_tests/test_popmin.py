@@ -23,7 +23,7 @@ def test_properties(set_: Set) -> None:
 
 @given(strategies.empty_sets)
 def test_base_case(set_: Set) -> None:
-    with pytest.raises(KeyError):
+    with pytest.raises(ValueError):
         set_.popmin()
 
 
