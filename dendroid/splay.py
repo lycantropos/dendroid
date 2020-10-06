@@ -104,20 +104,18 @@ class Tree(_Tree[Key, Value]):
 
     def max(self) -> Node:
         node = self.root
-        if node is NIL:
-            raise ValueError('Tree is empty.')
-        while node.right is not NIL:
-            node = node.right
-        self._splay(node.key)
+        if node is not NIL:
+            while node.right is not NIL:
+                node = node.right
+            self._splay(node.key)
         return node
 
     def min(self) -> Node:
         node = self.root
-        if node is NIL:
-            raise ValueError('Tree is empty.')
-        while node.left is not NIL:
-            node = node.left
-        self._splay(node.key)
+        if node is not NIL:
+            while node.left is not NIL:
+                node = node.left
+            self._splay(node.key)
         return node
 
     def next(self, key: Key) -> Node:
@@ -128,14 +126,14 @@ class Tree(_Tree[Key, Value]):
 
     def popmax(self) -> Node:
         if self.root is NIL:
-            raise KeyError
+            return self.root
         result = self.max()
         self._remove_root()
         return result
 
     def popmin(self) -> Node:
         if self.root is NIL:
-            raise KeyError
+            return self.root
         result = self.min()
         self._remove_root()
         return result
