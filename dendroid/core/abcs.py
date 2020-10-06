@@ -199,10 +199,10 @@ class Tree(ABC, Generic[Key, Value]):
         """Returns last node with a key lesser than the given one."""
         node = self.find(key)
         if node is NIL:
-            raise ValueError('No node found with key {!r}'.format(key))
+            raise KeyError('No node found with key {!r}'.format(key))
         result = self.predecessor(node)
         if result is NIL:
-            raise ValueError('Corresponds to a minimum')
+            raise KeyError('Corresponds to a minimum')
         return result
 
     @abstractmethod
