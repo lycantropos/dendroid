@@ -71,6 +71,13 @@ class Map(Generic[Key, Value]):
                              .format(key))
         return node.value
 
+    def ceilitem(self, key: Key) -> Value:
+        node = self.tree.supremum(key)
+        if node is NIL:
+            raise ValueError('No key found greater than or equal to {!r}'
+                             .format(key))
+        return node.item
+
     def clear(self) -> None:
         self.tree.clear()
 
