@@ -48,10 +48,7 @@ class Map(Generic[Key, Value]):
                 else NotImplemented)
 
     def __getitem__(self, key: Key) -> Value:
-        node = self.tree.find(key)
-        if node is NIL:
-            raise KeyError(key)
-        return node.value
+        return self._find_node(key).value
 
     def __iter__(self) -> Iterator[Key]:
         for node in self.tree:
@@ -68,35 +65,19 @@ class Map(Generic[Key, Value]):
         self.tree.insert(key, value).value = value
 
     def ceil(self, key: Key) -> Value:
-        node = self.tree.supremum(key)
-        if node is NIL:
-            raise KeyError('No key found greater than or equal to {!r}'
-                           .format(key))
-        return node.value
+        return self._ceil_node(key).value
 
     def ceilitem(self, key: Key) -> Value:
-        node = self.tree.supremum(key)
-        if node is NIL:
-            raise KeyError('No key found greater than or equal to {!r}'
-                           .format(key))
-        return node.item
+        return self._ceil_node(key).item
 
     def clear(self) -> None:
         self.tree.clear()
 
     def floor(self, key: Key) -> Value:
-        node = self.tree.infimum(key)
-        if node is NIL:
-            raise KeyError('No key found less than or equal to {!r}'
-                           .format(key))
-        return node.value
+        return self._floor_node(key).value
 
     def flooritem(self, key: Key) -> Value:
-        node = self.tree.infimum(key)
-        if node is NIL:
-            raise KeyError('No key found less than or equal to {!r}'
-                           .format(key))
-        return node.item
+        return self._floor_node(key).item
 
     def get(self,
             key: Key,
@@ -174,47 +155,61 @@ class Map(Generic[Key, Value]):
     def values(self) -> ValuesView[Value]:
         return ValuesView(self.tree)
 
-    def _max_node(self) -> Node:
-        node = self.tree.max()
+    def _ceil_node(self, key: Key) -> Node:
+        node = self.tree.supremum(key)
         if node is NIL:
-            raise KeyError('Map is empty')
+            raise KeyError('No key found greater than or equal to {!r}'
+                           .format(key))
         return node
+
+    def _find_node(self, key: Key) -> Node:
+        result = self.tree.find(key)
+        if result is NIL:
+            raise KeyError(key)
+        return result
+
+    def _floor_node(self, key: Key) -> Node:
+        result = self.tree.infimum(key)
+        if result is NIL:
+            raise KeyError('No key found less than or equal to {!r}'
+                           .format(key))
+        return result
+
+    def _max_node(self) -> Node:
+        result = self.tree.max()
+        if result is NIL:
+            raise KeyError('Map is empty')
+        return result
 
     def _min_node(self) -> Node:
-        node = self.tree.min()
-        if node is NIL:
+        result = self.tree.min()
+        if result is NIL:
             raise KeyError('Map is empty')
-        return node
+        return result
 
     def _next_node(self, key: Key) -> Node:
-        node = self.tree.find(key)
-        if node is NIL:
-            raise KeyError(key)
-        node = self.tree.successor(node)
-        if node is NIL:
+        result = self.tree.successor(self._find_node(key))
+        if result is NIL:
             raise KeyError('Corresponds to maximum')
-        return node
+        return result
 
     def _popmax_node(self) -> Node:
-        node = self.tree.popmax()
-        if node is NIL:
+        result = self.tree.popmax()
+        if result is NIL:
             raise KeyError('Map is empty')
-        return node
+        return result
 
     def _popmin_node(self) -> Node:
-        node = self.tree.popmin()
-        if node is NIL:
+        result = self.tree.popmin()
+        if result is NIL:
             raise KeyError('Map is empty')
-        return node
+        return result
 
     def _prev_node(self, key: Key) -> Node:
-        node = self.tree.find(key)
-        if node is NIL:
-            raise KeyError(key)
-        node = self.tree.predecessor(node)
-        if node is NIL:
+        result = self.tree.predecessor(self._find_node(key))
+        if result is NIL:
             raise KeyError('Corresponds to minimum')
-        return node
+        return result
 
 
 def map_constructor(tree_constructor
