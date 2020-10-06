@@ -106,10 +106,10 @@ class Tree(_Tree[Key, Value]):
             else:
                 return parent
 
-    def popmax(self) -> Node:
+    def popmax(self) -> AnyNode:
         node = self.root
         if node is NIL:
-            raise KeyError
+            return node
         elif node.right is NIL:
             self.root = node.left
             return node
@@ -119,10 +119,10 @@ class Tree(_Tree[Key, Value]):
             result, node.right = node.right, node.right.left
             return result
 
-    def popmin(self) -> Node:
+    def popmin(self) -> AnyNode:
         node = self.root
         if node is NIL:
-            raise KeyError
+            return node
         elif node.left is NIL:
             self.root = node.right
             return node
