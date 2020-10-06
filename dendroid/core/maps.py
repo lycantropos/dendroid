@@ -12,6 +12,7 @@ from dendroid.hints import (Item,
                             Key,
                             Value)
 from .abcs import (NIL,
+                   Node,
                    Tree)
 from .utils import split_items
 from .views import (ItemsView,
@@ -35,7 +36,9 @@ class Map(Generic[Key, Value]):
         return Map(self.tree.__copy__())
 
     def __delitem__(self, key: Key) -> None:
-        self.tree.pop(key)
+        node = self.tree.pop(key)
+        if node is NIL:
+            raise KeyError(key)
 
     def __eq__(self, other: 'Map[Key, Value]') -> bool:
         return (self.keys() == other.keys()
@@ -108,54 +111,52 @@ class Map(Generic[Key, Value]):
         return KeysView(self.tree)
 
     def max(self) -> Value:
-        return self.tree.max().value
+        return self._max_node().value
 
     def maxitem(self) -> Value:
-        return self.tree.max().item
+        return self._max_node().item
 
     def min(self) -> Value:
-        return self.tree.min().value
+        return self._min_node().value
 
     def minitem(self) -> Item:
-        return self.tree.min().item
+        return self._min_node().item
 
     def next(self, key: Key) -> Value:
-        return self.tree.next(key).value
+        return self._next_node(key).value
 
     def nextitem(self, key: Key) -> Value:
-        return self.tree.next(key).item
+        return self._next_node(key).item
 
     __sentinel = object()
 
     def pop(self, key: Key, default: Value = __sentinel) -> Value:
-        try:
-            node = self.tree.pop(key)
-        except KeyError:
+        node = self.tree.pop(key)
+        if node is NIL:
             if default is self.__sentinel:
-                raise
+                raise KeyError(key)
             return default
-        else:
-            return node.value
+        return node.value
 
     def popmax(self) -> Value:
-        return self.tree.popmax().value
+        return self._popmax_node().value
 
     def popmaxitem(self) -> Value:
-        return self.tree.popmax().item
+        return self._popmax_node().item
 
     def popmin(self) -> Value:
-        return self.tree.popmin().value
+        return self._popmin_node().value
 
     def popminitem(self) -> Item:
-        return self.tree.popmin().item
+        return self._popmin_node().item
 
     popitem = popminitem
 
     def prev(self, key: Key) -> Value:
-        return self.tree.prev(key).value
+        return self._prev_node(key).value
 
     def previtem(self, key: Key) -> Value:
-        return self.tree.prev(key).item
+        return self._prev_node(key).item
 
     def setdefault(self,
                    key: Key,
@@ -172,6 +173,48 @@ class Map(Generic[Key, Value]):
 
     def values(self) -> ValuesView[Value]:
         return ValuesView(self.tree)
+
+    def _max_node(self) -> Node:
+        node = self.tree.max()
+        if node is NIL:
+            raise KeyError('Map is empty')
+        return node
+
+    def _min_node(self) -> Node:
+        node = self.tree.min()
+        if node is NIL:
+            raise KeyError('Map is empty')
+        return node
+
+    def _next_node(self, key: Key) -> Node:
+        node = self.tree.find(key)
+        if node is NIL:
+            raise KeyError(key)
+        node = self.tree.successor(node)
+        if node is NIL:
+            raise KeyError('Corresponds to maximum')
+        return node
+
+    def _popmax_node(self) -> Node:
+        node = self.tree.popmax()
+        if node is NIL:
+            raise KeyError('Map is empty')
+        return node
+
+    def _popmin_node(self) -> Node:
+        node = self.tree.popmin()
+        if node is NIL:
+            raise KeyError('Map is empty')
+        return node
+
+    def _prev_node(self, key: Key) -> Node:
+        node = self.tree.find(key)
+        if node is NIL:
+            raise KeyError(key)
+        node = self.tree.predecessor(node)
+        if node is NIL:
+            raise KeyError('Corresponds to minimum')
+        return node
 
 
 def map_constructor(tree_constructor
