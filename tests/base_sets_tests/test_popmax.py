@@ -12,7 +12,7 @@ from . import strategies
 
 @given(strategies.non_empty_sets)
 def test_properties(set_: BaseSet) -> None:
-    set_.popmin()
+    set_.popmax()
 
     tree = set_.tree
     assert (to_min_binary_tree_height(tree)
@@ -23,14 +23,14 @@ def test_properties(set_: BaseSet) -> None:
 
 @given(strategies.empty_sets)
 def test_base_case(set_: BaseSet) -> None:
-    with pytest.raises(KeyError):
-        set_.popmin()
+    with pytest.raises(ValueError):
+        set_.popmax()
 
 
 @given(strategies.non_empty_sets)
 def test_step(set_: BaseSet) -> None:
-    result = set_.popmin()
+    result = set_.popmax()
 
     assert result not in set_
-    assert all(set_value_to_key(set_, result) < set_value_to_key(set_, value)
+    assert all(set_value_to_key(set_, value) < set_value_to_key(set_, result)
                for value in set_)

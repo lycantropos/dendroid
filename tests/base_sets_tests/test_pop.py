@@ -25,7 +25,7 @@ def test_properties(set_: BaseSet) -> None:
 
 @given(strategies.empty_sets)
 def test_base_case(set_: BaseSet) -> None:
-    with pytest.raises(KeyError):
+    with pytest.raises(ValueError):
         set_.pop()
 
 
