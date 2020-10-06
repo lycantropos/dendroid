@@ -160,10 +160,7 @@ class Tree(ABC, Generic[Key, Value]):
         node = self.find(key)
         if node is NIL:
             raise KeyError('No node found with key {!r}'.format(key))
-        result = self.successor(node)
-        if result is NIL:
-            raise KeyError('Corresponds to a maximum')
-        return result
+        return self.successor(node)
 
     def pop(self, key: Key) -> AnyNode:
         """Removes node with given key from the tree."""
