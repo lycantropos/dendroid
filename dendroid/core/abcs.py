@@ -141,7 +141,7 @@ class Tree(ABC, Generic[Key, Value]):
         """Returns node with the maximum key."""
         node = self.root
         if node is NIL:
-            raise ValueError('Tree is empty.')
+            return node
         while node.right is not NIL:
             node = node.right
         return node
