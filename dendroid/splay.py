@@ -118,12 +118,6 @@ class Tree(_Tree[Key, Value]):
             self._splay(node.key)
         return node
 
-    def next(self, key: Key) -> Node:
-        node = _Tree.next(self, key)
-        if node is not NIL:
-            self._splay(node.key)
-        return node
-
     def popmax(self) -> Node:
         if self.root is NIL:
             return self.root
@@ -152,12 +146,6 @@ class Tree(_Tree[Key, Value]):
             while result.right is not NIL:
                 result = result.right
             return result
-
-    def prev(self, key: Key) -> Node:
-        node = _Tree.prev(self, key)
-        if node is not NIL:
-            self._splay(node.key)
-        return node
 
     def remove(self, node: Node) -> None:
         self._splay(node.key)

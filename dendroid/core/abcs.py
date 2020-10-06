@@ -153,13 +153,6 @@ class Tree(ABC, Generic[Key, Value]):
                 node = node.left
         return node
 
-    def next(self, key: Key) -> AnyNode:
-        """Returns first node with a key greater than the given one."""
-        node = self.find(key)
-        if node is NIL:
-            raise KeyError('No node found with key {!r}'.format(key))
-        return self.successor(node)
-
     def pop(self, key: Key) -> AnyNode:
         """Removes node with given key from the tree."""
         node = self.find(key)
@@ -186,13 +179,6 @@ class Tree(ABC, Generic[Key, Value]):
     @abstractmethod
     def predecessor(self, node: Node) -> AnyNode:
         """Returns last node with a key less than of the given one."""
-
-    def prev(self, key: Key) -> AnyNode:
-        """Returns last node with a key lesser than the given one."""
-        node = self.find(key)
-        if node is NIL:
-            raise KeyError('No node found with key {!r}'.format(key))
-        return self.predecessor(node)
 
     @abstractmethod
     def remove(self, node: Node) -> None:
