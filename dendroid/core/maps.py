@@ -88,6 +88,13 @@ class Map(Generic[Key, Value]):
                              .format(key))
         return node.value
 
+    def flooritem(self, key: Key) -> Value:
+        node = self.tree.infimum(key)
+        if node is NIL:
+            raise ValueError('No key found less than or equal to {!r}'
+                             .format(key))
+        return node.item
+
     def get(self,
             key: Key,
             default: Optional[Value] = None) -> Optional[Value]:
