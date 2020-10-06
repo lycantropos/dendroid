@@ -109,28 +109,26 @@ class Tree(_Tree[Key, Value]):
     @staticmethod
     def predecessor(node: Node) -> Node:
         if node.left is NIL:
-            parent = node.parent
-            while parent is not None and node is parent.left:
-                node, parent = parent, parent.parent
-            return parent
+            result = node.parent
+            while result is not None and node is result.left:
+                node, result = result, result.parent
         else:
             result = node.left
             while result.right is not NIL:
                 result = result.right
-            return result
+        return result
 
     @staticmethod
     def successor(node: Node) -> Node:
         if node.right is NIL:
-            parent = node.parent
-            while parent is not None and node is parent.right:
-                node, parent = parent, parent.parent
-            return parent
+            result = node.parent
+            while result is not None and node is result.right:
+                node, result = result, result.parent
         else:
             result = node.right
             while result.left is not NIL:
                 result = result.left
-            return result
+        return result
 
     @classmethod
     def from_components(cls,
