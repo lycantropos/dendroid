@@ -15,4 +15,7 @@ def test_properties(tree_with_key: Tuple[Tree, Key]) -> None:
     result = tree.infimum(key)
 
     assert (result is NIL and all(key < node.key for node in tree)
-            or not key < result.key)
+            or not key < result.key and all(not node.key < key
+                                            or node is result
+                                            or node.key < result.key
+                                            for node in tree))
