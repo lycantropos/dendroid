@@ -77,7 +77,11 @@ class Set(BaseSet[Value]):
         self.tree.insert(value, value)
 
     def ceil(self, value: Value) -> Value:
-        return self.tree.supremum(value).value
+        node = self.tree.supremum(value)
+        if node is NIL:
+            raise ValueError('No value found greater than or equal to {!r}'
+                             .format(value))
+        return node.value
 
     def discard(self, value: Value) -> None:
         node = self.tree.find(value)
@@ -120,7 +124,11 @@ class KeyedSet(BaseSet[Value]):
         self.tree.insert(self.key(value), value)
 
     def ceil(self, value: Value) -> Value:
-        return self.tree.supremum(self.key(value)).value
+        node = self.tree.supremum(self.key(value))
+        if node is NIL:
+            raise ValueError('No value found greater than or equal to {!r}'
+                             .format(value))
+        return node.value
 
     def discard(self, value: Value) -> None:
         node = self.tree.find(self.key(value))
