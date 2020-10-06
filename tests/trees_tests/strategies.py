@@ -70,6 +70,8 @@ def to_tree_with_key(factory: Callable[..., Tree],
 
 empty_trees_with_keys = strategies.builds(to_tree_with_key,
                                           factories, single_items)
+trees_with_keys = strategies.builds(to_tree_with_key, factories,
+                                    non_empty_items_lists)
 
 
 def to_non_empty_trees_with_their_keys(tree: Tree
