@@ -67,15 +67,15 @@ class Map(Generic[Key, Value]):
     def ceil(self, key: Key) -> Value:
         node = self.tree.supremum(key)
         if node is NIL:
-            raise ValueError('No key found greater than or equal to {!r}'
-                             .format(key))
+            raise KeyError('No key found greater than or equal to {!r}'
+                           .format(key))
         return node.value
 
     def ceilitem(self, key: Key) -> Value:
         node = self.tree.supremum(key)
         if node is NIL:
-            raise ValueError('No key found greater than or equal to {!r}'
-                             .format(key))
+            raise KeyError('No key found greater than or equal to {!r}'
+                           .format(key))
         return node.item
 
     def clear(self) -> None:
@@ -84,15 +84,15 @@ class Map(Generic[Key, Value]):
     def floor(self, key: Key) -> Value:
         node = self.tree.infimum(key)
         if node is NIL:
-            raise ValueError('No key found less than or equal to {!r}'
-                             .format(key))
+            raise KeyError('No key found less than or equal to {!r}'
+                           .format(key))
         return node.value
 
     def flooritem(self, key: Key) -> Value:
         node = self.tree.infimum(key)
         if node is NIL:
-            raise ValueError('No key found less than or equal to {!r}'
-                             .format(key))
+            raise KeyError('No key found less than or equal to {!r}'
+                           .format(key))
         return node.item
 
     def get(self,
