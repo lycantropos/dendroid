@@ -6,7 +6,7 @@ from lz.iterating import (first,
                           last)
 
 from dendroid.hints import Value
-from tests.utils import (Set,
+from tests.utils import (BaseSet,
                          is_left_subtree_less_than_right_subtree,
                          to_height,
                          to_max_binary_tree_height,
@@ -15,7 +15,7 @@ from . import strategies
 
 
 @given(strategies.non_empty_sets_with_their_values)
-def test_properties(set_with_value: Tuple[Set, Value]) -> None:
+def test_properties(set_with_value: Tuple[BaseSet, Value]) -> None:
     set_, value = set_with_value
 
     set_.remove(value)
@@ -29,15 +29,15 @@ def test_properties(set_with_value: Tuple[Set, Value]) -> None:
 
 
 @given(strategies.empty_sets_with_values)
-def test_base_case(set_with_value: Tuple[Set, Value]) -> None:
+def test_base_case(set_with_value: Tuple[BaseSet, Value]) -> None:
     set_, value = set_with_value
 
-    with pytest.raises(ValueError):
+    with pytest.raises(KeyError):
         set_.remove(value)
 
 
 @given(strategies.non_empty_sets)
-def test_step_left(set_: Set) -> None:
+def test_step_left(set_: BaseSet) -> None:
     value = first(set_)
 
     set_.remove(value)
@@ -46,7 +46,7 @@ def test_step_left(set_: Set) -> None:
 
 
 @given(strategies.non_empty_sets)
-def test_step_right(set_: Set) -> None:
+def test_step_right(set_: BaseSet) -> None:
     value = last(set_)
 
     set_.remove(value)

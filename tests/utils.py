@@ -28,7 +28,7 @@ from dendroid.core.abcs import (NIL,
                                 Node,
                                 Tree)
 from dendroid.core.maps import Map
-from dendroid.core.sets import (BaseSet as Set,
+from dendroid.core.sets import (BaseSet,
                                 KeyedSet)
 from dendroid.core.utils import (are_keys_equal,
                                  to_balanced_tree_height)
@@ -52,9 +52,9 @@ KeysViewsTriplet = Tuple[KeysView, KeysView, KeysView]
 Map = Map
 MapsPair = Tuple[Map, Map]
 Node = Node
-Set = Set
-SetsPair = Tuple[Set, Set]
-SetsTriplet = Tuple[Set, Set, Set]
+BaseSet = BaseSet
+BaseSetsPair = Tuple[BaseSet, BaseSet]
+BaseSetsTriplet = Tuple[BaseSet, BaseSet, BaseSet]
 Tree = Tree
 TreesPair = Tuple[Tree, Tree]
 TreesTriplet = Tuple[Tree, Tree, Tree]
@@ -258,7 +258,7 @@ def map_value_to_key(map_: Map, value: Value) -> Key:
                 if candidate_value is value)
 
 
-def set_value_to_key(set_: Set, value: Value) -> Key:
+def set_value_to_key(set_: BaseSet, value: Value) -> Key:
     return set_.key(value) if isinstance(set_, KeyedSet) else value
 
 
@@ -272,5 +272,5 @@ def to_keys_view_including_key(keys_view: KeysView[Key],
     return keys_view.from_iterable(chain(keys_view, (key,)))
 
 
-def to_set_including_value(set_: Set, value: Value) -> Set:
+def to_set_including_value(set_: BaseSet, value: Value) -> BaseSet:
     return set_.from_iterable(left.attach(set_, value))

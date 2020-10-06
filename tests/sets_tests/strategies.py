@@ -21,17 +21,18 @@ from tests.strategies import (empty_values_lists_with_orders,
                               values_lists_with_none_orders,
                               values_lists_with_orders,
                               values_with_orders_strategies)
-from tests.utils import (Set,
-                         SetsPair,
+from tests.utils import (BaseSet,
+                         BaseSetsPair,
                          ValuesListWithOrder,
                          ValuesListsPairWithOrder,
                          has_size_two_or_more)
 
 
-def to_degenerate_factory(factory: Callable[..., Set]) -> Callable[..., Set]:
+def to_degenerate_factory(factory: Callable[..., BaseSet]
+                          ) -> Callable[..., BaseSet]:
     @wraps(factory)
     def wrapper(*values: Value,
-                key: Optional[Order] = None) -> Set:
+                key: Optional[Order] = None) -> BaseSet:
         result = factory(key=key)
         for value in values:
             result.add(value)
@@ -45,8 +46,8 @@ factories = strategies.sampled_from([binary.set_, avl.set_, red_black.set_,
 factories |= factories.map(to_degenerate_factory)
 
 
-def to_set(factory: Callable[..., Set],
-           values_list_with_order: ValuesListWithOrder) -> Set:
+def to_set(factory: Callable[..., BaseSet],
+           values_list_with_order: ValuesListWithOrder) -> BaseSet:
     values_list, order = values_list_with_order
     return factory(*values_list,
                    key=order)
@@ -62,11 +63,11 @@ sets_with_two_or_more_values = (
      .filter(has_size_two_or_more)))
 
 
-def to_empty_set_with_set(set_: Set) -> SetsPair:
+def to_empty_set_with_set(set_: BaseSet) -> BaseSetsPair:
     return to_empty_copy(set_), set_
 
 
-def to_empty_copy(set_: Set) -> Set:
+def to_empty_copy(set_: BaseSet) -> BaseSet:
     return set_.from_iterable(())
 
 
@@ -75,9 +76,9 @@ non_empty_sets = strategies.builds(to_set, factories,
                                    non_empty_values_lists_with_orders)
 
 
-def to_set_with_value(factory: Callable[..., Set],
+def to_set_with_value(factory: Callable[..., BaseSet],
                       values_list_with_order: ValuesListWithOrder
-                      ) -> Tuple[Set, Value]:
+                      ) -> Tuple[BaseSet, Value]:
     values_list, order = values_list_with_order
     *rest_values_list, value = values_list
     set_ = factory(*rest_values_list,
@@ -93,7 +94,7 @@ non_empty_sets_with_values = strategies.builds(to_set_with_value, factories,
                                                two_or_more_values_with_orders)
 
 
-def is_value_external(set_with_value: Tuple[Set, Value]) -> bool:
+def is_value_external(set_with_value: Tuple[BaseSet, Value]) -> bool:
     set_, value = set_with_value
     return value not in set_
 
@@ -102,9 +103,9 @@ non_empty_sets_with_external_values = (non_empty_sets_with_values
                                        .filter(is_value_external))
 
 
-def to_set_with_values_pair(factory: Callable[..., Set],
+def to_set_with_values_pair(factory: Callable[..., BaseSet],
                             values_list_with_order: ValuesListWithOrder
-                            ) -> Tuple[Set, Tuple[Value, Value]]:
+                            ) -> Tuple[BaseSet, Tuple[Value, Value]]:
     values_list, order = values_list_with_order
     *rest_values_list, first_value, second_value = values_list
     set_ = factory(*rest_values_list,
@@ -119,9 +120,9 @@ non_empty_sets_with_their_values = (
     non_empty_sets.flatmap(to_non_empty_sets_with_their_values))
 
 
-def to_sets_tuple(factory: Callable[..., Set],
+def to_sets_tuple(factory: Callable[..., BaseSet],
                   values_lists_pair_with_order: ValuesListsPairWithOrder
-                  ) -> Tuple[Set, ...]:
+                  ) -> Tuple[BaseSet, ...]:
     *values_lists, order = values_lists_pair_with_order
     return tuple(factory(*values_list,
                          key=order)
@@ -140,10 +141,10 @@ sets_triplets = strategies.builds(
                           sizes=[(0, None)] * 3))))
 
 
-def to_sets_pair_with_value(factory: Callable[..., Set],
+def to_sets_pair_with_value(factory: Callable[..., BaseSet],
                             values_lists_pair_with_order
                             : ValuesListsPairWithOrder
-                            ) -> Tuple[Set, Set, Value]:
+                            ) -> Tuple[BaseSet, BaseSet, Value]:
     first_values, second_values, order = values_lists_pair_with_order
     *first_values, value = first_values
     first_set = factory(*first_values,

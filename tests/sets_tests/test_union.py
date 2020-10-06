@@ -1,8 +1,8 @@
 from hypothesis import given
 
-from tests.utils import (Set,
-                         SetsPair,
-                         SetsTriplet,
+from tests.utils import (BaseSet,
+                         BaseSetsPair,
+                         BaseSetsTriplet,
                          equivalence,
                          is_left_subtree_less_than_right_subtree,
                          to_height,
@@ -12,7 +12,7 @@ from . import strategies
 
 
 @given(strategies.sets_pairs)
-def test_type(sets_pair: SetsPair) -> None:
+def test_type(sets_pair: BaseSetsPair) -> None:
     left_set, right_set = sets_pair
 
     result = left_set | right_set
@@ -21,7 +21,7 @@ def test_type(sets_pair: SetsPair) -> None:
 
 
 @given(strategies.sets_pairs)
-def test_properties(sets_pair: SetsPair) -> None:
+def test_properties(sets_pair: BaseSetsPair) -> None:
     left_set, right_set = sets_pair
 
     result = left_set | right_set
@@ -39,14 +39,14 @@ def test_properties(sets_pair: SetsPair) -> None:
 
 
 @given(strategies.sets)
-def test_idempotence(set_: Set) -> None:
+def test_idempotence(set_: BaseSet) -> None:
     result = set_ | set_
 
     assert result == set_
 
 
 @given(strategies.empty_sets_with_sets)
-def test_left_neutral_element(empty_tree_with_tree: SetsPair) -> None:
+def test_left_neutral_element(empty_tree_with_tree: BaseSetsPair) -> None:
     empty_tree, set_ = empty_tree_with_tree
 
     result = empty_tree | set_
@@ -55,7 +55,7 @@ def test_left_neutral_element(empty_tree_with_tree: SetsPair) -> None:
 
 
 @given(strategies.empty_sets_with_sets)
-def test_right_neutral_element(empty_tree_with_tree: SetsPair) -> None:
+def test_right_neutral_element(empty_tree_with_tree: BaseSetsPair) -> None:
     empty_tree, set_ = empty_tree_with_tree
 
     result = set_ | empty_tree
@@ -64,7 +64,7 @@ def test_right_neutral_element(empty_tree_with_tree: SetsPair) -> None:
 
 
 @given(strategies.sets_pairs)
-def test_absorption_identity(sets_pair: SetsPair) -> None:
+def test_absorption_identity(sets_pair: BaseSetsPair) -> None:
     left_set, right_set = sets_pair
 
     result = left_set | (left_set & right_set)
@@ -73,7 +73,7 @@ def test_absorption_identity(sets_pair: SetsPair) -> None:
 
 
 @given(strategies.sets_pairs)
-def test_commutativity(sets_pair: SetsPair) -> None:
+def test_commutativity(sets_pair: BaseSetsPair) -> None:
     left_set, right_set = sets_pair
 
     result = left_set | right_set
@@ -82,7 +82,7 @@ def test_commutativity(sets_pair: SetsPair) -> None:
 
 
 @given(strategies.sets_triplets)
-def test_associativity(sets_triplet: SetsTriplet) -> None:
+def test_associativity(sets_triplet: BaseSetsTriplet) -> None:
     left_set, mid_tree, right_set = sets_triplet
 
     result = (left_set | mid_tree) | right_set
@@ -91,7 +91,7 @@ def test_associativity(sets_triplet: SetsTriplet) -> None:
 
 
 @given(strategies.sets_triplets)
-def test_difference_operand(sets_triplet: SetsTriplet) -> None:
+def test_difference_operand(sets_triplet: BaseSetsTriplet) -> None:
     left_set, mid_tree, right_set = sets_triplet
 
     result = (left_set - mid_tree) | right_set
@@ -100,7 +100,7 @@ def test_difference_operand(sets_triplet: SetsTriplet) -> None:
 
 
 @given(strategies.sets_triplets)
-def test_distribution_over_intersection(sets_triplet: SetsTriplet) -> None:
+def test_distribution_over_intersection(sets_triplet: BaseSetsTriplet) -> None:
     left_set, mid_tree, right_set = sets_triplet
 
     result = left_set | (mid_tree & right_set)
@@ -109,7 +109,7 @@ def test_distribution_over_intersection(sets_triplet: SetsTriplet) -> None:
 
 
 @given(strategies.sets_pairs)
-def test_connection_with_subset_relation(sets_pair: SetsPair) -> None:
+def test_connection_with_subset_relation(sets_pair: BaseSetsPair) -> None:
     left_set, right_set = sets_pair
 
     result = left_set | right_set
@@ -118,7 +118,7 @@ def test_connection_with_subset_relation(sets_pair: SetsPair) -> None:
 
 
 @given(strategies.sets_pairs)
-def test_connection_with_disjoint(sets_pair: SetsPair) -> None:
+def test_connection_with_disjoint(sets_pair: BaseSetsPair) -> None:
     left_set, right_set = sets_pair
 
     result = left_set | right_set

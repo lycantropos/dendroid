@@ -1,7 +1,6 @@
 from copy import copy
 from typing import Tuple
 
-import pytest
 from hypothesis import given
 
 from dendroid.hints import (Item,

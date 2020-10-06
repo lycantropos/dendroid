@@ -1,8 +1,8 @@
 from hypothesis import given
 
-from tests.utils import (Set,
-                         SetsPair,
-                         SetsTriplet,
+from tests.utils import (BaseSet,
+                         BaseSetsPair,
+                         BaseSetsTriplet,
                          equivalence,
                          is_left_subtree_less_than_right_subtree,
                          to_height,
@@ -12,7 +12,7 @@ from . import strategies
 
 
 @given(strategies.sets_pairs)
-def test_type(sets_pair: SetsPair) -> None:
+def test_type(sets_pair: BaseSetsPair) -> None:
     left_set, right_set = sets_pair
 
     result = left_set - right_set
@@ -21,7 +21,7 @@ def test_type(sets_pair: SetsPair) -> None:
 
 
 @given(strategies.sets_pairs)
-def test_properties(sets_pair: SetsPair) -> None:
+def test_properties(sets_pair: BaseSetsPair) -> None:
     left_set, right_set = sets_pair
 
     result = left_set - right_set
@@ -38,14 +38,14 @@ def test_properties(sets_pair: SetsPair) -> None:
 
 
 @given(strategies.sets)
-def test_self_inverse(set_: Set) -> None:
+def test_self_inverse(set_: BaseSet) -> None:
     result = set_ - set_
 
     assert len(result) == 0
 
 
 @given(strategies.empty_sets_with_sets)
-def test_left_absorbing_element(empty_tree_with_tree: SetsPair) -> None:
+def test_left_absorbing_element(empty_tree_with_tree: BaseSetsPair) -> None:
     empty_tree, set_ = empty_tree_with_tree
 
     result = empty_tree - set_
@@ -54,7 +54,7 @@ def test_left_absorbing_element(empty_tree_with_tree: SetsPair) -> None:
 
 
 @given(strategies.empty_sets_with_sets)
-def test_right_neutral_element(empty_tree_with_tree: SetsPair) -> None:
+def test_right_neutral_element(empty_tree_with_tree: BaseSetsPair) -> None:
     empty_tree, set_ = empty_tree_with_tree
 
     result = set_ - empty_tree
@@ -63,7 +63,8 @@ def test_right_neutral_element(empty_tree_with_tree: SetsPair) -> None:
 
 
 @given(strategies.sets_pairs)
-def test_expressing_intersection_as_difference(sets_pair: SetsPair) -> None:
+def test_expressing_intersection_as_difference(sets_pair: BaseSetsPair
+                                               ) -> None:
     left_set, right_set = sets_pair
 
     result = left_set - (left_set - right_set)
@@ -72,7 +73,7 @@ def test_expressing_intersection_as_difference(sets_pair: SetsPair) -> None:
 
 
 @given(strategies.sets_triplets)
-def test_difference_subtrahend(sets_triplet: SetsTriplet) -> None:
+def test_difference_subtrahend(sets_triplet: BaseSetsTriplet) -> None:
     left_set, mid_tree, right_set = sets_triplet
 
     result = left_set - (mid_tree - right_set)
@@ -81,7 +82,7 @@ def test_difference_subtrahend(sets_triplet: SetsTriplet) -> None:
 
 
 @given(strategies.sets_triplets)
-def test_intersection_minuend(sets_triplet: SetsTriplet) -> None:
+def test_intersection_minuend(sets_triplet: BaseSetsTriplet) -> None:
     left_set, mid_tree, right_set = sets_triplet
 
     result = (left_set & mid_tree) - right_set
@@ -90,7 +91,7 @@ def test_intersection_minuend(sets_triplet: SetsTriplet) -> None:
 
 
 @given(strategies.sets_triplets)
-def test_intersection_subtrahend(sets_triplet: SetsTriplet) -> None:
+def test_intersection_subtrahend(sets_triplet: BaseSetsTriplet) -> None:
     left_set, mid_tree, right_set = sets_triplet
 
     result = left_set - (mid_tree & right_set)
@@ -99,7 +100,7 @@ def test_intersection_subtrahend(sets_triplet: SetsTriplet) -> None:
 
 
 @given(strategies.sets_triplets)
-def test_union_subtrahend(sets_triplet: SetsTriplet) -> None:
+def test_union_subtrahend(sets_triplet: BaseSetsTriplet) -> None:
     left_set, mid_tree, right_set = sets_triplet
 
     result = left_set - (mid_tree | right_set)
@@ -108,7 +109,7 @@ def test_union_subtrahend(sets_triplet: SetsTriplet) -> None:
 
 
 @given(strategies.sets_pairs)
-def test_connection_with_subset_relation(sets_pair: SetsPair) -> None:
+def test_connection_with_subset_relation(sets_pair: BaseSetsPair) -> None:
     left_set, right_set = sets_pair
 
     result = left_set - right_set
@@ -117,7 +118,7 @@ def test_connection_with_subset_relation(sets_pair: SetsPair) -> None:
 
 
 @given(strategies.sets_pairs)
-def test_connection_with_disjoint(sets_pair: SetsPair) -> None:
+def test_connection_with_disjoint(sets_pair: BaseSetsPair) -> None:
     left_set, right_set = sets_pair
 
     result = left_set - right_set

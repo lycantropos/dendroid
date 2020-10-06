@@ -2,7 +2,7 @@ from typing import Tuple
 
 from hypothesis import given
 
-from tests.utils import (Set,
+from tests.utils import (BaseSet,
                          are_nodes_parents_to_children,
                          do_paths_to_leaves_have_same_black_nodes_count,
                          do_red_nodes_have_black_children,
@@ -11,7 +11,7 @@ from . import strategies
 
 
 @given(strategies.sets_pairs)
-def test_properties(sets_pair: Tuple[Set, Set]) -> None:
+def test_properties(sets_pair: Tuple[BaseSet, BaseSet]) -> None:
     left_set, right_set = sets_pair
 
     left_set -= right_set

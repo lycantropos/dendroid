@@ -1,20 +1,20 @@
 from hypothesis import given
 
-from tests.utils import (Set,
-                         SetsPair,
-                         SetsTriplet,
+from tests.utils import (ItemsView,
+                         ItemsViewsPair,
+                         ItemsViewsTriplet,
                          equivalence,
                          implication)
 from . import strategies
 
 
 @given(strategies.items_views)
-def test_irreflexivity(items_view: Set) -> None:
+def test_irreflexivity(items_view: ItemsView) -> None:
     assert not items_view > items_view
 
 
 @given(strategies.items_views_pairs)
-def test_asymmetry(items_views_pair: SetsPair) -> None:
+def test_asymmetry(items_views_pair: ItemsViewsPair) -> None:
     first_items_view, second_items_view = items_views_pair
 
     assert implication(first_items_view > second_items_view,
@@ -22,7 +22,7 @@ def test_asymmetry(items_views_pair: SetsPair) -> None:
 
 
 @given(strategies.items_views_triplets)
-def test_transitivity(items_views_triplet: SetsTriplet) -> None:
+def test_transitivity(items_views_triplet: ItemsViewsTriplet) -> None:
     first_items_view, second_items_view, third_items_view = items_views_triplet
 
     assert implication(first_items_view > second_items_view > third_items_view,
@@ -30,7 +30,7 @@ def test_transitivity(items_views_triplet: SetsTriplet) -> None:
 
 
 @given(strategies.items_views_pairs)
-def test_connection_with_lower_than(items_views_pair: SetsPair) -> None:
+def test_connection_with_lower_than(items_views_pair: ItemsViewsPair) -> None:
     first_items_view, second_items_view = items_views_pair
 
     assert equivalence(first_items_view > second_items_view,

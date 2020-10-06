@@ -3,7 +3,7 @@ from typing import Tuple
 from hypothesis import given
 
 from dendroid.hints import Value
-from tests.utils import (Set,
+from tests.utils import (BaseSet,
                          are_keys_equal,
                          implication,
                          to_height,
@@ -13,7 +13,7 @@ from . import strategies
 
 
 @given(strategies.non_empty_sets_with_values)
-def test_properties(set_with_value: Tuple[Set, Value]) -> None:
+def test_properties(set_with_value: Tuple[BaseSet, Value]) -> None:
     set_, value = set_with_value
 
     assert implication(value in set_,
@@ -22,7 +22,7 @@ def test_properties(set_with_value: Tuple[Set, Value]) -> None:
 
 
 @given(strategies.non_empty_sets)
-def test_accessing_in_order(set_: Set) -> None:
+def test_accessing_in_order(set_: BaseSet) -> None:
     for value in set_:
         value in set_
 

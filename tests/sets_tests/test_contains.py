@@ -3,7 +3,7 @@ from typing import Tuple
 from hypothesis import given
 
 from dendroid.hints import Value
-from tests.utils import (Set,
+from tests.utils import (BaseSet,
                          are_keys_equal,
                          equivalence,
                          set_value_to_key,
@@ -12,14 +12,14 @@ from . import strategies
 
 
 @given(strategies.empty_sets_with_values)
-def test_base_case(set_with_value: Tuple[Set, Value]) -> None:
+def test_base_case(set_with_value: Tuple[BaseSet, Value]) -> None:
     set_, value = set_with_value
 
     assert value not in set_
 
 
 @given(strategies.sets_with_values_pairs)
-def test_step(set_with_values_pair: Tuple[Set, Tuple[Value, Value]]
+def test_step(set_with_values_pair: Tuple[BaseSet, Tuple[Value, Value]]
               ) -> None:
     set_, (extra_value, value) = set_with_values_pair
 

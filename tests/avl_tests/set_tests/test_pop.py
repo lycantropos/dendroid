@@ -1,6 +1,6 @@
 from hypothesis import given
 
-from tests.utils import (Set,
+from tests.utils import (BaseSet,
                          are_balance_factors_normalized,
                          are_nodes_heights_correct,
                          are_nodes_parents_to_children)
@@ -8,7 +8,7 @@ from . import strategies
 
 
 @given(strategies.non_empty_sets)
-def test_properties(set_: Set) -> None:
+def test_properties(set_: BaseSet) -> None:
     set_.pop()
 
     tree = set_.tree

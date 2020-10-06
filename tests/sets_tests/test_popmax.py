@@ -1,7 +1,7 @@
 import pytest
 from hypothesis import given
 
-from tests.utils import (Set,
+from tests.utils import (BaseSet,
                          is_left_subtree_less_than_right_subtree,
                          set_value_to_key,
                          to_height,
@@ -11,7 +11,7 @@ from . import strategies
 
 
 @given(strategies.non_empty_sets)
-def test_properties(set_: Set) -> None:
+def test_properties(set_: BaseSet) -> None:
     set_.popmax()
 
     tree = set_.tree
@@ -22,13 +22,13 @@ def test_properties(set_: Set) -> None:
 
 
 @given(strategies.empty_sets)
-def test_base_case(set_: Set) -> None:
-    with pytest.raises(ValueError):
+def test_base_case(set_: BaseSet) -> None:
+    with pytest.raises(KeyError):
         set_.popmax()
 
 
 @given(strategies.non_empty_sets)
-def test_step(set_: Set) -> None:
+def test_step(set_: BaseSet) -> None:
     result = set_.popmax()
 
     assert result not in set_

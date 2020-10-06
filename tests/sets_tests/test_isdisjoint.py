@@ -3,8 +3,8 @@ from typing import Tuple
 from hypothesis import given
 
 from dendroid.hints import Value
-from tests.utils import (Set,
-                         SetsPair,
+from tests.utils import (BaseSet,
+                         BaseSetsPair,
                          equivalence,
                          implication,
                          to_set_including_value)
@@ -12,7 +12,7 @@ from . import strategies
 
 
 @given(strategies.sets_pairs)
-def test_type(sets_pair: SetsPair) -> None:
+def test_type(sets_pair: BaseSetsPair) -> None:
     first_set, second_set = sets_pair
 
     result = first_set.isdisjoint(second_set)
@@ -21,14 +21,14 @@ def test_type(sets_pair: SetsPair) -> None:
 
 
 @given(strategies.empty_sets_with_sets)
-def test_base_case(empty_set_with_set: SetsPair) -> None:
+def test_base_case(empty_set_with_set: BaseSetsPair) -> None:
     empty_set, set_ = empty_set_with_set
 
     assert empty_set.isdisjoint(set_)
 
 
 @given(strategies.sets_pairs_with_values)
-def test_step(two_sets_with_value: Tuple[Set, Set, Value]) -> None:
+def test_step(two_sets_with_value: Tuple[BaseSet, BaseSet, Value]) -> None:
     left_set, right_set, value = two_sets_with_value
 
     next_left_set = to_set_including_value(left_set, value)
@@ -41,7 +41,7 @@ def test_step(two_sets_with_value: Tuple[Set, Set, Value]) -> None:
 
 
 @given(strategies.sets_pairs)
-def test_symmetry(sets_pair: SetsPair) -> None:
+def test_symmetry(sets_pair: BaseSetsPair) -> None:
     first_set, second_set = sets_pair
 
     assert equivalence(first_set.isdisjoint(second_set),

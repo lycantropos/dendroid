@@ -2,7 +2,7 @@ from hypothesis import given
 
 from dendroid import avl
 from tests import strategies
-from tests.utils import (Set,
+from tests.utils import (BaseSet,
                          ValuesListWithOrder,
                          are_balance_factors_normalized,
                          are_nodes_heights_correct,
@@ -19,7 +19,7 @@ def test_type(values_with_order: ValuesListWithOrder) -> None:
     result = avl.set_(*values,
                       key=order)
 
-    assert isinstance(result, Set)
+    assert isinstance(result, BaseSet)
 
 
 @given(strategies.values_lists_with_orders)

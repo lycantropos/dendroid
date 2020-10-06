@@ -1,8 +1,8 @@
 from hypothesis import given
 
-from tests.utils import (Set,
-                         SetsPair,
-                         SetsTriplet,
+from tests.utils import (BaseSet,
+                         BaseSetsPair,
+                         BaseSetsTriplet,
                          equivalence,
                          is_left_subtree_less_than_right_subtree,
                          to_height,
@@ -12,7 +12,7 @@ from . import strategies
 
 
 @given(strategies.sets_pairs)
-def test_type(sets_pair: SetsPair) -> None:
+def test_type(sets_pair: BaseSetsPair) -> None:
     left_set, right_set = sets_pair
 
     result = left_set ^ right_set
@@ -21,7 +21,7 @@ def test_type(sets_pair: SetsPair) -> None:
 
 
 @given(strategies.sets_pairs)
-def test_properties(sets_pair: SetsPair) -> None:
+def test_properties(sets_pair: BaseSetsPair) -> None:
     left_set, right_set = sets_pair
 
     result = left_set ^ right_set
@@ -40,14 +40,14 @@ def test_properties(sets_pair: SetsPair) -> None:
 
 
 @given(strategies.sets)
-def test_self_inverse(set_: Set) -> None:
+def test_self_inverse(set_: BaseSet) -> None:
     result = set_ ^ set_
 
     assert len(result) == 0
 
 
 @given(strategies.empty_sets_with_sets)
-def test_left_neutral_element(empty_set_with_set: SetsPair) -> None:
+def test_left_neutral_element(empty_set_with_set: BaseSetsPair) -> None:
     empty_set, set_ = empty_set_with_set
 
     result = empty_set ^ set_
@@ -56,7 +56,7 @@ def test_left_neutral_element(empty_set_with_set: SetsPair) -> None:
 
 
 @given(strategies.empty_sets_with_sets)
-def test_right_neutral_element(empty_set_with_set: SetsPair) -> None:
+def test_right_neutral_element(empty_set_with_set: BaseSetsPair) -> None:
     empty_set, set_ = empty_set_with_set
 
     result = set_ ^ empty_set
@@ -65,7 +65,7 @@ def test_right_neutral_element(empty_set_with_set: SetsPair) -> None:
 
 
 @given(strategies.sets_pairs)
-def test_commutativity(sets_pair: SetsPair) -> None:
+def test_commutativity(sets_pair: BaseSetsPair) -> None:
     left_set, right_set = sets_pair
 
     result = left_set ^ right_set
@@ -74,7 +74,7 @@ def test_commutativity(sets_pair: SetsPair) -> None:
 
 
 @given(strategies.sets_triplets)
-def test_associativity(sets_triplet: SetsTriplet) -> None:
+def test_associativity(sets_triplet: BaseSetsTriplet) -> None:
     left_set, mid_set, right_set = sets_triplet
 
     result = (left_set ^ mid_set) ^ right_set
@@ -83,7 +83,8 @@ def test_associativity(sets_triplet: SetsTriplet) -> None:
 
 
 @given(strategies.sets_pairs)
-def test_equivalent_using_union_of_differences(sets_pair: SetsPair) -> None:
+def test_equivalent_using_union_of_differences(sets_pair: BaseSetsPair
+                                               ) -> None:
     left_set, right_set = sets_pair
 
     result = (left_set - right_set) | (right_set - left_set)
@@ -93,7 +94,7 @@ def test_equivalent_using_union_of_differences(sets_pair: SetsPair) -> None:
 
 @given(strategies.sets_pairs)
 def test_equivalent_using_difference_of_union_and_intersection(
-        sets_pair: SetsPair) -> None:
+        sets_pair: BaseSetsPair) -> None:
     left_set, right_set = sets_pair
 
     result = (left_set | right_set) - (right_set & left_set)
@@ -102,7 +103,7 @@ def test_equivalent_using_difference_of_union_and_intersection(
 
 
 @given(strategies.sets_pairs)
-def test_expressing_union_as_symmetric_difference(sets_pair: SetsPair
+def test_expressing_union_as_symmetric_difference(sets_pair: BaseSetsPair
                                                   ) -> None:
     left_set, right_set = sets_pair
 
@@ -112,7 +113,7 @@ def test_expressing_union_as_symmetric_difference(sets_pair: SetsPair
 
 
 @given(strategies.sets_triplets)
-def test_repeated(sets_triplet: SetsTriplet) -> None:
+def test_repeated(sets_triplet: BaseSetsTriplet) -> None:
     left_set, mid_set, right_set = sets_triplet
 
     result = (left_set ^ mid_set) ^ (mid_set ^ right_set)
@@ -121,7 +122,7 @@ def test_repeated(sets_triplet: SetsTriplet) -> None:
 
 
 @given(strategies.sets_pairs)
-def test_connection_with_disjoint(sets_pair: SetsPair) -> None:
+def test_connection_with_disjoint(sets_pair: BaseSetsPair) -> None:
     left_set, right_set = sets_pair
 
     result = left_set ^ right_set

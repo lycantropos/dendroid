@@ -3,12 +3,12 @@ import sys
 
 from hypothesis import given
 
-from tests.utils import Set
+from tests.utils import BaseSet
 from . import strategies
 
 
 @given(strategies.sets)
-def test_basic(set_: Set) -> None:
+def test_basic(set_: BaseSet) -> None:
     result = repr(set_)
 
     type_ = type(set_)
@@ -17,7 +17,7 @@ def test_basic(set_: Set) -> None:
 
 
 @given(strategies.sets_with_none_orders)
-def test_evaluation(set_: Set) -> None:
+def test_evaluation(set_: BaseSet) -> None:
     result = repr(set_)
 
     type_ = type(set_)

@@ -1,20 +1,20 @@
 from hypothesis import given
 
-from tests.utils import (Set,
-                         SetsPair,
-                         SetsTriplet,
+from tests.utils import (KeysView,
+                         KeysViewsPair,
+                         KeysViewsTriplet,
                          equivalence,
                          implication)
 from . import strategies
 
 
 @given(strategies.keys_views)
-def test_irreflexivity(keys_view: Set) -> None:
+def test_irreflexivity(keys_view: KeysView) -> None:
     assert not keys_view < keys_view
 
 
 @given(strategies.keys_views_pairs)
-def test_asymmetry(keys_views_pair: SetsPair) -> None:
+def test_asymmetry(keys_views_pair: KeysViewsPair) -> None:
     first_keys_view, second_keys_view = keys_views_pair
 
     assert implication(first_keys_view < second_keys_view,
@@ -22,7 +22,7 @@ def test_asymmetry(keys_views_pair: SetsPair) -> None:
 
 
 @given(strategies.keys_views_triplets)
-def test_transitivity(keys_views_triplet: SetsTriplet) -> None:
+def test_transitivity(keys_views_triplet: KeysViewsTriplet) -> None:
     first_keys_view, second_keys_view, third_keys_view = keys_views_triplet
 
     assert implication(first_keys_view < second_keys_view < third_keys_view,
@@ -30,7 +30,7 @@ def test_transitivity(keys_views_triplet: SetsTriplet) -> None:
 
 
 @given(strategies.keys_views_pairs)
-def test_connection_with_greater_than(keys_views_pair: SetsPair) -> None:
+def test_connection_with_greater_than(keys_views_pair: KeysViewsPair) -> None:
     first_keys_view, second_keys_view = keys_views_pair
 
     assert equivalence(first_keys_view < second_keys_view,

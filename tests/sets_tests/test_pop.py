@@ -3,7 +3,7 @@ from copy import copy
 import pytest
 from hypothesis import given
 
-from tests.utils import (Set,
+from tests.utils import (BaseSet,
                          is_left_subtree_less_than_right_subtree,
                          to_height,
                          to_max_binary_tree_height,
@@ -12,7 +12,7 @@ from . import strategies
 
 
 @given(strategies.non_empty_sets)
-def test_properties(set_: Set) -> None:
+def test_properties(set_: BaseSet) -> None:
     result = set_.pop()
 
     tree = set_.tree
@@ -24,13 +24,13 @@ def test_properties(set_: Set) -> None:
 
 
 @given(strategies.empty_sets)
-def test_base_case(set_: Set) -> None:
-    with pytest.raises(ValueError):
+def test_base_case(set_: BaseSet) -> None:
+    with pytest.raises(KeyError):
         set_.pop()
 
 
 @given(strategies.non_empty_sets)
-def test_step(set_: Set) -> None:
+def test_step(set_: BaseSet) -> None:
     original = copy(set_)
 
     result = set_.pop()

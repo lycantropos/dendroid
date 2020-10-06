@@ -2,7 +2,7 @@ from hypothesis import given
 
 from dendroid import red_black
 from tests import strategies
-from tests.utils import (Set,
+from tests.utils import (BaseSet,
                          ValuesListWithOrder,
                          are_nodes_parents_to_children,
                          do_paths_to_leaves_have_same_black_nodes_count,
@@ -20,7 +20,7 @@ def test_type(values_with_order: ValuesListWithOrder) -> None:
     result = red_black.set_(*values,
                             key=key)
 
-    assert isinstance(result, Set)
+    assert isinstance(result, BaseSet)
 
 
 @given(strategies.values_lists_with_orders)

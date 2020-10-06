@@ -10,7 +10,7 @@ from hypothesis import strategies
 from dendroid.hints import (Key,
                             Order,
                             Value)
-from tests.utils import (Set,
+from tests.utils import (BaseSet,
                          Strategy,
                          ValuesListsWithOrder)
 
@@ -60,7 +60,7 @@ def to_values_lists_with_orders(
     return strategies.tuples(*lists_strategies, strategies.none() | orders)
 
 
-def to_non_empty_sets_with_their_values(set_: Set
-                                        ) -> Strategy[Tuple[Set, Value]]:
+def to_non_empty_sets_with_their_values(set_: BaseSet
+                                        ) -> Strategy[Tuple[BaseSet, Value]]:
     return strategies.tuples(strategies.just(set_),
                              strategies.sampled_from(list(set_)))

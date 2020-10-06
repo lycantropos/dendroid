@@ -1,8 +1,8 @@
 from hypothesis import given
 
-from tests.utils import (Set,
-                         SetsPair,
-                         SetsTriplet,
+from tests.utils import (BaseSet,
+                         BaseSetsPair,
+                         BaseSetsTriplet,
                          is_left_subtree_less_than_right_subtree,
                          to_height,
                          to_max_binary_tree_height,
@@ -11,7 +11,7 @@ from . import strategies
 
 
 @given(strategies.sets_pairs)
-def test_type(sets_pair: SetsPair) -> None:
+def test_type(sets_pair: BaseSetsPair) -> None:
     left_set, right_set = sets_pair
 
     result = left_set & right_set
@@ -20,7 +20,7 @@ def test_type(sets_pair: SetsPair) -> None:
 
 
 @given(strategies.sets_pairs)
-def test_properties(sets_pair: SetsPair) -> None:
+def test_properties(sets_pair: BaseSetsPair) -> None:
     left_set, right_set = sets_pair
 
     result = left_set & right_set
@@ -39,14 +39,14 @@ def test_properties(sets_pair: SetsPair) -> None:
 
 
 @given(strategies.sets)
-def test_idempotence(set_: Set) -> None:
+def test_idempotence(set_: BaseSet) -> None:
     result = set_ & set_
 
     assert result == set_
 
 
 @given(strategies.empty_sets_with_sets)
-def test_left_absorbing_element(empty_set_with_set: SetsPair) -> None:
+def test_left_absorbing_element(empty_set_with_set: BaseSetsPair) -> None:
     empty_set, set_ = empty_set_with_set
 
     result = empty_set & set_
@@ -56,7 +56,7 @@ def test_left_absorbing_element(empty_set_with_set: SetsPair) -> None:
 
 
 @given(strategies.empty_sets_with_sets)
-def test_right_absorbing_element(empty_set_with_set: SetsPair) -> None:
+def test_right_absorbing_element(empty_set_with_set: BaseSetsPair) -> None:
     empty_set, set_ = empty_set_with_set
 
     result = set_ & empty_set
@@ -66,7 +66,7 @@ def test_right_absorbing_element(empty_set_with_set: SetsPair) -> None:
 
 
 @given(strategies.sets_pairs)
-def test_absorption_identity(sets_pair: SetsPair) -> None:
+def test_absorption_identity(sets_pair: BaseSetsPair) -> None:
     left_set, right_set = sets_pair
 
     result = left_set & (left_set | right_set)
@@ -75,7 +75,7 @@ def test_absorption_identity(sets_pair: SetsPair) -> None:
 
 
 @given(strategies.sets_pairs)
-def test_commutativity(sets_pair: SetsPair) -> None:
+def test_commutativity(sets_pair: BaseSetsPair) -> None:
     left_set, right_set = sets_pair
 
     result = left_set & right_set
@@ -84,7 +84,7 @@ def test_commutativity(sets_pair: SetsPair) -> None:
 
 
 @given(strategies.sets_triplets)
-def test_associativity(sets_triplet: SetsTriplet) -> None:
+def test_associativity(sets_triplet: BaseSetsTriplet) -> None:
     left_set, mid_set, right_set = sets_triplet
 
     result = (left_set & mid_set) & right_set
@@ -93,7 +93,7 @@ def test_associativity(sets_triplet: SetsTriplet) -> None:
 
 
 @given(strategies.sets_triplets)
-def test_difference_operand(sets_triplet: SetsTriplet) -> None:
+def test_difference_operand(sets_triplet: BaseSetsTriplet) -> None:
     left_set, mid_set, right_set = sets_triplet
 
     result = (left_set - mid_set) & right_set
@@ -102,7 +102,7 @@ def test_difference_operand(sets_triplet: SetsTriplet) -> None:
 
 
 @given(strategies.sets_triplets)
-def test_distribution_over_union(sets_triplet: SetsTriplet) -> None:
+def test_distribution_over_union(sets_triplet: BaseSetsTriplet) -> None:
     left_set, mid_set, right_set = sets_triplet
 
     result = left_set & (mid_set | right_set)
@@ -111,7 +111,7 @@ def test_distribution_over_union(sets_triplet: SetsTriplet) -> None:
 
 
 @given(strategies.sets_pairs)
-def test_connection_with_subset_relation(sets_pair: SetsPair) -> None:
+def test_connection_with_subset_relation(sets_pair: BaseSetsPair) -> None:
     left_set, right_set = sets_pair
 
     result = left_set & right_set

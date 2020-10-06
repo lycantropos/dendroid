@@ -1,19 +1,19 @@
 import pytest
 from hypothesis import given
 
-from tests.utils import (Set,
+from tests.utils import (BaseSet,
                          set_value_to_key)
 from . import strategies
 
 
 @given(strategies.empty_sets)
-def test_base_case(set_: Set) -> None:
+def test_base_case(set_: BaseSet) -> None:
     with pytest.raises(ValueError):
         set_.min()
 
 
 @given(strategies.non_empty_sets)
-def test_step(set_: Set) -> None:
+def test_step(set_: BaseSet) -> None:
     result = set_.min()
 
     assert result in set_
