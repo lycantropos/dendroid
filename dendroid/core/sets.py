@@ -130,7 +130,9 @@ class Set(BaseSet[Value]):
         return node.value
 
     def remove(self, value: Value) -> None:
-        self.tree.pop(value)
+        node = self.tree.pop(value)
+        if node is NIL:
+            raise ValueError('{!r} is not in set'.format(value))
 
 
 class KeyedSet(BaseSet[Value]):
@@ -198,7 +200,9 @@ class KeyedSet(BaseSet[Value]):
         return node.value
 
     def remove(self, value: Value) -> None:
-        self.tree.pop(self.key(value))
+        node = self.tree.pop(self.key(value))
+        if node is NIL:
+            raise ValueError('{!r} is not in set'.format(value))
 
 
 def set_constructor(tree_constructor: Callable[..., Tree],
