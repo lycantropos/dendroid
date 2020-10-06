@@ -64,14 +64,14 @@ class Map(Generic[Key, Value]):
     def __setitem__(self, key: Key, value: Value) -> None:
         self.tree.insert(key, value).value = value
 
+    def clear(self) -> None:
+        self.tree.clear()
+
     def get(self,
             key: Key,
             default: Optional[Value] = None) -> Optional[Value]:
         node = self.tree.find(key)
         return default if node is NIL else node.value
-
-    def clear(self) -> None:
-        self.tree.clear()
 
     def items(self) -> ItemsView[Key, Value]:
         return ItemsView(self.tree)
