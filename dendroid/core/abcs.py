@@ -150,7 +150,7 @@ class Tree(ABC, Generic[Key, Value]):
         """Returns node with the minimum key."""
         node = self.root
         if node is NIL:
-            raise ValueError('Tree is empty.')
+            return node
         while node.left is not NIL:
             node = node.left
         return node
