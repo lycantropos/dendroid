@@ -64,6 +64,13 @@ class Map(Generic[Key, Value]):
     def __setitem__(self, key: Key, value: Value) -> None:
         self.tree.insert(key, value).value = value
 
+    def ceil(self, key: Key) -> Value:
+        node = self.tree.supremum(key)
+        if node is NIL:
+            raise ValueError('No key found greater than or equal to {!r}'
+                             .format(key))
+        return node.value
+
     def clear(self) -> None:
         self.tree.clear()
 
