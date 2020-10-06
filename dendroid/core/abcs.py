@@ -120,6 +120,19 @@ class Tree(ABC, Generic[Key, Value]):
                 break
         return node
 
+    def infimum(self, key: Key) -> AnyNode:
+        """Returns first node with a key not greater than the given one."""
+        node, result = self.root, NIL
+        while node is not NIL:
+            if key < node.key:
+                node = node.left
+            elif node.key < key:
+                result, node = node, node.right
+            else:
+                result = node
+                break
+        return result
+
     @abstractmethod
     def insert(self, key: Key, value: Value) -> AnyNode:
         """Inserts given key-value pair in the tree."""
