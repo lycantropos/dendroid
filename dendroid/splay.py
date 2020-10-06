@@ -136,18 +136,18 @@ class Tree(_Tree[Key, Value]):
 
     def predecessor(self, node: Node) -> AnyNode:
         if node.left is NIL:
-            candidate, cursor, key = NIL, self.root, node.key
+            result, cursor, key = NIL, self.root, node.key
             while cursor is not node:
                 if cursor.key < key:
-                    candidate, cursor = cursor, cursor.right
+                    result, cursor = cursor, cursor.right
                 else:
                     cursor = cursor.left
-            return candidate
         else:
             result = node.left
             while result.right is not NIL:
                 result = result.right
-            return result
+        self._splay(result.key)
+        return result
 
     def remove(self, node: Node) -> None:
         self._splay(node.key)
@@ -155,18 +155,18 @@ class Tree(_Tree[Key, Value]):
 
     def successor(self, node: Node) -> AnyNode:
         if node.right is NIL:
-            candidate, cursor, key = NIL, self.root, node.key
+            result, cursor, key = NIL, self.root, node.key
             while cursor is not node:
                 if key < cursor.key:
-                    candidate, cursor = cursor, cursor.left
+                    result, cursor = cursor, cursor.left
                 else:
                     cursor = cursor.right
-            return candidate
         else:
             result = node.right
             while result.left is not NIL:
                 result = result.left
-            return result
+        self._splay(result.key)
+        return result
 
     def _splay(self, key: Key) -> None:
         next_root = self.root
