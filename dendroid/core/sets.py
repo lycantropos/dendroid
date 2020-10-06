@@ -32,6 +32,10 @@ class BaseSet(MutableSet[Value]):
         for node in reversed(self.tree):
             yield node.value
 
+    @abstractmethod
+    def ceil(self, value: Value) -> Value:
+        """Returns first value not less than the given one."""
+
     def clear(self) -> None:
         self.tree.clear()
 
@@ -67,6 +71,9 @@ class Set(BaseSet[Value]):
 
     def add(self, value: Value) -> None:
         self.tree.insert(value, value)
+
+    def ceil(self, value: Value) -> Value:
+        return self.tree.supremum(value).value
 
     def discard(self, value: Value) -> None:
         node = self.tree.find(value)
@@ -104,6 +111,9 @@ class KeyedSet(BaseSet[Value]):
 
     def add(self, value: Value) -> None:
         self.tree.insert(self.key(value), value)
+
+    def ceil(self, value: Value) -> Value:
+        return self.tree.supremum(self.key(value)).value
 
     def discard(self, value: Value) -> None:
         node = self.tree.find(self.key(value))
