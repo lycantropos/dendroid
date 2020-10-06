@@ -90,7 +90,11 @@ class Set(BaseSet[Value]):
         self.tree.remove(node)
 
     def floor(self, value: Value) -> Value:
-        return self.tree.infimum(value).value
+        node = self.tree.infimum(value)
+        if node is NIL:
+            raise ValueError('No value found less than or equal to {!r}'
+                             .format(value))
+        return node.value
 
     def from_iterable(self, iterable: Iterable[Value]) -> 'Set[Value]':
         return Set(self.tree.from_components(iterable))
@@ -137,7 +141,11 @@ class KeyedSet(BaseSet[Value]):
         self.tree.remove(node)
 
     def floor(self, value: Value) -> Value:
-        return self.tree.infimum(self.key(value)).value
+        node = self.tree.infimum(self.key(value))
+        if node is NIL:
+            raise ValueError('No value found less than or equal to {!r}'
+                             .format(value))
+        return node.value
 
     def from_iterable(self, iterable: Iterable[Value]) -> 'KeyedSet[Value]':
         values = list(iterable)
