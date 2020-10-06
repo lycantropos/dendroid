@@ -39,6 +39,10 @@ class BaseSet(MutableSet[Value]):
     def clear(self) -> None:
         self.tree.clear()
 
+    @abstractmethod
+    def floor(self, value: Value) -> Value:
+        """Returns first value not greater than the given one."""
+
     def max(self) -> Value:
         return self.tree.max().value
 
@@ -81,6 +85,9 @@ class Set(BaseSet[Value]):
             return
         self.tree.remove(node)
 
+    def floor(self, value: Value) -> Value:
+        return self.tree.infimum(value).value
+
     def from_iterable(self, iterable: Iterable[Value]) -> 'Set[Value]':
         return Set(self.tree.from_components(iterable))
 
@@ -120,6 +127,9 @@ class KeyedSet(BaseSet[Value]):
         if node is NIL:
             return
         self.tree.remove(node)
+
+    def floor(self, value: Value) -> Value:
+        return self.tree.infimum(self.key(value)).value
 
     def from_iterable(self, iterable: Iterable[Value]) -> 'KeyedSet[Value]':
         values = list(iterable)
