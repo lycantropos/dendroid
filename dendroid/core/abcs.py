@@ -197,10 +197,7 @@ class Tree(ABC, Generic[Key, Value]):
         node = self.find(key)
         if node is NIL:
             raise KeyError('No node found with key {!r}'.format(key))
-        result = self.predecessor(node)
-        if result is NIL:
-            raise KeyError('Corresponds to a minimum')
-        return result
+        return self.predecessor(node)
 
     @abstractmethod
     def remove(self, node: Node) -> None:
