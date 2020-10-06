@@ -213,6 +213,19 @@ class Tree(ABC, Generic[Key, Value]):
     def successor(self, node: Node) -> AnyNode:
         """Returns first node with a key greater than of the given one."""
 
+    def supremum(self, key: Key) -> AnyNode:
+        """Returns first node with a key not less than the given one."""
+        node, result = self.root, NIL
+        while node is not NIL:
+            if key < node.key:
+                result, node = node, node.left
+            elif node.key < key:
+                node = node.right
+            else:
+                result = node
+                break
+        return result
+
 
 Self = TypeVar('Self')
 
