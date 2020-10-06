@@ -60,10 +60,16 @@ class BaseSet(MutableSet[Value]):
         """Returns first value greater than the given one."""
 
     def popmax(self) -> Value:
-        return self.tree.popmax().value
+        node = self.tree.popmax()
+        if node is NIL:
+            raise ValueError('Set is empty')
+        return node.value
 
     def popmin(self) -> Value:
-        return self.tree.popmin().value
+        node = self.tree.popmin()
+        if node is NIL:
+            raise ValueError('Set is empty')
+        return node.value
 
     pop = popmin
 
