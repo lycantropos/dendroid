@@ -146,7 +146,8 @@ class Tree(_Tree[Key, Value]):
             result = node.left
             while result.right is not NIL:
                 result = result.right
-        self._splay(result.key)
+        if result is not NIL:
+            self._splay(result.key)
         return result
 
     def remove(self, node: Node) -> None:
@@ -165,7 +166,8 @@ class Tree(_Tree[Key, Value]):
             result = node.right
             while result.left is not NIL:
                 result = result.left
-        self._splay(result.key)
+        if result is not NIL:
+            self._splay(result.key)
         return result
 
     def _splay(self, key: Key) -> None:
