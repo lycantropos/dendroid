@@ -6,11 +6,11 @@ from typing import (Callable,
 
 from reprit.base import generate_repr
 
-from dendroid.hints import (Order,
-                            Value)
 from .abcs import (NIL,
                    MutableSet,
                    Tree)
+from .hints import (Order,
+                    Value)
 
 
 class BaseSet(MutableSet[Value]):

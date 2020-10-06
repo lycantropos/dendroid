@@ -9,9 +9,9 @@ from typing import (Any,
                     Sequence,
                     Tuple)
 
-from dendroid.hints import (Item,
-                            Key,
-                            Value)
+from .hints import (Item,
+                    Key,
+                    Value)
 
 
 class AntisymmetricKeyIndex:

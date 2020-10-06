@@ -8,12 +8,12 @@ from typing import (Callable,
 
 from reprit.base import generate_repr
 
-from dendroid.hints import (Item,
-                            Key,
-                            Value)
 from .abcs import (NIL,
                    Node,
                    Tree)
+from .hints import (Item,
+                    Key,
+                    Value)
 from .utils import split_items
 from .views import (ItemsView,
                     KeysView,

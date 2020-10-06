@@ -20,6 +20,8 @@ from .core.utils import (dereference_maybe as _dereference_maybe,
                          to_unique_sorted_items as _to_unique_sorted_items,
                          to_unique_sorted_values as _to_unique_sorted_values)
 from .hints import (Key,
+                    MapFactory,
+                    SetFactory,
                     Value)
 
 
@@ -256,5 +258,5 @@ class Tree(_Tree[Key, Value]):
             parent.right = replacement
 
 
-map_ = partial(_map_constructor, Tree.from_components)
-set_ = partial(_set_constructor, Tree.from_components)
+map_ = partial(_map_constructor, Tree.from_components)  # type: MapFactory
+set_ = partial(_set_constructor, Tree.from_components)  # type: SetFactory

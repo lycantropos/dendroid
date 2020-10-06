@@ -5,13 +5,13 @@ from typing import (Generic,
 
 from reprit.base import generate_repr
 
-from dendroid.hints import (Item,
-                            Key,
-                            Value)
 from .abcs import (NIL,
                    AbstractSet,
                    Self,
                    Tree)
+from .hints import (Item,
+                    Key,
+                    Value)
 from .utils import split_items
 
 
