@@ -140,19 +140,17 @@ class Tree(ABC, Generic[Key, Value]):
     def max(self) -> AnyNode:
         """Returns node with the maximum key."""
         node = self.root
-        if node is NIL:
-            return node
-        while node.right is not NIL:
-            node = node.right
+        if node is not NIL:
+            while node.right is not NIL:
+                node = node.right
         return node
 
     def min(self) -> AnyNode:
         """Returns node with the minimum key."""
         node = self.root
-        if node is NIL:
-            return node
-        while node.left is not NIL:
-            node = node.left
+        if node is not NIL:
+            while node.left is not NIL:
+                node = node.left
         return node
 
     def next(self, key: Key) -> AnyNode:
@@ -165,27 +163,24 @@ class Tree(ABC, Generic[Key, Value]):
     def pop(self, key: Key) -> AnyNode:
         """Removes node with given key from the tree."""
         node = self.find(key)
-        if node is NIL:
-            raise KeyError(key)
-        self.remove(node)
+        if node is not NIL:
+            self.remove(node)
         return node
 
     def popmin(self) -> AnyNode:
         node = self.root
-        if node is NIL:
-            raise KeyError
-        while node.left is not NIL:
-            node = node.left
-        self.remove(node)
+        if node is not NIL:
+            while node.left is not NIL:
+                node = node.left
+            self.remove(node)
         return node
 
     def popmax(self) -> AnyNode:
         node = self.root
-        if node is NIL:
-            raise KeyError
-        while node.right is not NIL:
-            node = node.right
-        self.remove(node)
+        if node is not NIL:
+            while node.right is not NIL:
+                node = node.right
+            self.remove(node)
         return node
 
     @abstractmethod
