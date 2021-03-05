@@ -5,15 +5,15 @@ services:
     build:
       context: .
       args:
-        - PYTHON_IMAGE=${CPYTHON_IMAGE_NAME}
-        - PYTHON_IMAGE_VERSION=${CPYTHON_IMAGE_VERSION}
+        - IMAGE_NAME=${CPYTHON_IMAGE_NAME}
+        - IMAGE_VERSION=${CPYTHON_IMAGE_VERSION}
     image: lycantropos/dendroid-cpython:1.1.0
     volumes:
-      - ./dendroid/:/opt/dendroid/dendroid/
-      - ./tests/:/opt/dendroid/tests/
-      - ./README.md:/opt/dendroid/README.md
-      - ./requirements.txt:/opt/dendroid/requirements.txt
-      - ./requirements-tests.txt:/opt/dendroid/requirements-tests.txt
-      - ./setup.py:/opt/dendroid/setup.py
+      - ./dendroid:/opt/dendroid/dendroid
       - ./pytest.ini:/opt/dendroid/pytest.ini
+      - ./README.md:/opt/dendroid/README.md
+      - ./requirements-tests.txt:/opt/dendroid/requirements-tests.txt
+      - ./requirements.txt:/opt/dendroid/requirements.txt
+      - ./setup.py:/opt/dendroid/setup.py
+      - ./tests:/opt/dendroid/tests
     entrypoint: pytest
