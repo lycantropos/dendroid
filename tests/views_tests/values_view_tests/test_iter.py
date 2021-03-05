@@ -1,5 +1,5 @@
 from hypothesis import given
-from lz.iterating import (capacity)
+from lz.iterating import capacity
 
 from tests.utils import ValuesView
 from . import strategies
