@@ -83,29 +83,29 @@ def test_commutativity(sets_pair: BaseSetsPair) -> None:
 
 @given(strategies.sets_triplets)
 def test_associativity(sets_triplet: BaseSetsTriplet) -> None:
-    left_set, mid_tree, right_set = sets_triplet
+    left_set, mid_set, right_set = sets_triplet
 
-    result = (left_set | mid_tree) | right_set
+    result = (left_set | mid_set) | right_set
 
-    assert result == left_set | (mid_tree | right_set)
+    assert result == left_set | (mid_set | right_set)
 
 
 @given(strategies.sets_triplets)
 def test_difference_operand(sets_triplet: BaseSetsTriplet) -> None:
-    left_set, mid_tree, right_set = sets_triplet
+    left_set, mid_set, right_set = sets_triplet
 
-    result = (left_set - mid_tree) | right_set
+    result = (left_set - mid_set) | right_set
 
-    assert result == (left_set | right_set) - (mid_tree - right_set)
+    assert result == (left_set | right_set) - (mid_set - right_set)
 
 
 @given(strategies.sets_triplets)
 def test_distribution_over_intersection(sets_triplet: BaseSetsTriplet) -> None:
-    left_set, mid_tree, right_set = sets_triplet
+    left_set, mid_set, right_set = sets_triplet
 
-    result = left_set | (mid_tree & right_set)
+    result = left_set | (mid_set & right_set)
 
-    assert result == (left_set | mid_tree) & (left_set | right_set)
+    assert result == (left_set | mid_set) & (left_set | right_set)
 
 
 @given(strategies.sets_pairs)

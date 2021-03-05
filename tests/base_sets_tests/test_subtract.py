@@ -74,38 +74,38 @@ def test_expressing_intersection_as_difference(sets_pair: BaseSetsPair
 
 @given(strategies.sets_triplets)
 def test_difference_subtrahend(sets_triplet: BaseSetsTriplet) -> None:
-    left_set, mid_tree, right_set = sets_triplet
+    left_set, mid_set, right_set = sets_triplet
 
-    result = left_set - (mid_tree - right_set)
+    result = left_set - (mid_set - right_set)
 
-    assert result == (left_set - mid_tree) | (left_set & right_set)
+    assert result == (left_set - mid_set) | (left_set & right_set)
 
 
 @given(strategies.sets_triplets)
 def test_intersection_minuend(sets_triplet: BaseSetsTriplet) -> None:
-    left_set, mid_tree, right_set = sets_triplet
+    left_set, mid_set, right_set = sets_triplet
 
-    result = (left_set & mid_tree) - right_set
+    result = (left_set & mid_set) - right_set
 
-    assert result == left_set & (mid_tree - right_set)
+    assert result == left_set & (mid_set - right_set)
 
 
 @given(strategies.sets_triplets)
 def test_intersection_subtrahend(sets_triplet: BaseSetsTriplet) -> None:
-    left_set, mid_tree, right_set = sets_triplet
+    left_set, mid_set, right_set = sets_triplet
 
-    result = left_set - (mid_tree & right_set)
+    result = left_set - (mid_set & right_set)
 
-    assert result == (left_set - mid_tree) | (left_set - right_set)
+    assert result == (left_set - mid_set) | (left_set - right_set)
 
 
 @given(strategies.sets_triplets)
 def test_union_subtrahend(sets_triplet: BaseSetsTriplet) -> None:
-    left_set, mid_tree, right_set = sets_triplet
+    left_set, mid_set, right_set = sets_triplet
 
-    result = left_set - (mid_tree | right_set)
+    result = left_set - (mid_set | right_set)
 
-    assert result == (left_set - mid_tree) & (left_set - right_set)
+    assert result == (left_set - mid_set) & (left_set - right_set)
 
 
 @given(strategies.sets_pairs)
