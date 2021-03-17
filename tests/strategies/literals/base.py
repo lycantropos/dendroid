@@ -6,6 +6,7 @@ from hypothesis import strategies
 
 from tests.utils import (Strategy,
                          ValuesListWithOrder,
+                         combine,
                          compose,
                          identity,
                          leap_traverse,
