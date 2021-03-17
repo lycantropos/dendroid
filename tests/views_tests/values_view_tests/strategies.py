@@ -4,7 +4,6 @@ from typing import (Callable,
                     Tuple)
 
 from hypothesis import strategies
-from lz.functional import compose
 
 from dendroid import (avl,
                       binary,
@@ -20,7 +19,9 @@ from tests.strategies import (single_values_with_orders,
 from tests.utils import (Map,
                          ValuesListWithOrder,
                          ValuesListsWithOrder,
-                         ValuesView, has_size_two_or_more)
+                         ValuesView,
+                         compose,
+                         has_size_two_or_more)
 
 factories = (strategies.sampled_from([binary.map_, avl.map_, red_black.map_,
                                       splay.map_])

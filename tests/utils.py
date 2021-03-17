@@ -1,9 +1,11 @@
 import math
 import pickle
-from functools import singledispatch
+from collections import deque
+from functools import (partial,
+                       singledispatch)
 from itertools import (chain,
-                       groupby,
-                       islice)
+                       count,
+                       groupby)
 from typing import (Any,
                     Callable,
                     Iterable,
@@ -16,9 +18,6 @@ from typing import (Any,
                     Union)
 
 from hypothesis.strategies import SearchStrategy
-from lz import left
-from lz.functional import compose
-from lz.iterating import interleave
 
 from dendroid import (avl,
                       binary,
@@ -40,6 +39,8 @@ from dendroid.hints import (Item,
                             Order,
                             Value)
 
+Domain = TypeVar('Domain')
+Range = TypeVar('Range')
 AnyNode = TypeVar('AnyNode', binary.Node, avl.Node, red_black.Node, splay.Node,
                   NIL)
 Strategy = SearchStrategy
@@ -84,9 +85,78 @@ def all_equal(iterable: Iterable[Any]) -> bool:
     return next(groups, True) and not next(groups, False)
 
 
+def to_constant(value: Value) -> Callable[..., Value]:
+    def constant(*_, **__) -> Value:
+        return value
+
+    return constant
+
+
+def identity(value: Value) -> Value:
+    return value
+
+
+def capacity(iterable: Iterable[Any]) -> int:
+    counter = count()
+    deque(zip(iterable, counter),
+          maxlen=0)
+    return next(counter)
+
+
+def combination(functions: Tuple[Callable[[Domain], Range], ...],
+                arguments: Tuple[Domain, ...]) -> Tuple[Range, ...]:
+    return tuple(function(argument)
+                 for function, argument in zip(functions, arguments))
+
+
+def combine(*functions: Callable[[Domain], Range]
+            ) -> Callable[[Tuple[Domain, ...]], Tuple[Range, ...]]:
+    return partial(combination, functions)
+
+
+def composition(functions: Tuple[Callable[[Domain], Range], ...],
+                *args: Domain, **kwargs: Domain) -> Range:
+    functions_iterator = reversed(functions)
+    result = next(functions_iterator)(*args, **kwargs)
+    for function in functions_iterator:
+        result = function(result)
+    return result
+
+
+def compose(*functions: Callable[..., Range]) -> Callable[..., Range]:
+    return partial(composition, functions)
+
+
+def first(iterable: Iterable[Value]) -> Value:
+    try:
+        return next(iter(iterable))
+    except StopIteration as error:
+        raise ValueError('Argument supposed to be non-empty.') from error
+
+
+def last(iterable: Iterable[Value]) -> Value:
+    try:
+        return deque(iterable,
+                     maxlen=1)[0]
+    except IndexError as error:
+        raise ValueError('Argument supposed to be non-empty.') from error
+
+
 def one(iterable: Iterable[bool]) -> bool:
     iterator = iter(iterable)
     return any(iterator) and not any(iterator)
+
+
+def pairwise(iterable: Iterable[Value]) -> Iterable[Tuple[Value, Value]]:
+    iterator = iter(iterable)
+    try:
+        value = next(iterator)
+    except StopIteration:
+        return
+    else:
+        for next_value in iterator:
+            yield value, next_value
+            value = next_value
 
 
 def pickle_round_trip(object_: Value) -> Value:
@@ -98,7 +168,15 @@ def has_size_two_or_more(sized: Sized) -> bool:
 
 
 def leap_traverse(values: List[Value]) -> List[Value]:
-    return list(islice(interleave([values, reversed(values)]), len(values)))
+    iterator, reversed_iterator = iter(values), reversed(values)
+    result = []
+    size_half, is_odd = divmod(len(values), 2)
+    for _ in range(size_half):
+        result.append(next(iterator))
+        result.append(next(reversed_iterator))
+    if is_odd:
+        result.append(next(iterator))
+    return result
 
 
 are_keys_equal = are_keys_equal
@@ -157,8 +235,8 @@ def to_node_height(node: AnyNode) -> int:
             - 1)
 
 
-to_min_binary_tree_height = compose(to_balanced_tree_height,
-                                    len)  # type: Callable[[Tree], int]
+def to_min_binary_tree_height(tree: Tree) -> int:
+    return to_balanced_tree_height(len(tree))
 
 
 @singledispatch
@@ -273,4 +351,4 @@ def to_keys_view_including_key(keys_view: KeysView[Key],
 
 
 def to_set_including_value(set_: BaseSet, value: Value) -> BaseSet:
-    return set_.from_iterable(left.attach(set_, value))
+    return set_.from_iterable((*set_, value))

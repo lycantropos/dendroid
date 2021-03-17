@@ -2,12 +2,12 @@ from typing import Tuple
 
 import pytest
 from hypothesis import given
-from lz.iterating import (first,
-                          last)
 
 from dendroid.hints import Value
 from tests.utils import (BaseSet,
+                         first,
                          is_left_subtree_less_than_right_subtree,
+                         last,
                          to_height,
                          to_max_binary_tree_height,
                          to_min_binary_tree_height)

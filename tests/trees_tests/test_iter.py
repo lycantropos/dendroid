@@ -1,8 +1,8 @@
 from hypothesis import given
-from lz.iterating import (capacity,
-                          pairwise)
 
-from tests.utils import Tree
+from tests.utils import (Tree,
+                         capacity,
+                         pairwise)
 from . import strategies
 
 

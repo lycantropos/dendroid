@@ -1,8 +1,8 @@
 from hypothesis import given
-from lz.iterating import (capacity,
-                          pairwise)
 
-from tests.utils import Map
+from tests.utils import (Map,
+                         capacity,
+                         pairwise)
 from . import strategies
 
 

@@ -5,7 +5,6 @@ from typing import (Callable,
                     Tuple)
 
 from hypothesis import strategies
-from lz.functional import compose
 
 from dendroid import (avl,
                       binary,
@@ -19,10 +18,12 @@ from tests.strategies import (non_empty_values_lists_with_orders,
                               two_or_more_values_with_orders,
                               values_lists_with_orders,
                               values_with_orders_strategies)
-from tests.utils import (Node, Strategy,
+from tests.utils import (Node,
+                         Strategy,
                          Tree,
                          ValuesListWithOrder,
                          ValuesListsWithOrder,
+                         compose,
                          has_size_two_or_more)
 
 factories = (strategies.sampled_from([binary.map_, avl.map_, red_black.map_,

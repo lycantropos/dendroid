@@ -1,8 +1,8 @@
 from hypothesis import given
-from lz.iterating import (capacity,
-                          pairwise)
 
 from tests.utils import (BaseSet,
+                         capacity,
+                         pairwise,
                          set_value_to_key)
 from . import strategies
 

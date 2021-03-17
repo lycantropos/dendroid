@@ -3,14 +3,13 @@ from functools import partial
 from operator import not_
 
 from hypothesis import strategies
-from lz.functional import (combine,
-                           compose,
-                           identity,
-                           to_constant)
 
 from tests.utils import (Strategy,
                          ValuesListWithOrder,
-                         leap_traverse)
+                         compose,
+                         identity,
+                         leap_traverse,
+                         to_constant)
 from .factories import (to_values_lists_with_orders,
                         to_values_tuples_with_orders,
                         to_values_with_orders)
