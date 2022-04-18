@@ -35,7 +35,9 @@ def test_step(two_items_views_with_value: Tuple[ItemsView, ItemsView, Item]
     next_left_items_view = to_items_view_including_item(left_items_view, item)
 
     assert implication(not left_items_view.isdisjoint(right_items_view),
-                       not next_left_items_view.isdisjoint(right_items_view))
+                       not next_left_items_view.isdisjoint(right_items_view)
+                       or (len(left_items_view) == 1
+                           and item not in left_items_view))
     assert implication(left_items_view.isdisjoint(right_items_view),
                        equivalence(next_left_items_view
                                    .isdisjoint(right_items_view),
