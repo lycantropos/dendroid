@@ -1,17 +1,14 @@
 from typing import Callable
 
-from dendroid.core.hints import (Item,
-                                 Key,
-                                 Order,
-                                 Value)
-from dendroid.core.maps import Map
-from dendroid.core.sets import Set
+from .core import (hints as _hints,
+                   maps as _maps,
+                   sets as _sets)
 
-Key = Key
-Value = Value
-Item = Item
-Order = Order
-Map = Map
-Set = Set
+Key = _hints.Key
+Value = _hints.Value
+Item = _hints.Item
+Order = _hints.Order
+Map = _maps.Map
+Set = _sets.Set
 MapFactory = Callable[..., Map]
 SetFactory = Callable[..., Set]
