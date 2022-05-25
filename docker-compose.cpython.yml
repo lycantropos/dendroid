@@ -7,7 +7,7 @@ services:
       args:
         - IMAGE_NAME=${CPYTHON_IMAGE_NAME}
         - IMAGE_VERSION=${CPYTHON_IMAGE_VERSION}
-    image: lycantropos/dendroid-cpython:1.2.0
+    image: lycantropos/dendroid-cpython:1.3.0-alpha
     volumes:
       - ./dendroid:/opt/dendroid/dendroid
       - ./pytest.ini:/opt/dendroid/pytest.ini
