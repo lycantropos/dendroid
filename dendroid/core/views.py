@@ -1,4 +1,3 @@
-from collections import abc
 from typing import (Generic,
                     Iterable,
                     Iterator)
@@ -7,7 +6,6 @@ from reprit.base import generate_repr
 
 from .abcs import (NIL,
                    AbstractSet,
-                   Self,
                    Tree)
 from .hints import (Item,
                     Key,
@@ -15,7 +13,6 @@ from .hints import (Item,
 from .utils import split_items
 
 
-@abc.Sized.register
 class BaseView:
     __slots__ = 'tree',
 
@@ -42,7 +39,7 @@ class ItemsView(BaseView, AbstractSet[Item]):
         for node in reversed(self.tree):
             yield node.item
 
-    def from_iterable(self: Self, iterable: Iterable[Item]) -> Self:
+    def from_iterable(self, iterable: Iterable[Item]) -> 'ItemsView':
         keys, values = split_items(list(iterable))
         return ItemsView(self.tree.from_components(keys, values))
 
@@ -59,7 +56,7 @@ class KeysView(BaseView, AbstractSet[Key]):
         for node in reversed(self.tree):
             yield node.key
 
-    def from_iterable(self: Self, values: Iterable[Key]) -> Self:
+    def from_iterable(self, values: Iterable[Key]) -> 'KeysView':
         return KeysView(self.tree.from_components(values))
 
 

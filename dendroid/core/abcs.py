@@ -1,16 +1,17 @@
 from abc import (ABC,
-                 ABCMeta,
                  abstractmethod)
-from collections import abc
 from copy import deepcopy
 from itertools import chain
-from typing import (Generic,
+from typing import (Any,
+                    Generic,
                     Iterable,
                     Iterator,
                     List,
                     Optional,
                     TypeVar,
-                    Union)
+                    Union,
+                    cast,
+                    overload)
 
 from reprit.base import generate_repr
 
@@ -19,14 +20,20 @@ from .hints import (Item,
                     Value)
 from .utils import capacity
 
-NIL = None
+Nil = type(None)
+NIL: Nil = None
 
 
-class Node(metaclass=ABCMeta):
-    __slots__ = 'value',
+class Node(ABC):
+    @property
+    @abstractmethod
+    def left(self) -> 'AnyNode':
+        """Left child."""
 
-    left = NIL  # type: Union[NIL, 'Node']
-    right = NIL  # type: Union[NIL, 'Node']
+    @property
+    @abstractmethod
+    def right(self) -> 'AnyNode':
+        """Right child."""
 
     @property
     def item(self) -> Item:
@@ -37,11 +44,18 @@ class Node(metaclass=ABCMeta):
     def key(self) -> Key:
         """Comparisons key."""
 
+    @property
+    @abstractmethod
+    def value(self) -> Value:
+        """Underlying value."""
 
-AnyNode = Union[NIL, Node]
+
+_Node = TypeVar('_Node',
+                bound=Node)
+AnyNode = Union[Nil, _Node]
 
 
-class Tree(ABC, Generic[Key, Value]):
+class Tree(ABC, Generic[_Node]):
     __slots__ = 'root',
 
     def __init__(self, root: AnyNode) -> None:
@@ -51,10 +65,10 @@ class Tree(ABC, Generic[Key, Value]):
         """Checks if the tree has nodes."""
         return self.root is not NIL
 
-    def __copy__(self) -> 'Tree[Key, Value]':
+    def __copy__(self) -> 'Tree[_Node]':
         return type(self)(deepcopy(self.root))
 
-    def __iter__(self) -> Iterator[Node]:
+    def __iter__(self) -> Iterator[_Node]:
         """Returns iterator over nodes in ascending keys order."""
         node = self.root
         queue = []
@@ -72,7 +86,7 @@ class Tree(ABC, Generic[Key, Value]):
         """Returns number of nodes."""
         return capacity(self)
 
-    def __reversed__(self) -> Iterator[Node]:
+    def __reversed__(self) -> Iterator[_Node]:
         """Returns iterator over nodes in descending keys order."""
         node = self.root
         queue = []
@@ -91,7 +105,7 @@ class Tree(ABC, Generic[Key, Value]):
     def from_components(cls,
                         keys: Iterable[Key],
                         values: Optional[Iterable[Value]] = None
-                        ) -> 'Tree[Key, Value]':
+                        ) -> 'Tree[_Node]':
         """Constructs tree from given components."""
 
     __repr__ = generate_repr(from_components,
@@ -99,7 +113,7 @@ class Tree(ABC, Generic[Key, Value]):
 
     @property
     def keys(self) -> List[Key]:
-        return [node.key for node in self]
+        return cast(List[Key], [node.key for node in self])
 
     @property
     def values(self) -> List[Value]:
@@ -134,7 +148,7 @@ class Tree(ABC, Generic[Key, Value]):
         return result
 
     @abstractmethod
-    def insert(self, key: Key, value: Value) -> AnyNode:
+    def insert(self, key: Key, value: Value) -> _Node:
         """Inserts given key-value pair in the tree."""
 
     def max(self) -> AnyNode:
@@ -177,15 +191,15 @@ class Tree(ABC, Generic[Key, Value]):
         return node
 
     @abstractmethod
-    def predecessor(self, node: Node) -> AnyNode:
+    def predecessor(self, node: _Node) -> AnyNode:
         """Returns last node with a key less than of the given one."""
 
     @abstractmethod
-    def remove(self, node: Node) -> None:
+    def remove(self, node: _Node) -> None:
         """Removes node from the tree."""
 
     @abstractmethod
-    def successor(self, node: Node) -> AnyNode:
+    def successor(self, node: _Node) -> AnyNode:
         """Returns first node with a key greater than of the given one."""
 
     def supremum(self, key: Key) -> AnyNode:
@@ -202,35 +216,39 @@ class Tree(ABC, Generic[Key, Value]):
         return result
 
 
-Self = TypeVar('Self')
-
-
-@abc.Set.register
 class AbstractSet(Generic[Value]):
-    def __and__(self: Self, other: Self) -> Self:
+    def __and__(self, other: 'AbstractSet[Value]') -> 'AbstractSet[Value]':
         """Returns intersection of the set with given one."""
         return (self.from_iterable(value for value in self if value in other)
                 if isinstance(other, AbstractSet)
                 else NotImplemented)
 
     @abstractmethod
-    def __contains__(self: Self, value: Value) -> bool:
+    def __contains__(self, value: Value) -> bool:
         """Checks if given value is presented in the set."""
 
-    def __eq__(self: Self, other: Self) -> bool:
+    @overload
+    def __eq__(self, other: 'AbstractSet[Value]') -> bool:
+        ...
+
+    @overload
+    def __eq__(self, other: Any) -> Any:
+        ...
+
+    def __eq__(self, other):
         """Checks if the set is equal to given one."""
         return (len(self) == len(other) and self <= other <= self
                 if isinstance(other, AbstractSet)
                 else NotImplemented)
 
-    def __ge__(self: Self, other: Self) -> bool:
+    def __ge__(self, other: 'AbstractSet[Value]') -> bool:
         """Checks if the set is a superset of given one."""
         return (len(self) >= len(other)
                 and all(value in self for value in other)
                 if isinstance(other, AbstractSet)
                 else NotImplemented)
 
-    def __gt__(self: Self, other: Self) -> bool:
+    def __gt__(self, other: 'AbstractSet[Value]') -> bool:
         """Checks if the set is a strict superset of given one."""
         return (len(self) > len(other)
                 and self >= other and self != other
@@ -238,10 +256,10 @@ class AbstractSet(Generic[Value]):
                 else NotImplemented)
 
     @abstractmethod
-    def __iter__(self: Self) -> Iterator[Value]:
+    def __iter__(self) -> Iterator[Value]:
         """Returns iterator over the set values."""
 
-    def __le__(self: Self, other: Self) -> bool:
+    def __le__(self, other: 'AbstractSet[Value]') -> bool:
         """Checks if the set is a subset of given one."""
         return (len(self) <= len(other)
                 and all(value in other for value in self)
@@ -249,23 +267,23 @@ class AbstractSet(Generic[Value]):
                 else NotImplemented)
 
     @abstractmethod
-    def __len__(self: Self) -> int:
+    def __len__(self) -> int:
         """Returns size of the set."""
 
-    def __lt__(self: Self, other: Self) -> bool:
+    def __lt__(self, other: 'AbstractSet[Value]') -> bool:
         """Checks if the set is a strict subset of given one."""
         return (len(self) < len(other)
                 and self <= other and self != other
                 if isinstance(other, AbstractSet)
                 else NotImplemented)
 
-    def __or__(self: Self, other: Self) -> Self:
+    def __or__(self, other: 'AbstractSet[Value]') -> 'AbstractSet[Value]':
         """Returns union of the set with given one."""
         return (self.from_iterable(chain(self, other))
                 if isinstance(other, AbstractSet)
                 else NotImplemented)
 
-    def __sub__(self: Self, other: Self) -> Self:
+    def __sub__(self, other: 'AbstractSet[Value]') -> 'AbstractSet[Value]':
         """Returns subtraction of the set with given one."""
         return (self.from_iterable(value
                                    for value in self
@@ -273,26 +291,25 @@ class AbstractSet(Generic[Value]):
                 if isinstance(other, AbstractSet)
                 else NotImplemented)
 
-    def __xor__(self: Self, other: Self) -> Self:
+    def __xor__(self, other: 'AbstractSet[Value]') -> 'AbstractSet[Value]':
         """Returns symmetric difference of the set with given one."""
         return ((self - other) | (other - self)
                 if isinstance(other, AbstractSet)
                 else NotImplemented)
 
     @abstractmethod
-    def from_iterable(self: Self, values: Iterable[Value]) -> Self:
+    def from_iterable(self, values: Iterable[Value]) -> 'AbstractSet[Value]':
         """Constructs set from given values."""
 
-    def isdisjoint(self: Self, other: Self) -> bool:
+    def isdisjoint(self, other: 'AbstractSet[Value]') -> bool:
         """Checks if the tree has no intersection with given one."""
         return (all(value not in other for value in self)
                 if len(self) < len(other)
                 else all(value not in self for value in other))
 
 
-@abc.MutableSet.register
 class MutableSet(AbstractSet[Value]):
-    def __iand__(self: Self, other: Self) -> Self:
+    def __iand__(self, other: AbstractSet[Value]) -> 'MutableSet[Value]':
         """Intersects the set with given one in-place."""
         if not isinstance(other, AbstractSet):
             return NotImplemented
@@ -300,7 +317,7 @@ class MutableSet(AbstractSet[Value]):
             self.discard(value)
         return self
 
-    def __ior__(self: Self, other: Self) -> Self:
+    def __ior__(self, other: AbstractSet[Value]) -> 'MutableSet[Value]':
         """Unites the set with given one in-place."""
         if not isinstance(other, AbstractSet):
             return NotImplemented
@@ -308,7 +325,7 @@ class MutableSet(AbstractSet[Value]):
             self.add(value)
         return self
 
-    def __isub__(self: Self, other: Self) -> Self:
+    def __isub__(self, other: AbstractSet[Value]) -> 'MutableSet[Value]':
         """Subtracts from the set a given one in-place."""
         if not isinstance(other, AbstractSet):
             return NotImplemented
@@ -319,7 +336,7 @@ class MutableSet(AbstractSet[Value]):
                 self.discard(value)
         return self
 
-    def __ixor__(self: Self, other: Self) -> Self:
+    def __ixor__(self, other: AbstractSet[Value]) -> 'MutableSet[Value]':
         """Exclusively disjoins the set with given one in-place."""
         if not isinstance(other, AbstractSet):
             return NotImplemented
@@ -334,13 +351,17 @@ class MutableSet(AbstractSet[Value]):
         return self
 
     @abstractmethod
-    def add(self: Self, value: Value) -> None:
+    def add(self, value: Value) -> None:
         """Adds given value to the set."""
 
     @abstractmethod
-    def discard(self: Self, value: Value) -> None:
+    def clear(self) -> None:
+        """Adds given value to the set."""
+
+    @abstractmethod
+    def discard(self, value: Value) -> None:
         """Removes given value from the set if it is present."""
 
     @abstractmethod
-    def remove(self: Self, value: Value) -> None:
+    def remove(self, value: Value) -> None:
         """Removes given value that is present in the set."""

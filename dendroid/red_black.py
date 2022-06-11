@@ -4,12 +4,12 @@ from typing import (Any,
                     Callable,
                     Iterable,
                     Optional,
-                    Tuple,
-                    Union)
+                    Tuple)
 
 from reprit.base import generate_repr
 
 from .core.abcs import (NIL,
+                        AnyNode,
                         Node as _Node,
                         Tree as _Tree)
 from .core.maps import map_constructor as _map_constructor
@@ -26,18 +26,18 @@ from .hints import (Key,
 
 
 class Node(_Node):
-    __slots__ = ('_key', 'value', 'is_black', '_parent', '_left', '_right',
+    __slots__ = ('is_black', '_key', '_left', '_parent', '_right', '_value',
                  '__weakref__')
 
     def __init__(self,
                  key: Key,
                  value: Value,
                  is_black: bool,
-                 left: Union[NIL, 'Node'] = NIL,
-                 right: Union[NIL, 'Node'] = NIL,
-                 parent: Optional['Node'] = None) -> None:
-        self._key, self.value, self.is_black = key, value, is_black
-        self.left, self.right, self._parent = left, right, parent
+                 left: AnyNode = NIL,
+                 right: AnyNode = NIL,
+                 parent: AnyNode = None) -> None:
+        self._key, self._value, self.is_black = key, value, is_black
+        self.left, self.right, self.parent = left, right, parent
 
     __repr__ = recursive_repr()(generate_repr(__init__))
 
@@ -45,10 +45,10 @@ class Node(_Node):
 
     def __getstate__(self) -> State:
         return (self._key, self.value, self.is_black,
-                self.parent, self._left, self._right)
+                self.parent, self.left, self.right)
 
     def __setstate__(self, state: State) -> None:
-        (self._key, self.value, self.is_black,
+        (self._key, self._value, self.is_black,
          self.parent, self._left, self._right) = state
 
     @classmethod
@@ -60,33 +60,37 @@ class Node(_Node):
         return self._key
 
     @property
-    def left(self) -> Union[NIL, 'Node']:
+    def left(self) -> AnyNode:
         return self._left
 
     @left.setter
-    def left(self, node: Union[NIL, 'Node']) -> None:
+    def left(self, node: AnyNode) -> None:
         self._left = node
         _set_parent(node, self)
 
     @property
-    def parent(self) -> Optional['Node']:
+    def parent(self) -> AnyNode:
         return _dereference_maybe(self._parent)
 
     @parent.setter
-    def parent(self, node: Optional['Node']) -> None:
+    def parent(self, node: AnyNode) -> None:
         self._parent = _maybe_weakref(node)
 
     @property
-    def right(self) -> Union[NIL, 'Node']:
+    def right(self) -> AnyNode:
         return self._right
 
     @right.setter
-    def right(self, node: Union[NIL, 'Node']) -> None:
+    def right(self, node: AnyNode) -> None:
         self._right = node
         _set_parent(node, self)
 
+    @property
+    def value(self) -> Value:
+        return self._value
 
-def _set_parent(node: Union[NIL, Node], parent: Optional[Node]) -> None:
+
+def _set_parent(node: AnyNode, parent: Optional[Node]) -> None:
     if node is not NIL:
         node.parent = parent
 
@@ -101,13 +105,13 @@ def _is_left_child(node: Node) -> bool:
     return parent is not None and parent.left is node
 
 
-def _is_node_black(node: Union[NIL, Node]) -> bool:
+def _is_node_black(node: AnyNode) -> bool:
     return node is NIL or node.is_black
 
 
-class Tree(_Tree[Key, Value]):
+class Tree(_Tree[Node]):
     @staticmethod
-    def predecessor(node: Node) -> Node:
+    def predecessor(node: Node) -> AnyNode:
         if node.left is NIL:
             result = node.parent
             while result is not None and node is result.left:
@@ -119,7 +123,7 @@ class Tree(_Tree[Key, Value]):
         return result
 
     @staticmethod
-    def successor(node: Node) -> Node:
+    def successor(node: Node) -> AnyNode:
         if node.right is NIL:
             result = node.parent
             while result is not None and node is result.right:
@@ -132,13 +136,12 @@ class Tree(_Tree[Key, Value]):
 
     @classmethod
     def from_components(cls,
-                        keys: Iterable[Key],
-                        values: Optional[Iterable[Value]] = None
-                        ) -> 'Tree[Key, Value]':
-        keys = list(keys)
+                        _keys: Iterable[Key],
+                        _values: Optional[Iterable[Value]] = None) -> 'Tree':
+        keys = list(_keys)
         if not keys:
             root = NIL
-        elif values is None:
+        elif _values is None:
             keys = _to_unique_sorted_values(keys)
 
             def to_node(start_index: int,
@@ -149,18 +152,20 @@ class Tree(_Tree[Key, Value]):
                         ) -> Node:
                 middle_index = (start_index + end_index) // 2
                 return constructor(
-                        keys[middle_index], depth != height,
+                        keys[middle_index],
+                        depth != height,
                         (to_node(start_index, middle_index, depth + 1)
                          if middle_index > start_index
                          else NIL),
                         (to_node(middle_index + 1, end_index, depth + 1)
                          if middle_index < end_index - 1
-                         else NIL))
+                         else NIL)
+                )
 
             root = to_node(0, len(keys), 0)
             root.is_black = True
         else:
-            items = _to_unique_sorted_items(keys, tuple(values))
+            items = _to_unique_sorted_items(keys, tuple(_values))
 
             def to_node(start_index: int,
                         end_index: int,
@@ -169,13 +174,15 @@ class Tree(_Tree[Key, Value]):
                         constructor: Callable[..., Node] = Node) -> Node:
                 middle_index = (start_index + end_index) // 2
                 return constructor(
-                        *items[middle_index], depth != height,
+                        *items[middle_index],
+                        depth != height,
                         (to_node(start_index, middle_index, depth + 1)
                          if middle_index > start_index
                          else NIL),
                         (to_node(middle_index + 1, end_index, depth + 1)
                          if middle_index < end_index - 1
-                         else NIL))
+                         else NIL)
+                )
 
             root = to_node(0, len(items), 0)
             root.is_black = True
@@ -219,6 +226,7 @@ class Tree(_Tree[Key, Value]):
                                          _is_left_child(successor))
             self._transplant(successor, successor_child)
         else:
+            assert node.right is not NIL
             successor = node.right
             while successor.left is not NIL:
                 successor = successor.left
@@ -232,15 +240,18 @@ class Tree(_Tree[Key, Value]):
                 self._transplant(successor, successor.right)
                 successor.right = node.right
             self._transplant(node, successor)
+            assert successor.left is not NIL
             successor.left, successor.left.parent = node.left, successor
             successor.is_black = node.is_black
         if is_node_black:
+            assert successor_child_parent is not NIL
             self._remove_node_fixup(successor_child, successor_child_parent,
                                     is_successor_child_left)
 
     def _restore(self, node: Node) -> None:
         while not _is_node_black(node.parent):
             parent = node.parent
+            assert parent is not NIL
             grandparent = parent.parent
             if parent is grandparent.left:
                 uncle = grandparent.right
@@ -266,13 +277,17 @@ class Tree(_Tree[Key, Value]):
                     parent.is_black = uncle.is_black = True
                     grandparent.is_black = False
                     node = grandparent
+        assert self.root is not NIL
         self.root.is_black = True
 
-    def _remove_node_fixup(self, node: Union[NIL, Node], parent: Node,
+    def _remove_node_fixup(self,
+                           node: AnyNode,
+                           parent: Node,
                            is_left_child: bool) -> None:
         while node is not self.root and _is_node_black(node):
             if is_left_child:
                 sibling = parent.right
+                assert sibling is not NIL
                 if not _is_node_black(sibling):
                     sibling.is_black, parent.is_black = True, False
                     self._rotate_left(parent)
@@ -280,6 +295,7 @@ class Tree(_Tree[Key, Value]):
                 if (_is_node_black(sibling.left)
                         and _is_node_black(sibling.right)):
                     sibling.is_black = False
+                    assert parent.parent is not NIL
                     node, parent = parent, parent.parent
                     is_left_child = _is_left_child(node)
                 else:
@@ -293,6 +309,7 @@ class Tree(_Tree[Key, Value]):
                     node = self.root
             else:
                 sibling = parent.left
+                assert sibling is not NIL
                 if not _is_node_black(sibling):
                     sibling.is_black, parent.is_black = True, False
                     self._rotate_right(parent)
@@ -300,6 +317,7 @@ class Tree(_Tree[Key, Value]):
                 if (_is_node_black(sibling.left)
                         and _is_node_black(sibling.right)):
                     sibling.is_black = False
+                    assert parent.parent is not NIL
                     node, parent = parent, parent.parent
                     is_left_child = _is_left_child(node)
                 else:
@@ -315,15 +333,17 @@ class Tree(_Tree[Key, Value]):
 
     def _rotate_left(self, node: Node) -> None:
         replacement = node.right
+        assert replacement is not NIL
         self._transplant(node, replacement)
         node.right, replacement.left = replacement.left, node
 
     def _rotate_right(self, node: Node) -> None:
         replacement = node.left
+        assert replacement is not NIL
         self._transplant(node, replacement)
         node.left, replacement.right = replacement.right, node
 
-    def _transplant(self, origin: Node, replacement: Union[NIL, Node]) -> None:
+    def _transplant(self, origin: Node, replacement: AnyNode) -> None:
         parent = origin.parent
         if parent is None:
             self.root = replacement

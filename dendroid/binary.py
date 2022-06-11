@@ -2,8 +2,7 @@ from functools import partial
 from typing import (Any,
                     Callable,
                     Iterable,
-                    Optional,
-                    Union)
+                    Optional)
 
 from reprit.base import generate_repr
 
@@ -23,14 +22,16 @@ from .hints import (Key,
 
 
 class Node(_Node):
-    __slots__ = '_key', 'value', 'left', 'right'
+    __slots__ = '_left', '_right', '_key', '_value'
 
     def __init__(self,
                  key: Key,
                  value: Value,
-                 left: Union[NIL, 'Node'] = NIL,
-                 right: Union[NIL, 'Node'] = NIL) -> None:
-        self._key, self.value, self.left, self.right = key, value, left, right
+                 left: AnyNode = NIL,
+                 right: AnyNode = NIL) -> None:
+        self._key, self._value, self._left, self._right = (
+            key, value, left, right
+        )
 
     __repr__ = generate_repr(__init__)
 
@@ -42,17 +43,36 @@ class Node(_Node):
     def key(self) -> Key:
         return self._key
 
+    @property
+    def left(self) -> AnyNode:
+        return self._left
 
-class Tree(_Tree[Key, Value]):
+    @left.setter
+    def left(self, value: AnyNode) -> None:
+        self._left = value
+
+    @property
+    def right(self) -> AnyNode:
+        return self._right
+
+    @right.setter
+    def right(self, value: AnyNode) -> None:
+        self._right = value
+
+    @property
+    def value(self) -> Value:
+        return self._value
+
+
+class Tree(_Tree[Node]):
     @classmethod
     def from_components(cls,
-                        keys: Iterable[Key],
-                        values: Optional[Iterable[Value]] = None
-                        ) -> 'Tree[Key, Value]':
-        keys = list(keys)
+                        _keys: Iterable[Key],
+                        _values: Optional[Iterable[Value]] = None) -> 'Tree':
+        keys = list(_keys)
         if not keys:
             root = NIL
-        elif values is None:
+        elif _values is None:
             keys = _to_unique_sorted_values(keys)
 
             def to_node(start_index: int, end_index: int,
@@ -69,7 +89,7 @@ class Tree(_Tree[Key, Value]):
 
             root = to_node(0, len(keys))
         else:
-            items = _to_unique_sorted_items(keys, list(values))
+            items = _to_unique_sorted_items(keys, tuple(_values))
 
             def to_node(start_index: int, end_index: int,
                         constructor: Callable[..., Node] = Node) -> Node:
@@ -85,7 +105,7 @@ class Tree(_Tree[Key, Value]):
             root = to_node(0, len(items))
         return cls(root)
 
-    def insert(self, key: Key, value: Value) -> AnyNode:
+    def insert(self, key: Key, value: Value) -> Node:
         parent = self.root
         if parent is NIL:
             node = self.root = Node(key, value)
@@ -136,6 +156,7 @@ class Tree(_Tree[Key, Value]):
         if node.left is NIL:
             result, cursor, key = NIL, self.root, node.key
             while cursor is not node:
+                assert cursor is not NIL
                 if cursor.key < key:
                     result, cursor = cursor, cursor.right
                 else:
@@ -147,6 +168,7 @@ class Tree(_Tree[Key, Value]):
         return result
 
     def remove(self, node: Node) -> None:
+        assert self.root is not NIL
         parent, key = self.root, node.key
         if _are_keys_equal(key, parent.key):
             if parent.left is NIL:
@@ -158,13 +180,16 @@ class Tree(_Tree[Key, Value]):
                 else:
                     while node.right.right is not NIL:
                         node = node.right
+                    assert node.right is not NIL
                     (self.root, node.right.left, node.right.right,
                      node.right) = (node.right, self.root.left,
                                     self.root.right, node.right.left)
             return
         while True:
+            assert parent is not NIL
             if key < parent.key:
                 # search in left subtree
+                assert parent.left is not NIL
                 if _are_keys_equal(key, parent.left.key):
                     # remove `parent.left`
                     node = parent.left.left
@@ -176,6 +201,7 @@ class Tree(_Tree[Key, Value]):
                     else:
                         while node.right.right is not NIL:
                             node = node.right
+                        assert node.right is not NIL
                         (parent.left, node.right.left, node.right.right,
                          node.right) = (node.right, parent.left.left,
                                         parent.left.right, node.right.left)
@@ -183,36 +209,47 @@ class Tree(_Tree[Key, Value]):
                 else:
                     parent = parent.left
             # search in right subtree
-            elif _are_keys_equal(key, parent.right.key):
-                # remove `parent.right`
-                node = parent.right.left
-                if node is NIL:
-                    parent.right = parent.right.right
-                    return
-                elif node.right is NIL:
-                    parent.right, node.right = node, parent.right.right
-                else:
-                    while node.right.right is not NIL:
-                        node = node.right
-                    (parent.right, node.right.left, node.right.right,
-                     node.right) = (node.right, parent.right.left,
-                                    parent.right.right, node.right.left)
-                return
             else:
-                parent = parent.right
+                assert parent.right is not NIL
+                if _are_keys_equal(key, parent.right.key):
+                    # remove `parent.right`
+                    assert parent.right is not NIL
+                    node = parent.right.left
+                    if node is NIL:
+                        parent.right = parent.right.right
+                        return
+                    elif node.right is NIL:
+                        parent.right, node.right = node, parent.right.right
+                    else:
+                        while node.right.right is not NIL:
+                            node = node.right
+                        assert node.right is not NIL
+                        (
+                            parent.right, node.right.left, node.right.right,
+                            node.right
+                        ) = (
+                            node.right, parent.right.left, parent.right.right,
+                            node.right.left
+                        )
+                    return
+                else:
+                    parent = parent.right
 
     def successor(self, node: Node) -> AnyNode:
         if node.right is NIL:
             result, cursor, key = NIL, self.root, node.key
             while cursor is not node:
+                assert cursor is not NIL
                 if key < cursor.key:
                     result, cursor = cursor, cursor.left
                 else:
                     cursor = cursor.right
         else:
             result = node.right
+            assert result is not NIL
             while result.left is not NIL:
                 result = result.left
+                assert result is not NIL
         return result
 
 

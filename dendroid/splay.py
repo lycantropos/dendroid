@@ -2,11 +2,11 @@ from functools import partial
 from typing import (Callable,
                     Iterable,
                     Iterator,
-                    Optional)
+                    Optional, Union)
 
 from .binary import Node
 from .core.abcs import (NIL,
-                        AnyNode,
+                        Nil,
                         Tree as _Tree)
 from .core.maps import map_constructor as _map_constructor
 from .core.sets import set_constructor as _set_constructor
@@ -20,10 +20,10 @@ from .hints import (Key,
 Node = Node
 
 
-class Tree(_Tree[Key, Value]):
+class Tree(_Tree[Node]):
     __slots__ = '_header',
 
-    def __init__(self, root: AnyNode) -> None:
+    def __init__(self, root: Union[Nil, Node]) -> None:
         super().__init__(root)
         self._header = Node(None, None)
 
@@ -43,13 +43,12 @@ class Tree(_Tree[Key, Value]):
 
     @classmethod
     def from_components(cls,
-                        keys: Iterable[Key],
-                        values: Optional[Iterable[Value]] = None
-                        ) -> 'Tree[Key, Value]':
-        keys = list(keys)
+                        _keys: Iterable[Key],
+                        _values: Optional[Iterable[Value]] = None) -> 'Tree':
+        keys = list(_keys)
         if not keys:
             root = NIL
-        elif values is None:
+        elif _values is None:
             keys = _to_unique_sorted_values(keys)
 
             def to_node(start_index: int,
@@ -67,7 +66,7 @@ class Tree(_Tree[Key, Value]):
 
             root = to_node(0, len(keys))
         else:
-            items = _to_unique_sorted_items(keys, list(values))
+            items = _to_unique_sorted_items(keys, tuple(_values))
 
             def to_node(start_index: int,
                         end_index: int,
@@ -84,7 +83,7 @@ class Tree(_Tree[Key, Value]):
             root = to_node(0, len(items))
         return cls(root)
 
-    def find(self, key: Key) -> AnyNode:
+    def find(self, key: Key) -> Union[Nil, Node]:
         if self.root is NIL:
             return NIL
         self._splay(key)
@@ -104,48 +103,53 @@ class Tree(_Tree[Key, Value]):
                                                    self.root.right)
         return self.root
 
-    def max(self) -> Node:
+    def max(self) -> Union[Nil, Node]:
         node = self.root
         if node is not NIL:
             while node.right is not NIL:
                 node = node.right
+                assert node is not NIL
             self._splay(node.key)
         return node
 
-    def min(self) -> Node:
+    def min(self) -> Union[Nil, Node]:
         node = self.root
         if node is not NIL:
             while node.left is not NIL:
                 node = node.left
+                assert node is not NIL
             self._splay(node.key)
         return node
 
-    def popmax(self) -> Node:
+    def popmax(self) -> Union[Nil, Node]:
         if self.root is NIL:
             return self.root
         result = self.max()
         self._remove_root()
         return result
 
-    def popmin(self) -> Node:
+    def popmin(self) -> Union[Nil, Node]:
         if self.root is NIL:
             return self.root
         result = self.min()
         self._remove_root()
         return result
 
-    def predecessor(self, node: Node) -> AnyNode:
+    def predecessor(self, node: Node) -> Union[Nil, Node]:
         if node.left is NIL:
             result, cursor, key = NIL, self.root, node.key
             while cursor is not node:
+                assert cursor is not NIL
                 if cursor.key < key:
                     result, cursor = cursor, cursor.right
                 else:
                     cursor = cursor.left
         else:
             result = node.left
+            assert result is not NIL
             while result.right is not NIL:
                 result = result.right
+                assert result is not NIL
         if result is not NIL:
             self._splay(result.key)
         return result
@@ -154,18 +158,21 @@ class Tree(_Tree[Key, Value]):
         self._splay(node.key)
         self._remove_root()
 
-    def successor(self, node: Node) -> AnyNode:
+    def successor(self, node: Node) -> Union[Nil, Node]:
         if node.right is NIL:
             result, cursor, key = NIL, self.root, node.key
             while cursor is not node:
+                assert cursor is not NIL
                 if key < cursor.key:
                     result, cursor = cursor, cursor.left
                 else:
                     cursor = cursor.right
         else:
             result = node.right
+            assert result is not NIL
             while result.left is not NIL:
                 result = result.left
+                assert result is not NIL
         if result is not NIL:
             self._splay(result.key)
         return result
@@ -174,6 +181,7 @@ class Tree(_Tree[Key, Value]):
         next_root = self.root
         next_root_left_child = next_root_right_child = self._header
         while True:
+            assert next_root is not NIL
             if key < next_root.key:
                 if next_root.left is NIL:
                     break
@@ -194,30 +202,36 @@ class Tree(_Tree[Key, Value]):
                 next_root_left_child, next_root = next_root, next_root.right
             else:
                 break
+        assert next_root is not NIL
         next_root_left_child.right, next_root_right_child.left = (
-            next_root.left, next_root.right)
+            next_root.left, next_root.right
+        )
         next_root.left, next_root.right = self._header.right, self._header.left
         self.root = next_root
 
     def _remove_root(self) -> None:
         root = self.root
+        assert root is not NIL
         if root.left is NIL:
             self.root = root.right
         else:
             right_root_child = root.right
             self.root = root.left
             self._splay(root.key)
+            assert self.root is not NIL
             self.root.right = right_root_child
 
     @staticmethod
-    def _rotate_left(node: Node) -> AnyNode:
+    def _rotate_left(node: Node) -> Node:
         replacement = node.right
+        assert replacement is not NIL
         node.right, replacement.left = replacement.left, node
         return replacement
 
     @staticmethod
-    def _rotate_right(node: Node) -> AnyNode:
+    def _rotate_right(node: Node) -> Node:
         replacement = node.left
+        assert replacement is not NIL
         node.left, replacement.right = replacement.right, node
         return replacement
 

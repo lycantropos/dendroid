@@ -7,7 +7,8 @@ from typing import (Any,
                     List,
                     Optional,
                     Sequence,
-                    Tuple)
+                    Tuple,
+                    overload)
 
 from .hints import (Item,
                     Key,
@@ -20,8 +21,18 @@ class AntisymmetricKeyIndex:
     def __init__(self, key_index: Tuple[Key, int]) -> None:
         self.key, self.index = key_index
 
+    @overload
     def __eq__(self, other: 'AntisymmetricKeyIndex') -> bool:
-        return are_keys_equal(self.key, other.key)
+        ...
+
+    @overload
+    def __eq__(self, other: Any) -> Any:
+        ...
+
+    def __eq__(self, other):
+        return (are_keys_equal(self.key, other.key)
+                if isinstance(other, AntisymmetricKeyIndex)
+                else NotImplemented)
 
 
 def are_keys_equal(left: Key, right: Key) -> bool:
@@ -64,7 +75,7 @@ def maybe_weakref(object_: Optional[Value]
 
 
 def to_unique_sorted_items(keys: Sequence[Key], values: Sequence[Value]
-                           ) -> Sequence[Tuple[Key, Value]]:
+                           ) -> Sequence[Item]:
     return [(index_key.key, values[-index_key.index])
             for index_key, _ in groupby(
                 sorted([(key, -index) for index, key in enumerate(keys)]),
@@ -76,6 +87,7 @@ def to_unique_sorted_values(values: List[Value]) -> List[Value]:
     return [value for value, _ in groupby(values)]
 
 
-def split_items(items: Sequence[Item]) -> Tuple[Sequence[Key],
-                                                Sequence[Value]]:
-    return tuple(zip(*items)) if items else ((), ())
+def split_items(items: Sequence[Tuple[Key, Value]]
+                ) -> Tuple[Sequence[Key], Sequence[Value]]:
+    keys, values = tuple(zip(*items)) if items else ((), ())
+    return keys, values

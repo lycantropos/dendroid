@@ -1,10 +1,12 @@
 from collections import abc
-from typing import (Callable,
+from typing import (Any,
+                    Callable,
                     Generic,
                     Iterable,
                     Iterator,
                     Optional,
-                    Union)
+                    Union,
+                    overload)
 
 from reprit.base import generate_repr
 
@@ -20,7 +22,6 @@ from .views import (ItemsView,
                     ValuesView)
 
 
-@abc.MutableMapping.register
 class Map(Generic[Key, Value]):
     __slots__ = 'tree',
 
@@ -40,7 +41,15 @@ class Map(Generic[Key, Value]):
         if node is NIL:
             raise KeyError(key)
 
+    @overload
     def __eq__(self, other: 'Map[Key, Value]') -> bool:
+        ...
+
+    @overload
+    def __eq__(self, other: Any) -> Any:
+        ...
+
+    def __eq__(self, other):
         return (self.keys() == other.keys()
                 and all(other[key] == value
                         for key, value in self.items())
@@ -67,7 +76,7 @@ class Map(Generic[Key, Value]):
     def ceil(self, key: Key) -> Value:
         return self._ceil_node(key).value
 
-    def ceilitem(self, key: Key) -> Value:
+    def ceilitem(self, key: Key) -> Item:
         return self._ceil_node(key).item
 
     def clear(self) -> None:
@@ -76,7 +85,7 @@ class Map(Generic[Key, Value]):
     def floor(self, key: Key) -> Value:
         return self._floor_node(key).value
 
-    def flooritem(self, key: Key) -> Value:
+    def flooritem(self, key: Key) -> Item:
         return self._floor_node(key).item
 
     def get(self,
@@ -85,7 +94,7 @@ class Map(Generic[Key, Value]):
         node = self.tree.find(key)
         return default if node is NIL else node.value
 
-    def items(self) -> ItemsView[Key, Value]:
+    def items(self) -> ItemsView:
         return ItemsView(self.tree)
 
     def keys(self) -> KeysView[Key]:
@@ -94,7 +103,7 @@ class Map(Generic[Key, Value]):
     def max(self) -> Value:
         return self._max_node().value
 
-    def maxitem(self) -> Value:
+    def maxitem(self) -> Item:
         return self._max_node().item
 
     def min(self) -> Value:
@@ -106,12 +115,12 @@ class Map(Generic[Key, Value]):
     def next(self, key: Key) -> Value:
         return self._next_node(key).value
 
-    def nextitem(self, key: Key) -> Value:
+    def nextitem(self, key: Key) -> Item:
         return self._next_node(key).item
 
     __sentinel = object()
 
-    def pop(self, key: Key, default: Value = __sentinel) -> Value:
+    def pop(self, key: Key, default: Any = __sentinel) -> Value:
         node = self.tree.pop(key)
         if node is NIL:
             if default is self.__sentinel:
@@ -122,7 +131,7 @@ class Map(Generic[Key, Value]):
     def popmax(self) -> Value:
         return self._popmax_node().value
 
-    def popmaxitem(self) -> Value:
+    def popmaxitem(self) -> Item:
         return self._popmax_node().item
 
     def popmin(self) -> Value:
@@ -136,7 +145,7 @@ class Map(Generic[Key, Value]):
     def prev(self, key: Key) -> Value:
         return self._prev_node(key).value
 
-    def previtem(self, key: Key) -> Value:
+    def previtem(self, key: Key) -> Item:
         return self._prev_node(key).item
 
     def setdefault(self,
@@ -210,6 +219,9 @@ class Map(Generic[Key, Value]):
         if result is NIL:
             raise KeyError('Corresponds to minimum')
         return result
+
+
+abc.MutableMapping.register(Map)
 
 
 def map_constructor(tree_constructor
