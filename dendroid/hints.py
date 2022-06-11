@@ -1,34 +1,28 @@
-from typing import Optional, Tuple, TypeVar
+from typing import (Optional as _Optional,
+                    Tuple as _Tuple,
+                    TypeVar as _TypeVar)
 
-from typing_extensions import (Protocol,
-                               TypeAlias)
+from typing_extensions import Protocol as _Protocol
 
 from .core import (hints as _hints,
                    maps as _maps,
                    sets as _sets)
+from .core.hints import (Key,
+                         Value)
 
-Key: TypeAlias = _hints.Key
-Value: TypeAlias = _hints.Value
 Item = _hints.Item
-Order = _hints.Order
 Map = _maps.Map
+Order = _hints.Order
 Set = _sets.Set
 
-_Key = TypeVar('_Key',
-               bound=_hints.Ordered)
-_Value = TypeVar('_Value')
 
-
-class MapFactory(Protocol[_Key, _Value]):
-    def __call__(self, *items: Tuple[_Key, _Value]) -> Map[_Key, _Value]:
+class MapFactory(_Protocol[Key, Value]):
+    def __call__(self, *items: Item) -> Map[Key, Value]:
         ...
 
 
-_T = TypeVar('_T')
-
-
-class SetFactory(Protocol[_T]):
+class SetFactory(_Protocol[Value]):
     def __call__(self,
-                 *values: _T,
-                 key: Optional[_hints.Order] = None) -> _sets.BaseSet[_T]:
+                 *values: Value,
+                 key: _Optional[Order] = None) -> _sets.BaseSet[Value]:
         ...

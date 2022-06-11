@@ -1,12 +1,13 @@
-from functools import partial
-from reprlib import recursive_repr
-from typing import (Any,
-                    Callable,
-                    Iterable,
-                    Optional,
-                    Tuple)
+from functools import partial as _partial
+from reprlib import recursive_repr as _recursive_repr
+from typing import (Any as _Any,
+                    Callable as _Callable,
+                    Iterable as _Iterable,
+                    Optional as _Optional,
+                    Tuple as _Tuple,
+                    Union as _Union)
 
-from reprit.base import generate_repr
+from reprit.base import generate_repr as _generate_repr
 
 from .core.abcs import (NIL,
                         AnyNode,
@@ -19,10 +20,10 @@ from .core.utils import (dereference_maybe as _dereference_maybe,
                          to_balanced_tree_height as _to_balanced_tree_height,
                          to_unique_sorted_items as _to_unique_sorted_items,
                          to_unique_sorted_values as _to_unique_sorted_values)
-from .hints import (Key,
-                    MapFactory,
-                    SetFactory,
-                    Value)
+from .hints import (Key as _Key,
+                    MapFactory as _MapFactory,
+                    SetFactory as _SetFactory,
+                    Value as _Value)
 
 
 class Node(_Node):
@@ -30,8 +31,8 @@ class Node(_Node):
                  '__weakref__')
 
     def __init__(self,
-                 key: Key,
-                 value: Value,
+                 key: _Key,
+                 value: _Union[_Key, _Value],
                  is_black: bool,
                  left: AnyNode = NIL,
                  right: AnyNode = NIL,
@@ -39,9 +40,9 @@ class Node(_Node):
         self._key, self._value, self.is_black = key, value, is_black
         self.left, self.right, self.parent = left, right, parent
 
-    __repr__ = recursive_repr()(generate_repr(__init__))
+    __repr__ = _recursive_repr()(_generate_repr(__init__))
 
-    State = Tuple[Any, ...]
+    State = _Tuple[_Any, ...]
 
     def __getstate__(self) -> State:
         return (self._key, self.value, self.is_black,
@@ -52,11 +53,11 @@ class Node(_Node):
          self.parent, self._left, self._right) = state
 
     @classmethod
-    def from_simple(cls, key: Key, *args: Any) -> 'Node':
+    def from_simple(cls, key: _Key, *args: _Any) -> 'Node':
         return cls(key, key, *args)
 
     @property
-    def key(self) -> Key:
+    def key(self) -> _Key:
         return self._key
 
     @property
@@ -86,16 +87,16 @@ class Node(_Node):
         _set_parent(node, self)
 
     @property
-    def value(self) -> Value:
+    def value(self) -> _Value:
         return self._value
 
 
-def _set_parent(node: AnyNode, parent: Optional[Node]) -> None:
+def _set_parent(node: AnyNode, parent: _Optional[Node]) -> None:
     if node is not NIL:
         node.parent = parent
 
 
-def _set_black(maybe_node: Optional[Node]) -> None:
+def _set_black(maybe_node: _Optional[Node]) -> None:
     if maybe_node is not None:
         maybe_node.is_black = True
 
@@ -136,8 +137,8 @@ class Tree(_Tree[Node]):
 
     @classmethod
     def from_components(cls,
-                        _keys: Iterable[Key],
-                        _values: Optional[Iterable[Value]] = None) -> 'Tree':
+                        _keys: _Iterable[_Key],
+                        _values: _Optional[_Iterable[_Value]] = None) -> 'Tree':
         keys = list(_keys)
         if not keys:
             root = NIL
@@ -148,7 +149,7 @@ class Tree(_Tree[Node]):
                         end_index: int,
                         depth: int,
                         height: int = _to_balanced_tree_height(len(keys)),
-                        constructor: Callable[..., Node] = Node.from_simple
+                        constructor: _Callable[..., Node] = Node.from_simple
                         ) -> Node:
                 middle_index = (start_index + end_index) // 2
                 return constructor(
@@ -171,7 +172,7 @@ class Tree(_Tree[Node]):
                         end_index: int,
                         depth: int,
                         height: int = _to_balanced_tree_height(len(items)),
-                        constructor: Callable[..., Node] = Node) -> Node:
+                        constructor: _Callable[..., Node] = Node) -> Node:
                 middle_index = (start_index + end_index) // 2
                 return constructor(
                         *items[middle_index],
@@ -188,7 +189,7 @@ class Tree(_Tree[Node]):
             root.is_black = True
         return cls(root)
 
-    def insert(self, key: Key, value: Value) -> Node:
+    def insert(self, key: _Key, value: _Value) -> Node:
         parent = self.root
         if parent is NIL:
             node = self.root = Node(key, value, True)
@@ -354,5 +355,5 @@ class Tree(_Tree[Node]):
             parent.right = replacement
 
 
-map_ = partial(_map_constructor, Tree.from_components)  # type: MapFactory
-set_ = partial(_set_constructor, Tree.from_components)  # type: SetFactory
+map_: _MapFactory = _partial(_map_constructor, Tree.from_components)
+set_: _SetFactory = _partial(_set_constructor, Tree.from_components)
