@@ -14,6 +14,7 @@ def read_file(path_string: str) -> str:
 
 setup(name=dendroid.__name__,
       packages=find_packages(exclude=('tests', 'tests.*')),
+      package_data={dendroid.__name__: ['py.typed']},
       version=dendroid.__version__,
       description=dendroid.__doc__,
       long_description=read_file('README.md'),
