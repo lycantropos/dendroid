@@ -1,3 +1,4 @@
+import sys as _sys
 from functools import partial as _partial
 from reprlib import recursive_repr as _recursive_repr
 from typing import (Any as _Any,
@@ -28,7 +29,7 @@ from .hints import (Key as _Key,
 
 class Node(_Node):
     __slots__ = ('is_black', '_key', '_left', '_parent', '_right', '_value',
-                 '__weakref__')
+                 *(('__weakref__',) if _sys.version_info >= (3, 7) else ()))
 
     def __init__(self,
                  key: _Key,
@@ -90,6 +91,10 @@ class Node(_Node):
     def value(self) -> _Value:
         return self._value
 
+    @value.setter
+    def value(self, value: _Value) -> None:
+        self._value = value
+
 
 def _set_parent(node: AnyNode, parent: _Optional[Node]) -> None:
     if node is not NIL:
@@ -138,7 +143,8 @@ class Tree(_Tree[Node]):
     @classmethod
     def from_components(cls,
                         _keys: _Iterable[_Key],
-                        _values: _Optional[_Iterable[_Value]] = None) -> 'Tree':
+                        _values: _Optional[
+                            _Iterable[_Value]] = None) -> 'Tree':
         keys = list(_keys)
         if not keys:
             root = NIL

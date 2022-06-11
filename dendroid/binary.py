@@ -64,12 +64,17 @@ class Node(_Node):
     def value(self) -> _Value:
         return self._value
 
+    @value.setter
+    def value(self, value: _Value) -> None:
+        self._value = value
+
 
 class Tree(_Tree[Node]):
     @classmethod
     def from_components(cls,
                         _keys: _Iterable[_Key],
-                        _values: _Optional[_Iterable[_Value]] = None) -> 'Tree':
+                        _values: _Optional[_Iterable[_Value]] = None
+                        ) -> 'Tree':
         keys = list(_keys)
         if not keys:
             root = NIL

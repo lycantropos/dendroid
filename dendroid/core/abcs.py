@@ -25,6 +25,8 @@ NIL: Nil = None
 
 
 class Node(ABC):
+    __slots__ = ()
+
     @property
     @abstractmethod
     def left(self) -> 'AnyNode':
@@ -48,6 +50,10 @@ class Node(ABC):
     @abstractmethod
     def value(self) -> Value:
         """Underlying value."""
+
+    @value.setter
+    def value(self, value: Value) -> None:
+        pass
 
 
 _Node = TypeVar('_Node',
