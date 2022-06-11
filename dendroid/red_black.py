@@ -251,7 +251,6 @@ class Tree(_Tree[Node]):
             successor.left, successor.left.parent = node.left, successor
             successor.is_black = node.is_black
         if is_node_black:
-            assert successor_child_parent is not NIL
             self._remove_node_fixup(successor_child, successor_child_parent,
                                     is_successor_child_left)
 
@@ -289,9 +288,10 @@ class Tree(_Tree[Node]):
 
     def _remove_node_fixup(self,
                            node: AnyNode,
-                           parent: Node,
+                           parent: AnyNode,
                            is_left_child: bool) -> None:
         while node is not self.root and _is_node_black(node):
+            assert parent is not NIL
             if is_left_child:
                 sibling = parent.right
                 assert sibling is not NIL
