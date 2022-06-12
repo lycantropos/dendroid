@@ -302,7 +302,7 @@ class Tree(_Tree[Node]):
                 if (_is_node_black(sibling.left)
                         and _is_node_black(sibling.right)):
                     sibling.is_black = False
-                    assert parent.parent is not NIL
+                    assert parent is not NIL
                     node, parent = parent, parent.parent
                     is_left_child = _is_left_child(node)
                 else:
