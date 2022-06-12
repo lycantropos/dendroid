@@ -247,9 +247,9 @@ class Tree(_Tree[Node]):
                 self._transplant(successor, successor.right)
                 successor.right = node.right
             self._transplant(node, successor)
-            assert successor.left is not NIL
-            successor.left, successor.left.parent = node.left, successor
-            successor.is_black = node.is_black
+            assert node.left is not NIL
+            node.left.parent = successor
+            successor.left, successor.is_black = node.left, node.is_black
         if is_node_black:
             self._remove_node_fixup(successor_child, successor_child_parent,
                                     is_successor_child_left)
@@ -324,7 +324,7 @@ class Tree(_Tree[Node]):
                 if (_is_node_black(sibling.left)
                         and _is_node_black(sibling.right)):
                     sibling.is_black = False
-                    assert parent.parent is not NIL
+                    assert parent is not NIL
                     node, parent = parent, parent.parent
                     is_left_child = _is_left_child(node)
                 else:
