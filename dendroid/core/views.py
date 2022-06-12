@@ -1,3 +1,4 @@
+from collections import abc
 from typing import (Generic,
                     Iterable,
                     Iterator)
@@ -25,6 +26,7 @@ class BaseView:
         return len(self.tree)
 
 
+@abc.Set.register
 class ItemsView(BaseView, AbstractSet[Item]):
     def __contains__(self, item: Item) -> bool:
         key, value = item
@@ -44,6 +46,7 @@ class ItemsView(BaseView, AbstractSet[Item]):
         return ItemsView(self.tree.from_components(keys, values))
 
 
+@abc.Set.register
 class KeysView(BaseView, AbstractSet[Key]):
     def __contains__(self, key: Key) -> bool:
         return self.tree.find(key) is not NIL
