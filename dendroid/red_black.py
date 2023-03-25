@@ -7,23 +7,23 @@ from reprlib import recursive_repr as _recursive_repr
 import typing_extensions as _te
 from reprit.base import generate_repr as _generate_repr
 
-from .core.abcs import (NIL,
-                        Nil as _Nil,
-                        Node as _Node,
-                        Tree as _Tree)
-from .core.hints import (Item as _Item,
-                         Key as _Key,
-                         Order as _Order,
-                         Value as _Value)
-from .core.maps import Map as _Map
-from .core.sets import (KeyedSet as _KeyedSet,
-                        Set as _Set)
-from .core.utils import (dereference_maybe as _dereference_maybe,
-                         maybe_weakref as _maybe_weakref,
-                         split_items as _split_items,
-                         to_balanced_tree_height as _to_balanced_tree_height,
-                         to_unique_sorted_items as _to_unique_sorted_items,
-                         to_unique_sorted_values as _to_unique_sorted_values)
+from ._core.abcs import (NIL,
+                         Nil as _Nil,
+                         Node as _Node,
+                         Tree as _Tree)
+from ._core.hints import (Item as _Item,
+                          Key as _Key,
+                          Order as _Order,
+                          Value as _Value)
+from ._core.maps import Map as _Map
+from ._core.sets import (KeyedSet as _KeyedSet,
+                         Set as _Set)
+from ._core.utils import (dereference_maybe as _dereference_maybe,
+                          maybe_weakref as _maybe_weakref,
+                          split_items as _split_items,
+                          to_balanced_tree_height as _to_balanced_tree_height,
+                          to_unique_sorted_items as _to_unique_sorted_items,
+                          to_unique_sorted_values as _to_unique_sorted_values)
 
 
 class Node(_t.Generic[_Key, _Value]):
