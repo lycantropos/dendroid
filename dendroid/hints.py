@@ -7,5 +7,5 @@ from .core.hints import (Key,
 Item = _hints.Item[Key, Value]
 Map = _maps.Map[Key, Value]
 Order = _hints.Order[Value, Key]
-KeyedSet = _sets.KeyedSet[Value]
+KeyedSet = _sets.KeyedSet[Key, Value]
 Set = _sets.Set[Value]

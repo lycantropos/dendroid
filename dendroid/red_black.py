@@ -434,14 +434,14 @@ def set_(*values: _Value,
 
 @_t.overload
 def set_(*values: _Value,
-         key: _Order[_Value, _Key]) -> _KeyedSet[_Value]:
+         key: _Order[_Value, _Key]) -> _KeyedSet[_Key, _Value]:
     ...
 
 
 def set_(
         *values: _Value,
         key: _t.Optional[_Order[_Value, _Key]] = None
-) -> _t.Union[_KeyedSet[_Value], _Set[_Value]]:
+) -> _t.Union[_KeyedSet[_Key, _Value], _Set[_Value]]:
     return (_Set(Tree.from_components(values))
             if key is None
             else _KeyedSet(Tree.from_components([key(value)

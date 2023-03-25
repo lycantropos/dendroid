@@ -135,7 +135,7 @@ class Set(BaseSet[Value]):
             raise ValueError('{!r} is not in set'.format(value))
 
 
-class KeyedSet(BaseSet[Value]):
+class KeyedSet(_t.Generic[Key, Value], BaseSet[Value]):
     __slots__ = 'key',
 
     def __init__(self, tree: Tree[Key, Value], key: Order[Value, Key]) -> None:
@@ -147,7 +147,7 @@ class KeyedSet(BaseSet[Value]):
     def __contains__(self, value: Value) -> bool:
         return bool(self.tree) and self.tree.find(self.key(value)) is not NIL
 
-    def __copy__(self) -> 'KeyedSet[Value]':
+    def __copy__(self) -> KeyedSet[Key, Value]:
         return KeyedSet(self.tree.__copy__(), self.key)
 
     def add(self, value: Value) -> None:
@@ -173,8 +173,9 @@ class KeyedSet(BaseSet[Value]):
                              .format(value))
         return node.value
 
-    def from_iterable(self, iterable: _t.Iterable[Value]) -> 'KeyedSet[Value]':
-        values = list(iterable)
+    def from_iterable(self,
+                      _value: _t.Iterable[Value]) -> KeyedSet[Key, Value]:
+        values = list(_value)
         return KeyedSet(self.tree.from_components(map(self.key, values),
                                                   values),
                         self.key)
