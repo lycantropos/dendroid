@@ -19,7 +19,7 @@ Nil = type(None)
 NIL: Nil = None
 
 
-class Node(_t.Protocol[Key_co, Value]):
+class Node(_te.Protocol[Key_co, Value]):
     @property
     @abstractmethod
     def left(self) -> _t.Union[Nil, _te.Self]:
