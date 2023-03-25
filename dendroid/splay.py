@@ -1,100 +1,130 @@
-from functools import partial as _partial
-from typing import (Any as _Any,
-                    Callable as _Callable,
-                    Iterable as _Iterable,
-                    Iterator as _Iterator,
-                    Optional as _Optional,
-                    cast as _cast)
+from __future__ import annotations
+
+import typing as _t
+
+import typing_extensions as _te
 
 from . import binary as _binary
 from .core.abcs import (NIL,
-                        AnyNode,
+                        Nil as _Nil,
+                        Node,
                         Tree as _Tree)
-from .core.maps import map_constructor as _map_constructor
-from .core.sets import set_constructor as _set_constructor
-from .core.utils import (to_unique_sorted_items as _to_unique_sorted_items,
+from .core.hints import (Item as _Item,
+                         Key as _Key,
+                         Order as _Order,
+                         Value as _Value)
+from .core.maps import Map as _Map
+from .core.sets import (KeyedSet as _KeyedSet,
+                        Set as _Set)
+from .core.utils import (split_items as _split_items,
+                         to_unique_sorted_items as _to_unique_sorted_items,
                          to_unique_sorted_values as _to_unique_sorted_values)
-from .hints import (Key as _Key,
-                    MapFactory as _MapFactory,
-                    SetFactory as _SetFactory,
-                    Value as _Value)
-
-Node = _binary.Node
 
 
-class Tree(_Tree[Node]):
-    __slots__ = '_header',
+class Tree(_Tree[_Key, _Value]):
+    _header: _binary.Node[_Key, _Value]
+    root: _t.Optional[_binary.Node[_Key, _Value]]
 
-    def __init__(self, root: AnyNode) -> None:
-        super().__init__(root)
+    __slots__ = '_header', 'root'
+
+    def __init__(self,
+                 root: _t.Union[_Nil, _binary.Node[_Key, _Value]]) -> None:
+        self.root = root
         self._header = _binary.Node(NotImplemented, NotImplemented)
 
-    def __iter__(self) -> _Iterator[Node]:
+    def __iter__(self) -> _t.Iterator[_binary.Node[_Key, _Value]]:
         # we are collecting all values at once
         # because tree can be implicitly changed during iteration
         # (e.g. by simple lookup)
         # and cause infinite loops
-        return iter(list(super().__iter__()))
+        return _t.cast(_t.Iterator[_binary.Node[_Key, _Value]],
+                       iter(list(super().__iter__())))
 
-    def __reversed__(self) -> _Iterator[Node]:
+    def __reversed__(self) -> _t.Iterator[_binary.Node[_Key, _Value]]:
         # we are collecting all values at once
         # because tree can be implicitly changed during iteration
         # (e.g. by simple lookup)
         # and cause infinite loops
-        return iter(list(super().__reversed__()))
+        return _t.cast(_t.Iterator[_binary.Node[_Key, _Value]],
+                       iter(list(super().__reversed__())))
 
+    @_t.overload
+    @classmethod
+    def from_components(cls: _t.Type[Tree[_Key, _Key]],
+                        _keys: _t.Iterable[_Key],
+                        _values: None = ...) -> Tree[_Key, _Key]:
+        ...
+
+    @_t.overload
     @classmethod
     def from_components(cls,
-                        _keys: _Iterable[_Key],
-                        _values: _Optional[_Iterable[_Value]] = None) -> 'Tree':
+                        _keys: _t.Iterable[_Key],
+                        _values: _t.Iterable[_Value]) -> _te.Self:
+        ...
+
+    @classmethod
+    def from_components(
+            cls: _t.Union[
+                _t.Type[Tree[_Key, _Key]], _t.Type[Tree[_Key, _Value]]
+            ],
+            _keys: _t.Iterable[_Key],
+            _values: _t.Optional[_t.Iterable[_Value]] = None
+    ) -> _t.Union[Tree[_Key, _Key], Tree[_Key, _Value]]:
         keys = list(_keys)
         if not keys:
-            root = NIL
+            return cls(NIL)
         elif _values is None:
             keys = _to_unique_sorted_values(keys)
 
-            def to_node(start_index: int,
-                        end_index: int,
-                        constructor: _Callable[
-                            ..., _binary.Node] = _binary.Node.from_simple
-                        ) -> _binary.Node:
+            def to_simple_node(
+                    start_index: int,
+                    end_index: int,
+                    constructor: _t.Callable[..., _binary.Node[_Key, _Key]]
+                    = _binary.Node.from_simple
+            ) -> _binary.Node[_Key, _Key]:
                 middle_index = (start_index + end_index) // 2
                 return constructor(keys[middle_index],
-                                   (to_node(start_index, middle_index)
+                                   (to_simple_node(start_index, middle_index)
                                     if middle_index > start_index
                                     else NIL),
-                                   (to_node(middle_index + 1, end_index)
+                                   (to_simple_node(middle_index + 1, end_index)
                                     if middle_index < end_index - 1
                                     else NIL))
 
-            root = to_node(0, len(keys))
+            return _t.cast(_t.Type[Tree[_Key, _Key]], cls)(
+                    to_simple_node(0, len(keys))
+            )
         else:
             items = _to_unique_sorted_items(keys, tuple(_values))
 
-            def to_node(start_index: int,
-                        end_index: int,
-                        constructor: _Callable[
-                            ..., _binary.Node] = _binary.Node) -> _binary.Node:
+            def to_complex_node(
+                    start_index: int,
+                    end_index: int,
+                    constructor: _t.Callable[..., _binary.Node[_Key, _Value]]
+                    = _binary.Node[_Key, _Value]
+            ) -> _binary.Node[_Key, _Value]:
                 middle_index = (start_index + end_index) // 2
                 return constructor(*items[middle_index],
-                                   (to_node(start_index, middle_index)
+                                   (to_complex_node(start_index, middle_index)
                                     if middle_index > start_index
                                     else NIL),
-                                   (to_node(middle_index + 1, end_index)
+                                   (to_complex_node(middle_index + 1,
+                                                    end_index)
                                     if middle_index < end_index - 1
                                     else NIL))
 
-            root = to_node(0, len(items))
-        return cls(root)
+            return _t.cast(_t.Type[Tree[_Key, _Value]], cls)(
+                    to_complex_node(0, len(items))
+            )
 
-    def find(self, key: _Key) -> AnyNode:
+    def find(self, key: _Key) -> _t.Union[_Nil, _binary.Node[_Key, _Value]]:
         if self.root is NIL:
             return NIL
         self._splay(key)
         root = self.root
         return NIL if key < root.key or root.key < key else root
 
-    def insert(self, key: _Key, value: _Value) -> Node:
+    def insert(self, key: _Key, value: _Value) -> Node[_Key, _Value]:
         if self.root is NIL:
             node = self.root = _binary.Node(key, value)
             return node
@@ -109,7 +139,7 @@ class Tree(_Tree[Node]):
                                                            self.root.right)
         return self.root
 
-    def max(self) -> AnyNode:
+    def max(self) -> _t.Union[_Nil, Node[_Key, _Value]]:
         node = self.root
         if node is not NIL:
             while node.right is not NIL:
@@ -118,7 +148,7 @@ class Tree(_Tree[Node]):
             self._splay(node.key)
         return node
 
-    def min(self) -> AnyNode:
+    def min(self) -> _t.Union[_Nil, Node[_Key, _Value]]:
         node = self.root
         if node is not NIL:
             while node.left is not NIL:
@@ -127,21 +157,24 @@ class Tree(_Tree[Node]):
             self._splay(node.key)
         return node
 
-    def popmax(self) -> AnyNode:
+    def popmax(self) -> _t.Union[_Nil, Node[_Key, _Value]]:
         if self.root is NIL:
             return self.root
         result = self.max()
         self._remove_root()
         return result
 
-    def popmin(self) -> AnyNode:
+    def popmin(self) -> _t.Union[_Nil, Node[_Key, _Value]]:
         if self.root is NIL:
             return self.root
         result = self.min()
         self._remove_root()
         return result
 
-    def predecessor(self, node: Node) -> AnyNode:
+    def predecessor(
+            self, node: Node[_Key, _Value]
+    ) -> _t.Union[_Nil, _binary.Node[_Key, _Value]]:
+        assert isinstance(node, _binary.Node)
         if node.left is NIL:
             result, cursor, key = NIL, self.root, node.key
             while cursor is not node:
@@ -160,11 +193,14 @@ class Tree(_Tree[Node]):
             self._splay(result.key)
         return result
 
-    def remove(self, node: Node) -> None:
-        self._splay(_cast(_Any, node.key))
+    def remove(self, node: Node[_Key, _Value]) -> None:
+        self._splay(node.key)
         self._remove_root()
 
-    def successor(self, node: Node) -> AnyNode:
+    def successor(
+            self, node: Node[_Key, _Value]
+    ) -> _t.Union[_Nil, _binary.Node[_Key, _Value]]:
+        assert isinstance(node, _binary.Node)
         if node.right is NIL:
             result, cursor, key = NIL, self.root, node.key
             while cursor is not node:
@@ -228,19 +264,35 @@ class Tree(_Tree[Node]):
             self.root.right = right_root_child
 
     @staticmethod
-    def _rotate_left(node: Node) -> Node:
+    def _rotate_left(
+            node: _binary.Node[_Key, _Value]
+    ) -> _binary.Node[_Key, _Value]:
         replacement = node.right
         assert replacement is not NIL
         node.right, replacement.left = replacement.left, node
         return replacement
 
     @staticmethod
-    def _rotate_right(node: Node) -> Node:
+    def _rotate_right(
+            node: _binary.Node[_Key, _Value]
+    ) -> _binary.Node[_Key, _Value]:
         replacement = node.left
         assert replacement is not NIL
         node.left, replacement.right = replacement.right, node
         return replacement
 
 
-map_: _MapFactory = _partial(_map_constructor, Tree.from_components)
-set_: _SetFactory = _partial(_set_constructor, Tree.from_components)
+def map_(*items: _Item[_Key, _Value]) -> _Map[_Key, _Value]:
+    return _Map(Tree.from_components(*_split_items(items)))
+
+
+def set_(
+        *values: _Value,
+        key: _t.Optional[_Order[_Value, _Key]] = None
+) -> _t.Union[_KeyedSet[_Value], _Set[_Value]]:
+    return (_Set(Tree.from_components(values))
+            if key is None
+            else _KeyedSet(Tree.from_components([key(value)
+                                                 for value in values],
+                                                values),
+                           key))

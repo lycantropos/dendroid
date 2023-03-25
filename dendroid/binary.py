@@ -1,43 +1,47 @@
-from functools import partial as _partial
-from typing import (Any as _Any,
-                    Callable as _Callable,
-                    Iterable as _Iterable,
-                    Optional as _Optional,
-                    Union as _Union)
+from __future__ import annotations
 
+import typing as _t
+
+import typing_extensions as _te
 from reprit.base import generate_repr as _generate_repr
 
 from .core.abcs import (NIL,
-                        AnyNode,
+                        Nil as _Nil,
                         Node as _Node,
                         Tree as _Tree)
-from .core.maps import map_constructor as _map_constructor
-from .core.sets import set_constructor as _set_constructor
+from .core.hints import (Item as _Item,
+                         Key as _Key,
+                         Order as _Order,
+                         Value as _Value)
+from .core.maps import Map as _Map
+from .core.sets import (KeyedSet as _KeyedSet,
+                        Set as _Set)
 from .core.utils import (are_keys_equal as _are_keys_equal,
+                         split_items as _split_items,
                          to_unique_sorted_items as _to_unique_sorted_items,
                          to_unique_sorted_values as _to_unique_sorted_values)
-from .hints import (Key as _Key,
-                    MapFactory as _MapFactory,
-                    SetFactory as _SetFactory,
-                    Value as _Value)
 
 
-class Node(_Node):
+class Node(_Node[_Key, _Value]):
+    _left: _t.Union[_Nil, _te.Self]
+    _right: _t.Union[_Nil, _te.Self]
+
     __slots__ = '_left', '_right', '_key', '_value'
 
     def __init__(self,
                  key: _Key,
-                 value: _Union[_Key, _Value],
-                 left: AnyNode = NIL,
-                 right: AnyNode = NIL) -> None:
-        self._key, self._value, self._left, self._right = (
-            key, value, left, right
-        )
+                 value: _Value,
+                 left: _t.Union[_Nil, _te.Self] = NIL,
+                 right: _t.Union[_Nil, _te.Self] = NIL) -> None:
+        self._key, self._value, self._left, self._right = (key, value, left,
+                                                           right)
 
     __repr__ = _generate_repr(__init__)
 
     @classmethod
-    def from_simple(cls, key: _Key, *args: _Any) -> 'Node':
+    def from_simple(cls: _t.Type[Node[_Key, _Key]],
+                    key: _Key,
+                    *args: _t.Any) -> Node[_Key, _Key]:
         return cls(key, key, *args)
 
     @property
@@ -45,19 +49,19 @@ class Node(_Node):
         return self._key
 
     @property
-    def left(self) -> AnyNode:
+    def left(self) -> _t.Union[_Nil, _te.Self]:
         return self._left
 
     @left.setter
-    def left(self, value: AnyNode) -> None:
+    def left(self, value: _t.Union[_Nil, _te.Self]) -> None:
         self._left = value
 
     @property
-    def right(self) -> AnyNode:
+    def right(self) -> _t.Union[_Nil, _te.Self]:
         return self._right
 
     @right.setter
-    def right(self, value: AnyNode) -> None:
+    def right(self, value: _t.Union[_Nil, _te.Self]) -> None:
         self._right = value
 
     @property
@@ -69,49 +73,78 @@ class Node(_Node):
         self._value = value
 
 
-class Tree(_Tree[Node]):
+class Tree(_Tree[_Key, _Value]):
+    root: _t.Optional[Node[_Key, _Value]]
+
+    @_t.overload
     @classmethod
     def from_components(cls,
-                        _keys: _Iterable[_Key],
-                        _values: _Optional[_Iterable[_Value]] = None
-                        ) -> 'Tree':
+                        _keys: _t.Iterable[_Key],
+                        _values: None = ...) -> Tree[_Key, _Key]:
+        ...
+
+    @_t.overload
+    @classmethod
+    def from_components(cls,
+                        _keys: _t.Iterable[_Key],
+                        _values: _t.Iterable[_Value]) -> _te.Self:
+        ...
+
+    @classmethod
+    def from_components(
+            cls: _t.Union[
+                _t.Type[Tree[_Key, _Key]], _t.Type[Tree[_Key, _Value]]
+            ],
+            _keys: _t.Iterable[_Key],
+            _values: _t.Optional[_t.Iterable[_Value]] = None
+    ) -> _t.Union[Tree[_Key, _Key], Tree[_Key, _Value]]:
         keys = list(_keys)
         if not keys:
-            root = NIL
+            return cls(NIL)
         elif _values is None:
             keys = _to_unique_sorted_values(keys)
 
-            def to_node(start_index: int, end_index: int,
-                        constructor: _Callable[..., Node] = Node.from_simple
-                        ) -> Node:
+            def to_simple_node(
+                    start_index: int,
+                    end_index: int,
+                    constructor: _t.Callable[..., Node[_Key, _Key]]
+                    = Node.from_simple
+            ) -> Node[_Key, _Key]:
                 middle_index = (start_index + end_index) // 2
                 return constructor(keys[middle_index],
-                                   (to_node(start_index, middle_index)
+                                   (to_simple_node(start_index, middle_index)
                                     if middle_index > start_index
                                     else NIL),
-                                   (to_node(middle_index + 1, end_index)
+                                   (to_simple_node(middle_index + 1, end_index)
                                     if middle_index < end_index - 1
                                     else NIL))
 
-            root = to_node(0, len(keys))
+            return _t.cast(_t.Type[Tree[_Key, _Key]], cls)(
+                    to_simple_node(0, len(keys))
+            )
         else:
             items = _to_unique_sorted_items(keys, tuple(_values))
 
-            def to_node(start_index: int, end_index: int,
-                        constructor: _Callable[..., Node] = Node) -> Node:
+            def to_complex_node(
+                    start_index: int,
+                    end_index: int,
+                    constructor: _t.Callable[..., Node[_Key, _Value]] = Node
+            ) -> Node[_Key, _Value]:
                 middle_index = (start_index + end_index) // 2
                 return constructor(*items[middle_index],
-                                   (to_node(start_index, middle_index)
+                                   (to_complex_node(start_index, middle_index)
                                     if middle_index > start_index
                                     else NIL),
-                                   (to_node(middle_index + 1, end_index)
+                                   (to_complex_node(middle_index + 1,
+                                                    end_index)
                                     if middle_index < end_index - 1
                                     else NIL))
 
-            root = to_node(0, len(items))
-        return cls(root)
+            return _t.cast(_t.Type[Tree[_Key, _Value]], cls)(
+                    to_complex_node(0, len(items))
+            )
 
-    def insert(self, key: _Key, value: _Value) -> Node:
+    def insert(self, key: _Key, value: _Value) -> Node[_Key, _Value]:
         parent = self.root
         if parent is NIL:
             node = self.root = Node(key, value)
@@ -132,7 +165,7 @@ class Tree(_Tree[Node]):
             else:
                 return parent
 
-    def popmax(self) -> AnyNode:
+    def popmax(self) -> _t.Union[_Nil, Node[_Key, _Value]]:
         node = self.root
         if node is NIL:
             return node
@@ -142,10 +175,11 @@ class Tree(_Tree[Node]):
         else:
             while node.right.right is not NIL:
                 node = node.right
+            assert node.right is not NIL
             result, node.right = node.right, node.right.left
             return result
 
-    def popmin(self) -> AnyNode:
+    def popmin(self) -> _t.Union[_Nil, Node[_Key, _Value]]:
         node = self.root
         if node is NIL:
             return node
@@ -155,10 +189,14 @@ class Tree(_Tree[Node]):
         else:
             while node.left.left is not NIL:
                 node = node.left
+            assert node.left is not NIL
             result, node.left = node.left, node.left.right
             return result
 
-    def predecessor(self, node: Node) -> AnyNode:
+    def predecessor(
+            self, node: _Node[_Key, _Value]
+    ) -> _t.Union[_Nil, Node[_Key, _Value]]:
+        assert isinstance(node, Node)
         if node.left is NIL:
             result, cursor, key = NIL, self.root, node.key
             while cursor is not node:
@@ -173,7 +211,8 @@ class Tree(_Tree[Node]):
                 result = result.right
         return result
 
-    def remove(self, node: Node) -> None:
+    def remove(self, node: _Node[_Key, _Value]) -> None:
+        assert isinstance(node, Node)
         assert self.root is not NIL
         parent, key = self.root, node.key
         if _are_keys_equal(key, parent.key):
@@ -187,9 +226,11 @@ class Tree(_Tree[Node]):
                     while node.right.right is not NIL:
                         node = node.right
                     assert node.right is not NIL
-                    (self.root, node.right.left, node.right.right,
-                     node.right) = (node.right, self.root.left,
-                                    self.root.right, node.right.left)
+                    (
+                        self.root, node.right.left, node.right.right,
+                        node.right
+                    ) = (node.right, self.root.left, self.root.right,
+                         node.right.left)
             return
         while True:
             assert parent is not NIL
@@ -198,19 +239,21 @@ class Tree(_Tree[Node]):
                 assert parent.left is not NIL
                 if _are_keys_equal(key, parent.left.key):
                     # remove `parent.left`
-                    node = parent.left.left
-                    if node is NIL:
+                    cursor = parent.left.left
+                    if cursor is NIL:
                         parent.left = parent.left.right
                         return
-                    elif node.right is NIL:
-                        parent.left, node.right = node, parent.left.right
+                    elif cursor.right is NIL:
+                        parent.left, cursor.right = cursor, parent.left.right
                     else:
-                        while node.right.right is not NIL:
-                            node = node.right
-                        assert node.right is not NIL
-                        (parent.left, node.right.left, node.right.right,
-                         node.right) = (node.right, parent.left.left,
-                                        parent.left.right, node.right.left)
+                        while cursor.right.right is not NIL:
+                            cursor = cursor.right
+                        assert cursor.right is not NIL
+                        (
+                            parent.left, cursor.right.left, cursor.right.right,
+                            cursor.right
+                        ) = (cursor.right, parent.left.left, parent.left.right,
+                             cursor.right.left)
                     return
                 else:
                     parent = parent.left
@@ -220,28 +263,31 @@ class Tree(_Tree[Node]):
                 if _are_keys_equal(key, parent.right.key):
                     # remove `parent.right`
                     assert parent.right is not NIL
-                    node = parent.right.left
-                    if node is NIL:
+                    cursor = parent.right.left
+                    if cursor is NIL:
                         parent.right = parent.right.right
                         return
-                    elif node.right is NIL:
-                        parent.right, node.right = node, parent.right.right
+                    elif cursor.right is NIL:
+                        parent.right, cursor.right = cursor, parent.right.right
                     else:
-                        while node.right.right is not NIL:
-                            node = node.right
-                        assert node.right is not NIL
+                        while cursor.right.right is not NIL:
+                            cursor = cursor.right
+                        assert cursor.right is not NIL
                         (
-                            parent.right, node.right.left, node.right.right,
-                            node.right
+                            parent.right, cursor.right.left,
+                            cursor.right.right, cursor.right
                         ) = (
-                            node.right, parent.right.left, parent.right.right,
-                            node.right.left
+                            cursor.right, parent.right.left,
+                            parent.right.right, cursor.right.left
                         )
                     return
                 else:
                     parent = parent.right
 
-    def successor(self, node: Node) -> AnyNode:
+    def successor(
+            self, node: _Node[_Key, _Value]
+    ) -> _t.Union[_Nil, Node[_Key, _Value]]:
+        assert isinstance(node, Node)
         if node.right is NIL:
             result, cursor, key = NIL, self.root, node.key
             while cursor is not node:
@@ -258,6 +304,23 @@ class Tree(_Tree[Node]):
                 assert result is not NIL
         return result
 
+    __slots__ = 'root',
 
-map_: _MapFactory = _partial(_map_constructor, Tree.from_components)
-set_: _SetFactory = _partial(_set_constructor, Tree.from_components)
+    def __init__(self, root: _t.Union[_Nil, Node[_Key, _Value]]) -> None:
+        self.root = root
+
+
+def map_(*items: _Item[_Key, _Value]) -> _Map[_Key, _Value]:
+    return _Map(Tree.from_components(*_split_items(items)))
+
+
+def set_(
+        *values: _Value,
+        key: _t.Optional[_Order[_Value, _Key]] = None
+) -> _t.Union[_KeyedSet[_Value], _Set[_Value]]:
+    return (_Set(Tree.from_components(values))
+            if key is None
+            else _KeyedSet(Tree.from_components([key(value)
+                                                 for value in values],
+                                                values),
+                           key))

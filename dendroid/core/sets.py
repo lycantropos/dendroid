@@ -1,34 +1,34 @@
+from __future__ import annotations
+
+import typing as _t
 from abc import abstractmethod
-from typing import (Callable,
-                    Iterable,
-                    Iterator,
-                    Optional)
 
 from reprit.base import generate_repr
 
 from .abcs import (NIL,
                    MutableSet,
                    Tree)
-from .hints import (Order,
+from .hints import (Key,
+                    Order,
                     Value)
 
 
 class BaseSet(MutableSet[Value]):
     __slots__ = 'tree',
 
-    def __init__(self, tree: Tree) -> None:
+    def __init__(self, tree: Tree[_t.Any, Value]) -> None:
         self.tree = tree
 
     __repr__ = generate_repr(__init__)
 
-    def __iter__(self) -> Iterator[Value]:
+    def __iter__(self) -> _t.Iterator[Value]:
         for node in self.tree:
             yield node.value
 
     def __len__(self) -> int:
         return len(self.tree)
 
-    def __reversed__(self) -> Iterator[Value]:
+    def __reversed__(self) -> _t.Iterator[Value]:
         for node in reversed(self.tree):
             yield node.value
 
@@ -82,7 +82,7 @@ class Set(BaseSet[Value]):
     def __contains__(self, value: Value) -> bool:
         return self.tree.find(value) is not NIL
 
-    def __copy__(self) -> 'Set[Value]':
+    def __copy__(self) -> Set[Value]:
         return Set(self.tree.__copy__())
 
     def add(self, value: Value) -> None:
@@ -108,7 +108,7 @@ class Set(BaseSet[Value]):
                              .format(value))
         return node.value
 
-    def from_iterable(self, iterable: Iterable[Value]) -> 'Set[Value]':
+    def from_iterable(self, iterable: _t.Iterable[Key]) -> Set[Key]:
         return Set(self.tree.from_components(iterable))
 
     def next(self, value: Value) -> Value:
@@ -138,7 +138,7 @@ class Set(BaseSet[Value]):
 class KeyedSet(BaseSet[Value]):
     __slots__ = 'key',
 
-    def __init__(self, tree: Tree, key: Order) -> None:
+    def __init__(self, tree: Tree[Key, Value], key: Order[Value, Key]) -> None:
         super().__init__(tree)
         self.key = key
 
@@ -173,7 +173,7 @@ class KeyedSet(BaseSet[Value]):
                              .format(value))
         return node.value
 
-    def from_iterable(self, iterable: Iterable[Value]) -> 'KeyedSet[Value]':
+    def from_iterable(self, iterable: _t.Iterable[Value]) -> 'KeyedSet[Value]':
         values = list(iterable)
         return KeyedSet(self.tree.from_components(map(self.key, values),
                                                   values),
@@ -205,9 +205,11 @@ class KeyedSet(BaseSet[Value]):
             raise ValueError('{!r} is not in set'.format(value))
 
 
-def set_constructor(tree_constructor: Callable[..., Tree],
-                    *values: Value,
-                    key: Optional[Order] = None) -> BaseSet[Value]:
+def set_constructor(
+        tree_constructor: _t.Callable[..., Tree[Key, Value]],
+        *values: Value,
+        key: _t.Optional[Order[Value, Key]] = None
+) -> BaseSet[Value]:
     return (Set(tree_constructor(values))
             if key is None
             else KeyedSet(tree_constructor([key(value) for value in values],
