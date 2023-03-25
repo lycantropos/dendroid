@@ -190,6 +190,12 @@ def are_items_equal(left: Item, right: Item) -> bool:
     return are_keys_equal(left_key, right_key) and left_value == right_value
 
 
+def are_items_keys_equal(left: Item, right: Item) -> bool:
+    left_key, _ = left
+    right_key, _ = right
+    return are_keys_equal(left_key, right_key)
+
+
 to_balanced_tree_height = to_balanced_tree_height
 
 
