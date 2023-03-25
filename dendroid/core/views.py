@@ -3,7 +3,6 @@ from __future__ import annotations
 import typing as _t
 from collections import abc
 
-import typing_extensions as _te
 from reprit.base import generate_repr
 
 from .abcs import (NIL,
