@@ -131,12 +131,12 @@ class Tree(_Tree[_Key, _Value]):
         self._splay(key)
         if key < self.root.key:
             self.root.left, self.root = NIL, Node(key, value,
-                                                          self.root.left,
-                                                          self.root)
+                                                  self.root.left,
+                                                  self.root)
         elif self.root.key < key:
             self.root.right, self.root = NIL, Node(key, value,
-                                                           self.root,
-                                                           self.root.right)
+                                                   self.root,
+                                                   self.root.right)
         return self.root
 
     def max(self) -> _t.Union[_Nil, _Node[_Key, _Value]]:
