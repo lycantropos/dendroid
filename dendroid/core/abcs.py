@@ -109,23 +109,23 @@ class Tree(ABC, _t.Generic[Key, Value]):
     @_t.overload
     @classmethod
     def from_components(cls,
-                        _keys: _t.Iterable[Key],
-                        _values: None = ...) -> Tree[Key, Key]:
+                        keys: _t.Iterable[Key],
+                        values: None = ...) -> Tree[Key, Key]:
         ...
 
     @_t.overload
     @classmethod
     def from_components(cls,
-                        _keys: _t.Iterable[Key],
-                        _values: _t.Iterable[Value]) -> _te.Self:
+                        keys: _t.Iterable[Key],
+                        values: _t.Iterable[Value]) -> _te.Self:
         ...
 
     @classmethod
     @abstractmethod
     def from_components(
             cls: _t.Union[_t.Type[Tree[Key, Key]], _t.Type[Tree[Key, Value]]],
-            _keys: _t.Iterable[Key],
-            _values: _t.Optional[_t.Iterable[Value]] = None
+            keys: _t.Iterable[Key],
+            values: _t.Optional[_t.Iterable[Value]] = None
     ) -> _t.Union[Tree[Key, Key], Tree[Key, Value]]:
         """Constructs tree from given components."""
 
