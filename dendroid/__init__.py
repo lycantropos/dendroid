@@ -1,3 +1,3 @@
 """Search trees."""
 
-__version__ = '1.6.0-alpha'
+__version__ = '1.6.0'
