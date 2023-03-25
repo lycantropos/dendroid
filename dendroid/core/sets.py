@@ -108,8 +108,8 @@ class Set(BaseSet[Value]):
                              .format(value))
         return node.value
 
-    def from_iterable(self, iterable: _t.Iterable[Key]) -> Set[Key]:
-        return Set(self.tree.from_components(iterable))
+    def from_iterable(self, _value: _t.Iterable[Key]) -> Set[Key]:
+        return Set(self.tree.from_components(_value))
 
     def next(self, value: Value) -> Value:
         node = self.tree.find(value)
