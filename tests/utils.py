@@ -23,17 +23,17 @@ from dendroid import (avl,
                       binary,
                       red_black,
                       splay)
-from dendroid.core.abcs import (NIL,
-                                Node,
-                                Tree)
-from dendroid.core.maps import Map
-from dendroid.core.sets import (BaseSet,
-                                KeyedSet)
-from dendroid.core.utils import (are_keys_equal,
-                                 to_balanced_tree_height)
-from dendroid.core.views import (ItemsView,
-                                 KeysView,
-                                 ValuesView)
+from dendroid._core.abcs import (NIL,
+                                 Node,
+                                 Tree)
+from dendroid._core.maps import Map
+from dendroid._core.sets import (BaseSet,
+                                 KeyedSet)
+from dendroid._core.utils import (are_keys_equal,
+                                  to_balanced_tree_height)
+from dendroid._core.views import (ItemsView,
+                                  KeysView,
+                                  ValuesView)
 from dendroid.hints import (Item,
                             Key,
                             Order,
@@ -61,10 +61,12 @@ TreesPair = Tuple[Tree, Tree]
 TreesTriplet = Tuple[Tree, Tree, Tree]
 ValuesListWithOrder = Tuple[List[Value], Optional[Order]]
 ValuesListsPairWithOrder = Tuple[List[Value], List[Value], Optional[Order]]
-ValuesListsTripletWithOrder = Tuple[List[Value], List[Value], List[Value],
-                                    Optional[Order]]
-ValuesListsWithOrder = Union[ValuesListWithOrder, ValuesListsPairWithOrder,
-                             ValuesListsTripletWithOrder]
+ValuesListsTripletWithOrder = Tuple[
+    List[Value], List[Value], List[Value], Optional[Order]
+]
+ValuesListsWithOrder = Union[
+    ValuesListWithOrder, ValuesListsPairWithOrder, ValuesListsTripletWithOrder
+]
 ValuesView = ValuesView
 ValuesViewsPair = Tuple[ValuesView, ValuesView]
 ValuesViewsTriplet = Tuple[ValuesView, ValuesView, ValuesView]
