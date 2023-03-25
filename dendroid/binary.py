@@ -22,7 +22,7 @@ from .core.utils import (are_keys_equal as _are_keys_equal,
                          to_unique_sorted_values as _to_unique_sorted_values)
 
 
-class Node(_Node[_Key, _Value]):
+class Node(_t.Generic[_Key, _Value]):
     _left: _t.Union[_Nil, _te.Self]
     _right: _t.Union[_Nil, _te.Self]
 
@@ -43,6 +43,10 @@ class Node(_Node[_Key, _Value]):
                     key: _Key,
                     *args: _t.Any) -> Node[_Key, _Key]:
         return cls(key, key, *args)
+
+    @property
+    def item(self) -> _Item[_Key, _Value]:
+        return self.key, self.value
 
     @property
     def key(self) -> _Key:

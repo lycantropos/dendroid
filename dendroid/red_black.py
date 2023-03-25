@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys as _sys
 import typing as _t
 import weakref
 from reprlib import recursive_repr as _recursive_repr
@@ -27,13 +26,13 @@ from .core.utils import (dereference_maybe as _dereference_maybe,
                          to_unique_sorted_values as _to_unique_sorted_values)
 
 
-class Node(_Node[_Key, _Value]):
+class Node(_t.Generic[_Key, _Value]):
     _left: _t.Optional[_te.Self]
     _right: _t.Optional[_te.Self]
     _parent: _t.Optional['weakref.ref[_te.Self]']
 
     __slots__ = ('is_black', '_key', '_left', '_parent', '_right', '_value',
-                 *(('__weakref__',) if _sys.version_info >= (3, 7) else ()))
+                 '__weakref__')
 
     def __init__(self,
                  key: _Key,
@@ -60,6 +59,10 @@ class Node(_Node[_Key, _Value]):
                     key: _Key,
                     *args: _t.Any) -> Node[_Key, _Key]:
         return cls(key, key, *args)
+
+    @property
+    def item(self) -> _Item[_Key, _Value]:
+        return self.key, self.value
 
     @property
     def key(self) -> _Key:
