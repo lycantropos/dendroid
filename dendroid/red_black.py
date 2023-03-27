@@ -29,33 +29,6 @@ NIL = _NIL
 
 
 class Node(_t.Generic[_Key, _Value]):
-    _left: _t.Optional[_te.Self]
-    _right: _t.Optional[_te.Self]
-    _parent: _t.Optional['weakref.ref[_te.Self]']
-
-    __slots__ = ('is_black', '_key', '_left', '_parent', '_right', '_value',
-                 '__weakref__')
-
-    def __init__(self,
-                 key: _Key,
-                 value: _Value,
-                 is_black: bool,
-                 left: _t.Union[_Nil, _te.Self] = NIL,
-                 right: _t.Union[_Nil, _te.Self] = NIL,
-                 parent: _t.Union[_Nil, _te.Self] = NIL) -> None:
-        self._key, self._value, self.is_black = key, value, is_black
-        self.left, self.right, self.parent = left, right, parent
-
-    __repr__ = _recursive_repr()(_generate_repr(__init__))
-
-    def __getstate__(self) -> _t.Tuple[_t.Any, ...]:
-        return (self._key, self.value, self.is_black,
-                self.parent, self.left, self.right)
-
-    def __setstate__(self, state: _t.Tuple[_t.Any, ...]) -> None:
-        (self._key, self._value, self.is_black,
-         self.parent, self._left, self._right) = state
-
     @classmethod
     def from_simple(cls: _t.Type[Node[_Key, _Key]],
                     key: _Key,
@@ -103,6 +76,33 @@ class Node(_t.Generic[_Key, _Value]):
     @value.setter
     def value(self, value: _Value) -> None:
         self._value = value
+
+    _left: _t.Optional[_te.Self]
+    _right: _t.Optional[_te.Self]
+    _parent: _t.Optional['weakref.ref[_te.Self]']
+
+    __slots__ = ('is_black', '_key', '_left', '_parent', '_right', '_value',
+                 '__weakref__')
+
+    def __init__(self,
+                 key: _Key,
+                 value: _Value,
+                 is_black: bool,
+                 left: _t.Union[_Nil, _te.Self] = NIL,
+                 right: _t.Union[_Nil, _te.Self] = NIL,
+                 parent: _t.Union[_Nil, _te.Self] = NIL) -> None:
+        self._key, self._value, self.is_black = key, value, is_black
+        self.left, self.right, self.parent = left, right, parent
+
+    __repr__ = _recursive_repr()(_generate_repr(__init__))
+
+    def __getstate__(self) -> _t.Tuple[_t.Any, ...]:
+        return (self._key, self.value, self.is_black,
+                self.parent, self.left, self.right)
+
+    def __setstate__(self, state: _t.Tuple[_t.Any, ...]) -> None:
+        (self._key, self._value, self.is_black,
+         self.parent, self._left, self._right) = state
 
 
 def _set_parent(node: _t.Union[_Nil, Node[_Key, _Value]],

@@ -24,32 +24,6 @@ NIL = _NIL
 
 
 class Tree(_Tree[_Key, _Value]):
-    _header: Node[_Key, _Value]
-    root: _t.Optional[Node[_Key, _Value]]
-
-    __slots__ = '_header', 'root'
-
-    def __init__(self,
-                 root: _t.Union[_Nil, Node[_Key, _Value]]) -> None:
-        self.root = root
-        self._header = Node(NotImplemented, NotImplemented)
-
-    def __iter__(self) -> _t.Iterator[Node[_Key, _Value]]:
-        # we are collecting all values at once
-        # because tree can be implicitly changed during iteration
-        # (e.g. by simple lookup)
-        # and cause infinite loops
-        return _t.cast(_t.Iterator[Node[_Key, _Value]],
-                       iter(list(super().__iter__())))
-
-    def __reversed__(self) -> _t.Iterator[Node[_Key, _Value]]:
-        # we are collecting all values at once
-        # because tree can be implicitly changed during iteration
-        # (e.g. by simple lookup)
-        # and cause infinite loops
-        return _t.cast(_t.Iterator[Node[_Key, _Value]],
-                       iter(list(super().__reversed__())))
-
     @_t.overload
     @classmethod
     def from_components(cls: _t.Type[Tree[_Key, _Key]],
@@ -221,6 +195,36 @@ class Tree(_Tree[_Key, _Value]):
             self._splay(result.key)
         return result
 
+    @staticmethod
+    def _rotate_left(
+            node: Node[_Key, _Value]
+    ) -> Node[_Key, _Value]:
+        replacement = node.right
+        assert replacement is not NIL
+        node.right, replacement.left = replacement.left, node
+        return replacement
+
+    @staticmethod
+    def _rotate_right(
+            node: Node[_Key, _Value]
+    ) -> Node[_Key, _Value]:
+        replacement = node.left
+        assert replacement is not NIL
+        node.left, replacement.right = replacement.right, node
+        return replacement
+
+    def _remove_root(self) -> None:
+        root = self.root
+        assert root is not NIL
+        if root.left is NIL:
+            self.root = root.right
+        else:
+            right_root_child = root.right
+            self.root = root.left
+            self._splay(root.key)
+            assert self.root is not NIL
+            self.root.right = right_root_child
+
     def _splay(self, key: _Key) -> None:
         next_root = self.root
         next_root_left_child = next_root_right_child = self._header
@@ -253,35 +257,30 @@ class Tree(_Tree[_Key, _Value]):
         next_root.left, next_root.right = self._header.right, self._header.left
         self.root = next_root
 
-    def _remove_root(self) -> None:
-        root = self.root
-        assert root is not NIL
-        if root.left is NIL:
-            self.root = root.right
-        else:
-            right_root_child = root.right
-            self.root = root.left
-            self._splay(root.key)
-            assert self.root is not NIL
-            self.root.right = right_root_child
+    _header: Node[_Key, _Value]
+    root: _t.Optional[Node[_Key, _Value]]
 
-    @staticmethod
-    def _rotate_left(
-            node: Node[_Key, _Value]
-    ) -> Node[_Key, _Value]:
-        replacement = node.right
-        assert replacement is not NIL
-        node.right, replacement.left = replacement.left, node
-        return replacement
+    __slots__ = '_header', 'root'
 
-    @staticmethod
-    def _rotate_right(
-            node: Node[_Key, _Value]
-    ) -> Node[_Key, _Value]:
-        replacement = node.left
-        assert replacement is not NIL
-        node.left, replacement.right = replacement.right, node
-        return replacement
+    def __init__(self, root: _t.Union[_Nil, Node[_Key, _Value]]) -> None:
+        self.root = root
+        self._header = Node(NotImplemented, NotImplemented)
+
+    def __iter__(self) -> _t.Iterator[Node[_Key, _Value]]:
+        # we are collecting all values at once
+        # because tree can be implicitly changed during iteration
+        # (e.g. by simple lookup)
+        # and cause infinite loops
+        return _t.cast(_t.Iterator[Node[_Key, _Value]],
+                       iter(list(super().__iter__())))
+
+    def __reversed__(self) -> _t.Iterator[Node[_Key, _Value]]:
+        # we are collecting all values at once
+        # because tree can be implicitly changed during iteration
+        # (e.g. by simple lookup)
+        # and cause infinite loops
+        return _t.cast(_t.Iterator[Node[_Key, _Value]],
+                       iter(list(super().__reversed__())))
 
 
 def map_(*items: _Item[_Key, _Value]) -> _Map[_Key, _Value]:

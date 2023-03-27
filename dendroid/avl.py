@@ -27,38 +27,6 @@ NIL = _NIL
 
 
 class Node(_t.Generic[_Key, _Value]):
-    __slots__ = ('height', '_key', '_left', '_parent', '_right', '_value',
-                 '__weakref__')
-
-    def __init__(self,
-                 key: _Key,
-                 value: _Value,
-                 left: _t.Union[_Nil, _te.Self] = NIL,
-                 right: _t.Union[_Nil, _te.Self] = NIL,
-                 parent: _t.Union[_Nil, _te.Self] = NIL) -> None:
-        self._key, self._value = key, value
-        self.left, self.right, self.parent = left, right, parent
-        self.height = max(_to_height(self.left), _to_height(self.right)) + 1
-
-    __repr__ = _recursive_repr()(_generate_repr(__init__))
-
-    def __getstate__(self) -> _t.Tuple[
-        _Key, _Value, int, _t.Union[_Nil, _te.Self],
-        _t.Union[_Nil, _te.Self], _t.Union[_Nil, _te.Self]
-    ]:
-        return (self._key, self._value, self.height,
-                self.parent, self.left, self.right)
-
-    def __setstate__(
-            self,
-            state: _t.Tuple[
-                _Key, _Value, int, _t.Union[_Nil, _te.Self],
-                _t.Union[_Nil, _te.Self], _t.Union[_Nil, _te.Self]
-            ]
-    ) -> None:
-        (self._key, self._value, self.height,
-         self.parent, self._left, self._right) = state
-
     @classmethod
     def from_simple(cls: _t.Type[Node[_Key, _Key]],
                     key: _Key,
@@ -110,6 +78,38 @@ class Node(_t.Generic[_Key, _Value]):
     @value.setter
     def value(self, value: _Value) -> None:
         self._value = value
+
+    __slots__ = ('height', '_key', '_left', '_parent', '_right', '_value',
+                 '__weakref__')
+
+    def __init__(self,
+                 key: _Key,
+                 value: _Value,
+                 left: _t.Union[_Nil, _te.Self] = NIL,
+                 right: _t.Union[_Nil, _te.Self] = NIL,
+                 parent: _t.Union[_Nil, _te.Self] = NIL) -> None:
+        self._key, self._value = key, value
+        self.left, self.right, self.parent = left, right, parent
+        self.height = max(_to_height(self.left), _to_height(self.right)) + 1
+
+    __repr__ = _recursive_repr()(_generate_repr(__init__))
+
+    def __getstate__(self) -> _t.Tuple[
+        _Key, _Value, int, _t.Union[_Nil, _te.Self],
+        _t.Union[_Nil, _te.Self], _t.Union[_Nil, _te.Self]
+    ]:
+        return (self._key, self._value, self.height,
+                self.parent, self.left, self.right)
+
+    def __setstate__(
+            self,
+            state: _t.Tuple[
+                _Key, _Value, int, _t.Union[_Nil, _te.Self],
+                _t.Union[_Nil, _te.Self], _t.Union[_Nil, _te.Self]
+            ]
+    ) -> None:
+        (self._key, self._value, self.height,
+         self.parent, self._left, self._right) = state
 
 
 def _to_height(node: _t.Union[_Nil, Node[_Key, _Value]]) -> int:

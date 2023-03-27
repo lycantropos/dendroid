@@ -25,21 +25,6 @@ NIL = _NIL
 
 
 class Node(_t.Generic[_Key, _Value]):
-    _left: _t.Union[_Nil, _te.Self]
-    _right: _t.Union[_Nil, _te.Self]
-
-    __slots__ = '_left', '_right', '_key', '_value'
-
-    def __init__(self,
-                 key: _Key,
-                 value: _Value,
-                 left: _t.Union[_Nil, _te.Self] = NIL,
-                 right: _t.Union[_Nil, _te.Self] = NIL) -> None:
-        self._key, self._value, self._left, self._right = (key, value, left,
-                                                           right)
-
-    __repr__ = _generate_repr(__init__)
-
     @classmethod
     def from_simple(cls: _t.Type[Node[_Key, _Key]],
                     key: _Key,
@@ -77,6 +62,21 @@ class Node(_t.Generic[_Key, _Value]):
     @value.setter
     def value(self, value: _Value) -> None:
         self._value = value
+
+    _left: _t.Union[_Nil, _te.Self]
+    _right: _t.Union[_Nil, _te.Self]
+
+    __slots__ = '_left', '_right', '_key', '_value'
+
+    def __init__(self,
+                 key: _Key,
+                 value: _Value,
+                 left: _t.Union[_Nil, _te.Self] = NIL,
+                 right: _t.Union[_Nil, _te.Self] = NIL) -> None:
+        self._key, self._value, self._left, self._right = (key, value, left,
+                                                           right)
+
+    __repr__ = _generate_repr(__init__)
 
 
 class Tree(_Tree[_Key, _Value]):
