@@ -6,7 +6,7 @@ from reprlib import recursive_repr as _recursive_repr
 import typing_extensions as _te
 from reprit.base import generate_repr as _generate_repr
 
-from ._core.abcs import (NIL,
+from ._core.abcs import (NIL as _NIL,
                          Nil as _Nil,
                          Node as _Node,
                          Tree as _Tree)
@@ -22,6 +22,8 @@ from ._core.utils import (dereference_maybe as _dereference_maybe,
                           split_items as _split_items,
                           to_unique_sorted_items as _to_unique_sorted_items,
                           to_unique_sorted_values as _to_unique_sorted_values)
+
+NIL = _NIL
 
 
 class Node(_t.Generic[_Key, _Value]):

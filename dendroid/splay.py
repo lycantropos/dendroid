@@ -4,7 +4,7 @@ import typing as _t
 
 import typing_extensions as _te
 
-from ._core.abcs import (NIL,
+from ._core.abcs import (NIL as _NIL,
                          Nil as _Nil,
                          Node as _Node,
                          Tree as _Tree)
@@ -19,6 +19,8 @@ from ._core.utils import (split_items as _split_items,
                           to_unique_sorted_items as _to_unique_sorted_items,
                           to_unique_sorted_values as _to_unique_sorted_values)
 from .binary import Node
+
+NIL = _NIL
 
 
 class Tree(_Tree[_Key, _Value]):
