@@ -10,10 +10,8 @@ services:
     image: lycantropos/dendroid-pypy:1.6.1
     volumes:
       - ./dendroid:/opt/dendroid/dendroid
-      - ./pytest.ini:/opt/dendroid/pytest.ini
+      - ./pyproject.toml:/opt/dendroid/pyproject.toml
       - ./README.md:/opt/dendroid/README.md
-      - ./requirements-tests.txt:/opt/dendroid/requirements-tests.txt
-      - ./requirements.txt:/opt/dendroid/requirements.txt
       - ./setup.py:/opt/dendroid/setup.py
       - ./tests:/opt/dendroid/tests
     entrypoint: pytest

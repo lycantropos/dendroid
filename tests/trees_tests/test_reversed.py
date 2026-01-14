@@ -1,28 +1,29 @@
 from hypothesis import given
 
-from tests.utils import (Tree,
-                         capacity,
-                         pairwise)
+from tests.hints import KeyT, ValueT
+from tests.utils import Tree, capacity, pairwise
+
 from . import strategies
 
 
 @given(strategies.trees)
-def test_size(tree: Tree) -> None:
+def test_size(tree: Tree[KeyT, ValueT]) -> None:
     result = reversed(tree)
 
     assert capacity(result) == len(tree)
 
 
 @given(strategies.trees)
-def test_elements(tree: Tree) -> None:
+def test_elements(tree: Tree[KeyT, ValueT]) -> None:
     result = reversed(tree)
 
     assert all(element in tree for element in result)
 
 
 @given(strategies.trees_with_two_or_more_nodes)
-def test_order(tree: Tree) -> None:
+def test_order(tree: Tree[KeyT, ValueT]) -> None:
     result = reversed(tree)
 
-    assert all(next_node.key < node.key
-               for node, next_node in pairwise(result))
+    assert all(
+        next_node.key < node.key for node, next_node in pairwise(result)
+    )

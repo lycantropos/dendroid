@@ -1,45 +1,40 @@
 import weakref
 from collections import deque
-from itertools import (count,
-                       groupby)
-from typing import (Any,
-                    Iterable,
-                    List,
-                    Optional,
-                    Sequence,
-                    Tuple,
-                    overload)
+from collections.abc import Iterable, Sequence
+from itertools import count, groupby
+from typing import Any, overload
 
-from .hints import (Item,
-                    Key,
-                    Value)
+from typing_extensions import Self
+
+from .hints import Item, KeyT, ValueT
+from .nil import NIL, Nil
 
 
 class AntisymmetricKeyIndex:
-    __slots__ = 'key', 'index'
+    __slots__ = 'index', 'key'
 
-    def __init__(self, key_index: Tuple[Key, int]) -> None:
+    def __init__(self, key_index: tuple[KeyT, int], /) -> None:
         self.key, self.index = key_index
 
     @overload
-    def __eq__(self, other: 'AntisymmetricKeyIndex') -> bool:
-        ...
+    def __eq__(self, other: Self, /) -> bool: ...
 
     @overload
-    def __eq__(self, other: Any) -> Any:
-        ...
+    def __eq__(self, other: Any, /) -> Any: ...
 
-    def __eq__(self, other: Any) -> Any:
-        return (are_keys_equal(self.key, other.key)
-                if isinstance(other, AntisymmetricKeyIndex)
-                else NotImplemented)
+    def __eq__(self, other: Any, /) -> Any:
+        return (
+            are_keys_equal(self.key, other.key)
+            if isinstance(other, AntisymmetricKeyIndex)
+            else NotImplemented
+        )
 
 
-def are_keys_equal(left: Key, right: Key) -> bool:
+def are_keys_equal(left: KeyT, right: KeyT, /) -> bool:
     return not (left < right or right < left)
 
 
-def capacity(iterable: Iterable[Any]) -> int:
+def capacity(iterable: Iterable[Any], /) -> int:
     """
     Returns number of elements in iterable.
 
@@ -51,47 +46,49 @@ def capacity(iterable: Iterable[Any]) -> int:
     counter = count()
     # order matters: if `counter` goes first,
     # then it will be incremented even for empty `iterable`
-    deque(zip(iterable, counter),
-          maxlen=0)
+    deque(zip(iterable, counter, strict=False), maxlen=0)
     return next(counter)
 
 
-def to_balanced_tree_height(size: int) -> int:
+def to_balanced_tree_height(size: int, /) -> int:
     return size.bit_length() - 1
 
 
 def dereference_maybe(
-        maybe_reference: Optional['weakref.ref[Value]']
-) -> Optional[Value]:
-    return (maybe_reference
-            if maybe_reference is None
-            else maybe_reference())
+    maybe_reference: weakref.ref[ValueT] | Nil, /
+) -> ValueT | Nil:
+    if maybe_reference is not NIL:
+        result = maybe_reference()
+        assert result is not None
+        return result
+    return maybe_reference
 
 
 def maybe_weakref(
-        object_: Optional[Value]
-) -> Optional['weakref.ReferenceType[Value]']:
-    return (object_
-            if object_ is None
-            else weakref.ref(object_))
+    object_: ValueT | Nil, /
+) -> weakref.ReferenceType[ValueT] | Nil:
+    return object_ if object_ is NIL else weakref.ref(object_)
 
 
 def to_unique_sorted_items(
-        keys: Sequence[Key], values: Sequence[Value]
-) -> Sequence[Item[Key, Value]]:
-    return [(index_key.key, values[-index_key.index])
-            for index_key, _ in groupby(
-                sorted([(key, -index) for index, key in enumerate(keys)]),
-                key=AntisymmetricKeyIndex)]
+    keys: Sequence[KeyT], values: Sequence[ValueT], /
+) -> Sequence[Item[Any, ValueT]]:
+    return [
+        (index_key.key, values[-index_key.index])
+        for index_key, _ in groupby(
+            sorted([(key, -index) for index, key in enumerate(keys)]),
+            key=AntisymmetricKeyIndex,
+        )
+    ]
 
 
-def to_unique_sorted_values(values: List[Value]) -> List[Value]:
+def to_unique_sorted_values(values: list[ValueT], /) -> list[ValueT]:
     values.sort()
     return [value for value, _ in groupby(values)]
 
 
 def split_items(
-        items: Sequence[Tuple[Key, Value]]
-) -> Tuple[Sequence[Key], Sequence[Value]]:
-    keys, values = tuple(zip(*items)) if items else ((), ())
+    items: Sequence[tuple[KeyT, ValueT]], /
+) -> tuple[Sequence[KeyT], Sequence[ValueT]]:
+    keys, values = tuple(zip(*items, strict=False)) if items else ((), ())
     return keys, values

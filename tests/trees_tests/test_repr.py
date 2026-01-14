@@ -3,12 +3,14 @@ import sys
 
 from hypothesis import given
 
+from tests.hints import KeyT, ValueT
 from tests.utils import Tree
+
 from . import strategies
 
 
 @given(strategies.trees)
-def test_evaluation(tree: Tree) -> None:
+def test_evaluation(tree: Tree[KeyT, ValueT]) -> None:
     result = repr(tree)
 
     # `math` module is required for `inf` object

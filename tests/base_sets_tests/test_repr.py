@@ -3,12 +3,14 @@ import sys
 
 from hypothesis import given
 
+from tests.hints import ValueT
 from tests.utils import BaseSet
+
 from . import strategies
 
 
 @given(strategies.sets)
-def test_basic(set_: BaseSet) -> None:
+def test_basic(set_: BaseSet[ValueT]) -> None:
     result = repr(set_)
 
     type_ = type(set_)
@@ -17,10 +19,12 @@ def test_basic(set_: BaseSet) -> None:
 
 
 @given(strategies.sets_with_none_orders)
-def test_evaluation(set_: BaseSet) -> None:
+def test_evaluation(set_: BaseSet[ValueT]) -> None:
     result = repr(set_)
 
     type_ = type(set_)
     # `math` module is required for `inf` object
-    assert eval(result, sys.modules,
-                {**vars(math), type_.__qualname__: type_}) == set_
+    assert (
+        eval(result, sys.modules, {**vars(math), type_.__qualname__: type_})
+        == set_
+    )

@@ -1,145 +1,153 @@
 import math
 import pickle
 from collections import deque
-from functools import (partial,
-                       singledispatch)
-from itertools import (chain,
-                       count,
-                       groupby)
-from typing import (Any,
-                    Callable,
-                    Iterable,
-                    List,
-                    Optional,
-                    Sequence,
-                    Sized,
-                    Tuple,
-                    TypeVar,
-                    Union)
+from collections.abc import Callable, Iterable, Sequence, Sized
+from functools import singledispatch
+from itertools import chain, count, groupby
+from operator import is_
+from typing import Any, TypeAlias, TypeVar, overload
 
-from hypothesis.strategies import SearchStrategy
+from typing_extensions import TypeIs
 
-from dendroid import (avl,
-                      binary,
-                      red_black,
-                      splay)
-from dendroid._core.abcs import (NIL,
-                                 Node,
-                                 Tree)
-from dendroid._core.maps import Map
-from dendroid._core.sets import (BaseSet,
-                                 KeyedSet)
-from dendroid._core.utils import (are_keys_equal,
-                                  to_balanced_tree_height)
-from dendroid._core.views import (ItemsView,
-                                  KeysView,
-                                  ValuesView)
-from dendroid.hints import (Item,
-                            Key,
-                            Order,
-                            Value)
+from dendroid import avl, binary, red_black, splay
+from dendroid._core import (
+    abcs as _abcs,
+    maps as _maps,
+    nil as _nil,
+    sets as _sets,
+    utils as _utils,
+    views as _views,
+)
+from dendroid.hints import Item, Order
+from tests.hints import Domain, KeyT, Range, ValueT
 
-Domain = TypeVar('Domain')
-Range = TypeVar('Range')
-AnyNode = TypeVar('AnyNode', binary.Node, avl.Node, red_black.Node, splay.Node,
-                  NIL)
-Strategy = SearchStrategy
-ItemsView = ItemsView
-ItemsViewsPair = Tuple[ItemsView, ItemsView]
-ItemsViewsTriplet = Tuple[ItemsView, ItemsView, ItemsView]
-KeysView = KeysView
-KeysViewsPair = Tuple[KeysView, KeysView]
-KeysViewsTriplet = Tuple[KeysView, KeysView, KeysView]
-Map = Map
-MapsPair = Tuple[Map, Map]
-Node = Node
-BaseSet = BaseSet
-BaseSetsPair = Tuple[BaseSet, BaseSet]
-BaseSetsTriplet = Tuple[BaseSet, BaseSet, BaseSet]
-Tree = Tree
-TreesPair = Tuple[Tree, Tree]
-TreesTriplet = Tuple[Tree, Tree, Tree]
-ValuesListWithOrder = Tuple[List[Value], Optional[Order]]
-ValuesListsPairWithOrder = Tuple[List[Value], List[Value], Optional[Order]]
-ValuesListsTripletWithOrder = Tuple[
-    List[Value], List[Value], List[Value], Optional[Order]
+AnyNode: TypeAlias = (
+    binary.Node[KeyT, ValueT]
+    | avl.Node[KeyT, ValueT]
+    | red_black.Node[KeyT, ValueT]
+    | splay.Node[KeyT, ValueT]
+    | _abcs.Node[KeyT, ValueT]
+)
+AnyNodeT = TypeVar(
+    'AnyNodeT',
+    binary.Node[Any, Any],
+    avl.Node[Any, Any],
+    red_black.Node[Any, Any],
+    splay.Node[Any, Any],
+    _abcs.Node[Any, Any],
+)
+ItemsView = _views.ItemsView
+ItemsViewsPair: TypeAlias = tuple[
+    ItemsView[KeyT, ValueT], ItemsView[KeyT, ValueT]
 ]
-ValuesListsWithOrder = Union[
-    ValuesListWithOrder, ValuesListsPairWithOrder, ValuesListsTripletWithOrder
+ItemsViewsTriplet: TypeAlias = tuple[
+    ItemsView[KeyT, ValueT], ItemsView[KeyT, ValueT], ItemsView[KeyT, ValueT]
 ]
-ValuesView = ValuesView
-ValuesViewsPair = Tuple[ValuesView, ValuesView]
-ValuesViewsTriplet = Tuple[ValuesView, ValuesView, ValuesView]
+KeysView = _views.KeysView
+KeysViewsPair: TypeAlias = tuple[KeysView[KeyT], KeysView[KeyT]]
+KeysViewsTriplet: TypeAlias = tuple[
+    KeysView[KeyT], KeysView[KeyT], KeysView[KeyT]
+]
+Map = _maps.Map
+MapsPair: TypeAlias = tuple[Map[KeyT, ValueT], Map[KeyT, ValueT]]
+Node = _abcs.Node[KeyT, ValueT]
+BaseSet = _sets.BaseSet
+BaseSetsPair: TypeAlias = tuple[BaseSet[ValueT], BaseSet[ValueT]]
+BaseSetsTriplet: TypeAlias = tuple[
+    BaseSet[ValueT], BaseSet[ValueT], BaseSet[ValueT]
+]
+Tree = _abcs.Tree
+TreesPair: TypeAlias = tuple[Tree[KeyT, ValueT], Tree[KeyT, ValueT]]
+TreesTriplet: TypeAlias = tuple[
+    Tree[KeyT, ValueT], Tree[KeyT, ValueT], Tree[KeyT, ValueT]
+]
+ValueSequenceWithOrder: TypeAlias = tuple[
+    Sequence[ValueT], Order[ValueT, KeyT] | None
+]
+ValueSequencePairWithOrder: TypeAlias = tuple[
+    tuple[Sequence[ValueT], Sequence[ValueT]], Order[ValueT, KeyT] | None
+]
+ValueSequencesWithOrder: TypeAlias = tuple[
+    tuple[Sequence[ValueT], ...], Order[ValueT, KeyT] | None
+]
+ValuesView = _views.ValuesView
+ValuesViewsPair: TypeAlias = tuple[ValuesView[ValueT], ValuesView[ValueT]]
+ValuesViewsTriplet: TypeAlias = tuple[
+    ValuesView[ValueT], ValuesView[ValueT], ValuesView[ValueT]
+]
 
-NIL = NIL
+NIL = _nil.NIL
+Nil = _nil.Nil
 
 
-def equivalence(left_statement: bool, right_statement: bool) -> bool:
-    return left_statement is right_statement
+equivalence = is_
 
 
-def implication(antecedent: bool, consequent: bool) -> bool:
+def implication(antecedent: bool, consequent: bool, /) -> bool:  # noqa: FBT001
     return not antecedent or consequent
 
 
-def all_equal(iterable: Iterable[Any]) -> bool:
+def all_equal(iterable: Iterable[Any], /) -> bool:
     groups = groupby(iterable)
     return next(groups, True) and not next(groups, False)
 
 
-def to_constant(value: Value) -> Callable[..., Value]:
-    def constant(*_, **__) -> Value:
+def to_constant(value: ValueT, /) -> Callable[..., ValueT]:
+    def constant(*_: Any, **__: Any) -> ValueT:
         return value
 
     return constant
 
 
-def identity(value: Value) -> Value:
+def identity(value: ValueT, /) -> ValueT:
     return value
 
 
-def capacity(iterable: Iterable[Any]) -> int:
+def capacity(iterable: Iterable[Any], /) -> int:
     counter = count()
-    deque(zip(iterable, counter),
-          maxlen=0)
+    deque(zip(iterable, counter, strict=False), maxlen=0)
     return next(counter)
 
 
-def combination(functions: Tuple[Callable[[Domain], Range], ...],
-                arguments: Tuple[Domain, ...]) -> Tuple[Range, ...]:
-    return tuple(function(argument)
-                 for function, argument in zip(functions, arguments))
+def combine(
+    *functions: Callable[[Domain], Range],
+) -> Callable[[tuple[Domain, ...]], tuple[Range, ...]]:
+    def combination(arguments: tuple[Domain, ...], /) -> tuple[Range, ...]:
+        return tuple(
+            function(argument)
+            for function, argument in zip(functions, arguments, strict=False)
+        )
+
+    return combination
 
 
-def combine(*functions: Callable[[Domain], Range]
-            ) -> Callable[[Tuple[Domain, ...]], Tuple[Range, ...]]:
-    return partial(combination, functions)
+def compose(
+    last_function: Callable[..., Range], /, *rest_functions: Callable[..., Any]
+) -> Callable[..., Range]:
+    if len(rest_functions) == 0:
+        return last_function
+    *mid_functions, first_function = rest_functions
+    mid_functions = mid_functions[::-1]
+
+    def composition(*args: Domain, **kwargs: Domain) -> Range:
+        result = first_function(*args, **kwargs)
+        for function in mid_functions:
+            result = function(result)
+        return last_function(result)
+
+    return composition
 
 
-def composition(functions: Tuple[Callable[[Domain], Range], ...],
-                *args: Domain, **kwargs: Domain) -> Range:
-    functions_iterator = reversed(functions)
-    result = next(functions_iterator)(*args, **kwargs)
-    for function in functions_iterator:
-        result = function(result)
-    return result
-
-
-def compose(*functions: Callable[..., Range]) -> Callable[..., Range]:
-    return partial(composition, functions)
-
-
-def first(iterable: Iterable[Value]) -> Value:
+def first(iterable: Iterable[ValueT]) -> ValueT:
     try:
         return next(iter(iterable))
     except StopIteration as error:
         raise ValueError('Argument supposed to be non-empty.') from error
 
 
-def last(iterable: Iterable[Value]) -> Value:
+def last(iterable: Iterable[ValueT]) -> ValueT:
     try:
-        return deque(iterable,
-                     maxlen=1)[0]
+        return deque(iterable, maxlen=1)[0]
     except IndexError as error:
         raise ValueError('Argument supposed to be non-empty.') from error
 
@@ -149,7 +157,7 @@ def one(iterable: Iterable[bool]) -> bool:
     return any(iterator) and not any(iterator)
 
 
-def pairwise(iterable: Iterable[Value]) -> Iterable[Tuple[Value, Value]]:
+def pairwise(iterable: Iterable[ValueT]) -> Iterable[tuple[ValueT, ValueT]]:
     iterator = iter(iterable)
     try:
         value = next(iterator)
@@ -161,7 +169,7 @@ def pairwise(iterable: Iterable[Value]) -> Iterable[Tuple[Value, Value]]:
             value = next_value
 
 
-def pickle_round_trip(object_: Value) -> Value:
+def pickle_round_trip(object_: Any, /) -> Any:
     return pickle.loads(pickle.dumps(object_))
 
 
@@ -169,40 +177,52 @@ def has_size_two_or_more(sized: Sized) -> bool:
     return len(sized) >= 2
 
 
-def leap_traverse(values: List[Value]) -> List[Value]:
+def leap_traverse(values: list[ValueT]) -> list[ValueT]:
     iterator, reversed_iterator = iter(values), reversed(values)
-    result = []
+    result: list[ValueT] = []
     size_half, is_odd = divmod(len(values), 2)
     for _ in range(size_half):
-        result.append(next(iterator))
-        result.append(next(reversed_iterator))
+        result.extend((next(iterator), next(reversed_iterator)))
     if is_odd:
         result.append(next(iterator))
     return result
 
 
-are_keys_equal = are_keys_equal
+are_keys_equal = _utils.are_keys_equal
 
 
-def are_items_equal(left: Item, right: Item) -> bool:
+def are_items_equal(
+    left: Item[KeyT, ValueT], right: Item[KeyT, ValueT], /
+) -> bool:
     left_key, left_value = left
     right_key, right_value = right
-    return are_keys_equal(left_key, right_key) and left_value == right_value
+    return (
+        _utils.are_keys_equal(left_key, right_key)
+        and left_value == right_value
+    )
 
 
-def are_items_keys_equal(left: Item, right: Item) -> bool:
+def are_items_keys_equal(
+    left: Item[KeyT, ValueT], right: Item[KeyT, ValueT], /
+) -> bool:
     left_key, _ = left
     right_key, _ = right
-    return are_keys_equal(left_key, right_key)
+    return _utils.are_keys_equal(left_key, right_key)
 
 
-to_balanced_tree_height = to_balanced_tree_height
+to_balanced_tree_height = _utils.to_balanced_tree_height
 
 
-def is_left_subtree_less_than_right_subtree(tree: Tree) -> bool:
+def is_left_subtree_less_than_right_subtree(
+    tree: Tree[KeyT, ValueT], /
+) -> bool:
     if tree.root is NIL:
         return True
-    queue = [(tree.root, tree.min().key, tree.max().key)]
+    min_node = tree.min()
+    assert min_node is not NIL
+    max_node = tree.max()
+    assert max_node is not NIL
+    queue = [(tree.root, min_node.key, max_node.key)]
     while queue:
         node, left_end, right_end = queue.pop()
         if node.left is not NIL:
@@ -218,96 +238,127 @@ def is_left_subtree_less_than_right_subtree(tree: Tree) -> bool:
     return True
 
 
-def are_nodes_parents_to_children(tree: Union[avl.Tree, red_black.Tree]
-                                  ) -> bool:
-    return all(is_node_parent_to_children(node)
-               for node in iter_nodes(tree.root))
+def are_nodes_parents_to_children(
+    tree: avl.Tree[KeyT, ValueT] | red_black.Tree[KeyT, ValueT], /
+) -> bool:
+    return all(
+        _is_node_with_parent(node) and _is_node_parent_to_its_children(node)
+        for node in iter_nodes(tree.root)  # type: ignore[type-var]
+    )
 
 
-def is_node_parent_to_children(node: Union[avl.Node, red_black.Node]) -> bool:
+def _is_node_with_parent(
+    node: Any, /
+) -> TypeIs[avl.Node[KeyT, ValueT] | red_black.Node[KeyT, ValueT]]:
+    return isinstance(node, avl.Node | red_black.Node)
+
+
+def _is_node_parent_to_its_children(
+    node: avl.Node[KeyT, ValueT] | red_black.Node[KeyT, ValueT], /
+) -> bool:
     return _is_child_node(node.left, node) and _is_child_node(node.right, node)
 
 
-def _is_child_node(node: Union[avl.Node, red_black.Node, NIL],
-                   parent: Union[avl.Node, red_black.Node]) -> bool:
+def _is_child_node(
+    node: avl.Node[KeyT, ValueT] | red_black.Node[KeyT, ValueT] | Nil,
+    parent: avl.Node[KeyT, ValueT] | red_black.Node[KeyT, ValueT],
+    /,
+) -> bool:
     return node is NIL or node.parent is parent
 
 
-def to_height(tree: Tree) -> int:
+def to_height(tree: Tree[KeyT, ValueT], /) -> int:
     return to_node_height(tree.root)
 
 
-def to_node_height(node: AnyNode) -> int:
-    return (max(map(len, to_paths_to_leaves(node)),
-                default=0)
-            - 1)
+def to_node_height(node: AnyNode[KeyT, ValueT] | Nil, /) -> int:
+    return max(map(len, to_paths_to_leaves(node)), default=0) - 1
 
 
-def to_min_binary_tree_height(tree: Tree) -> int:
-    return to_balanced_tree_height(len(tree))
+def to_min_binary_tree_height(tree: Tree[KeyT, ValueT]) -> int:
+    return _utils.to_balanced_tree_height(len(tree))
 
 
 @singledispatch
-def to_max_binary_tree_height(tree: Tree) -> int:
-    raise TypeError('Unsupported tree type: {type}.'
-                    .format(type=type(tree)))
+def to_max_binary_tree_height(tree: Tree[KeyT, ValueT], /) -> int:
+    raise TypeError(f'Unsupported tree type: {type(tree)}.')
 
 
 @to_max_binary_tree_height.register(binary.Tree)
 @to_max_binary_tree_height.register(splay.Tree)
-def _(tree: binary.Tree) -> int:
+def _(tree: binary.Tree[KeyT, ValueT], /) -> int:
     return len(tree) - 1
 
 
 MAX_AVL_TREE_HEIGHT_SLOPE = 1 / math.log2((1 + math.sqrt(5)) / 2)
-MAX_AVL_TREE_HEIGHT_INTERCEPT = (MAX_AVL_TREE_HEIGHT_SLOPE * math.log2(5) / 2
-                                 - 2)
+MAX_AVL_TREE_HEIGHT_INTERCEPT = (
+    MAX_AVL_TREE_HEIGHT_SLOPE * math.log2(5) / 2 - 2
+)
 
 
 @to_max_binary_tree_height.register(avl.Tree)
-def _(tree: avl.Tree) -> int:
-    return math.floor(MAX_AVL_TREE_HEIGHT_SLOPE * math.log2(len(tree) + 2)
-                      + MAX_AVL_TREE_HEIGHT_INTERCEPT)
+def _(tree: avl.Tree[KeyT, ValueT], /) -> int:
+    return math.floor(
+        MAX_AVL_TREE_HEIGHT_SLOPE * math.log2(len(tree) + 2)
+        + MAX_AVL_TREE_HEIGHT_INTERCEPT
+    )
 
 
 @to_max_binary_tree_height.register(red_black.Tree)
-def _(tree: red_black.Tree) -> int:
-    return 2 * to_balanced_tree_height(len(tree) + 1)
+def _(tree: red_black.Tree[KeyT, ValueT], /) -> int:
+    return 2 * _utils.to_balanced_tree_height(len(tree) + 1)
 
 
-def are_balance_factors_normalized(tree: avl.Tree) -> bool:
-    return all(node.balance_factor in (-1, 0, 1)
-               for node in iter_nodes(tree.root))
+def are_balance_factors_normalized(tree: avl.Tree[KeyT, ValueT], /) -> bool:
+    return all(
+        node.balance_factor in (-1, 0, 1) for node in iter_nodes(tree.root)
+    )
 
 
-def are_nodes_heights_correct(tree: avl.Tree) -> bool:
-    return all(node.height == to_node_height(node)
-               for node in iter_nodes(tree.root))
+def are_nodes_heights_correct(tree: avl.Tree[KeyT, ValueT], /) -> bool:
+    return all(
+        node.height == to_node_height(node) for node in iter_nodes(tree.root)
+    )
 
 
-def is_root_black(tree: red_black.Tree) -> bool:
-    return red_black._is_node_black(tree.root)
+is_red_black_tree_node_black = red_black._is_node_black  # noqa: SLF001
 
 
-def do_red_nodes_have_black_children(tree: red_black.Tree) -> bool:
-    return all(implication(not node.is_black,
-                           red_black._is_node_black(node.left)
-                           and red_black._is_node_black(node.right))
-               for node in iter_nodes(tree.root))
+def is_root_black(tree: red_black.Tree[KeyT, ValueT], /) -> bool:
+    return is_red_black_tree_node_black(tree.root)
 
 
-def do_paths_to_leaves_have_same_black_nodes_count(tree: red_black.Tree
-                                                   ) -> bool:
-    return all(all_equal(to_black_nodes_count(path)
-                         for path in to_paths_to_leaves(node))
-               for node in iter_nodes(tree.root))
+def do_red_nodes_have_black_children(
+    tree: red_black.Tree[KeyT, ValueT], /
+) -> bool:
+    return all(
+        implication(
+            not node.is_black,
+            is_red_black_tree_node_black(node.left)
+            and is_red_black_tree_node_black(node.right),
+        )
+        for node in iter_nodes(tree.root)
+    )
 
 
-def to_black_nodes_count(path: Sequence[red_black.Node]) -> int:
+def do_paths_to_leaves_have_same_black_nodes_count(
+    tree: red_black.Tree[KeyT, ValueT], /
+) -> bool:
+    return all(
+        all_equal(
+            to_black_nodes_count(path) for path in to_paths_to_leaves(node)
+        )
+        for node in iter_nodes(tree.root)
+    )
+
+
+def to_black_nodes_count(
+    path: Sequence[red_black.Node[KeyT, ValueT]], /
+) -> int:
     return sum(node.is_black for node in path)
 
 
-def iter_nodes(root: AnyNode) -> Iterable[AnyNode]:
+def iter_nodes(root: AnyNodeT | Nil, /) -> Iterable[AnyNodeT]:
     if root is NIL:
         return
     queue = [root]
@@ -320,43 +371,65 @@ def iter_nodes(root: AnyNode) -> Iterable[AnyNode]:
             queue.append(node.right)
 
 
-def to_paths_to_leaves(root: AnyNode) -> Iterable[Sequence[AnyNode]]:
+def to_paths_to_leaves(
+    root: AnyNodeT | Nil, /
+) -> Iterable[Sequence[AnyNodeT]]:
     if root is NIL:
         return
-    queue = [[root]]
+    queue: list[tuple[AnyNodeT, ...]] = [(root,)]
     while queue:
         path = queue.pop()
         last_node = path[-1]
         ended = True
         if last_node.left is not NIL:
             ended = False
-            queue.append(path + [last_node.left])
+            queue.append(path + (last_node.left,))  # noqa: RUF005
         if last_node.right is not NIL:
             ended = False
-            queue.append(path + [last_node.right])
+            queue.append(path + (last_node.right,))  # noqa: RUF005
         if ended:
             yield path
 
 
-def map_value_to_key(map_: Map, value: Value) -> Key:
-    return next(candidate_key
-                for candidate_key, candidate_value in map_.items()
-                if candidate_value is value)
+def map_value_to_key(map_: Map[KeyT, ValueT], value: ValueT, /) -> Any:
+    return next(
+        candidate_key
+        for candidate_key, candidate_value in map_.items()
+        if candidate_value is value
+    )
 
 
-def set_value_to_key(set_: BaseSet, value: Value) -> Key:
-    return set_.key(value) if isinstance(set_, KeyedSet) else value
+@overload
+def set_value_to_key(
+    set_: _sets.KeyedSet[KeyT, ValueT], value: ValueT, /
+) -> KeyT: ...
 
 
-def to_items_view_including_item(items_view: ItemsView,
-                                 item: Item) -> ItemsView:
+@overload
+def set_value_to_key(set_: _sets.Set[ValueT], value: ValueT, /) -> ValueT: ...
+
+
+@overload
+def set_value_to_key(set_: BaseSet[ValueT], value: ValueT, /) -> Any: ...
+
+
+def set_value_to_key(set_: BaseSet[ValueT], value: ValueT, /) -> Any:
+    return set_.key(value) if isinstance(set_, _sets.KeyedSet) else value
+
+
+def to_items_view_including_item(
+    items_view: ItemsView[KeyT, ValueT], item: Item[KeyT, ValueT], /
+) -> ItemsView[KeyT, ValueT]:
     return items_view.from_iterable(chain(items_view, (item,)))
 
 
-def to_keys_view_including_key(keys_view: KeysView[Key],
-                               key: Key) -> KeysView[Key]:
+def to_keys_view_including_key(
+    keys_view: KeysView[KeyT], key: KeyT, /
+) -> KeysView[KeyT]:
     return keys_view.from_iterable(chain(keys_view, (key,)))
 
 
-def to_set_including_value(set_: BaseSet, value: Value) -> BaseSet:
+def to_set_including_value(
+    set_: BaseSet[ValueT], value: ValueT, /
+) -> BaseSet[ValueT]:
     return set_.from_iterable((*set_, value))

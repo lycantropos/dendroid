@@ -1,27 +1,27 @@
 from hypothesis import given
 
-from tests.utils import (KeysView,
-                         capacity,
-                         pairwise)
+from tests.hints import KeyT
+from tests.utils import KeysView, capacity, pairwise
+
 from . import strategies
 
 
 @given(strategies.keys_views)
-def test_size(keys_view: KeysView) -> None:
+def test_size(keys_view: KeysView[KeyT]) -> None:
     result = reversed(keys_view)
 
     assert capacity(result) == len(keys_view)
 
 
 @given(strategies.keys_views)
-def test_elements(keys_view: KeysView) -> None:
+def test_elements(keys_view: KeysView[KeyT]) -> None:
     result = reversed(keys_view)
 
     assert all(element in keys_view for element in result)
 
 
 @given(strategies.keys_views_with_two_or_more_values)
-def test_order(keys_view: KeysView) -> None:
+def test_order(keys_view: KeysView[KeyT]) -> None:
     result = reversed(keys_view)
 
     assert all(next_key < key for key, next_key in pairwise(result))

@@ -2,12 +2,14 @@ import copy
 
 from hypothesis import given
 
+from tests.hints import ValueT
 from tests.utils import BaseSet
+
 from . import strategies
 
 
 @given(strategies.sets)
-def test_shallow(set_: BaseSet) -> None:
+def test_shallow(set_: BaseSet[ValueT]) -> None:
     result = copy.copy(set_)
 
     assert result is not set_
@@ -15,7 +17,7 @@ def test_shallow(set_: BaseSet) -> None:
 
 
 @given(strategies.sets)
-def test_deep(set_: BaseSet) -> None:
+def test_deep(set_: BaseSet[ValueT]) -> None:
     result = copy.deepcopy(set_)
 
     assert result is not set_

@@ -1,12 +1,13 @@
 from hypothesis import given
 
-from tests.utils import (ValuesView,
-                         equivalence)
+from tests.hints import ValueT
+from tests.utils import ValuesView, equivalence
+
 from . import strategies
 
 
 @given(strategies.values_views)
-def test_properties(values_view_: ValuesView) -> None:
+def test_properties(values_view_: ValuesView[ValueT]) -> None:
     result = len(values_view_)
 
     assert result >= 0

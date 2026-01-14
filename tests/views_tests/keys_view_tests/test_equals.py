@@ -1,38 +1,50 @@
 from hypothesis import given
 
-from tests.utils import (KeysView,
-                         KeysViewsPair,
-                         KeysViewsTriplet,
-                         equivalence,
-                         implication)
+from tests.hints import KeyT
+from tests.utils import (
+    KeysView,
+    KeysViewsPair,
+    KeysViewsTriplet,
+    equivalence,
+    implication,
+)
+
 from . import strategies
 
 
 @given(strategies.keys_views)
-def test_reflexivity(keys_view: KeysView) -> None:
+def test_reflexivity(keys_view: KeysView[KeyT]) -> None:
     assert keys_view == keys_view
 
 
 @given(strategies.keys_views_pairs)
-def test_symmetry(keys_views_pair: KeysViewsPair) -> None:
+def test_symmetry(keys_views_pair: KeysViewsPair[KeyT]) -> None:
     first_keys_view, second_keys_view = keys_views_pair
 
-    assert equivalence(first_keys_view == second_keys_view,
-                       second_keys_view == first_keys_view)
+    assert equivalence(
+        first_keys_view == second_keys_view,
+        second_keys_view == first_keys_view,
+    )
 
 
 @given(strategies.keys_views_triplets)
-def test_transitivity(keys_views_triplet: KeysViewsTriplet) -> None:
+def test_transitivity(keys_views_triplet: KeysViewsTriplet[KeyT]) -> None:
     first_keys_view, second_keys_view, third_keys_view = keys_views_triplet
 
-    assert implication(first_keys_view == second_keys_view
-                       and second_keys_view == third_keys_view,
-                       first_keys_view == third_keys_view)
+    assert implication(
+        first_keys_view == second_keys_view
+        and second_keys_view == third_keys_view,
+        first_keys_view == third_keys_view,
+    )
 
 
 @given(strategies.keys_views_pairs)
-def test_connection_with_inequality(keys_views_pair: KeysViewsPair) -> None:
+def test_connection_with_inequality(
+    keys_views_pair: KeysViewsPair[KeyT],
+) -> None:
     first_keys_view, second_keys_view = keys_views_pair
 
-    assert equivalence(not first_keys_view == second_keys_view,
-                       first_keys_view != second_keys_view)
+    assert equivalence(
+        first_keys_view != second_keys_view,
+        first_keys_view != second_keys_view,
+    )

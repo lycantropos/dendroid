@@ -2,29 +2,32 @@ from hypothesis import given
 
 from dendroid import binary
 from tests import strategies
-from tests.utils import (BaseSet,
-                         ValuesListWithOrder,
-                         is_left_subtree_less_than_right_subtree,
-                         to_balanced_tree_height,
-                         to_height)
+from tests.hints import KeyT, ValueT
+from tests.utils import (
+    BaseSet,
+    ValueSequenceWithOrder,
+    is_left_subtree_less_than_right_subtree,
+    to_balanced_tree_height,
+    to_height,
+)
 
 
 @given(strategies.values_lists_with_orders)
-def test_type(values_with_order: ValuesListWithOrder) -> None:
+def test_type(values_with_order: ValueSequenceWithOrder[ValueT, KeyT]) -> None:
     values, order = values_with_order
 
-    result = binary.set_(*values,
-                         key=order)
+    result = binary.set_(*values, key=order)
 
     assert isinstance(result, BaseSet)
 
 
 @given(strategies.values_lists_with_orders)
-def test_properties(values_with_order: ValuesListWithOrder) -> None:
+def test_properties(
+    values_with_order: ValueSequenceWithOrder[ValueT, KeyT],
+) -> None:
     values, order = values_with_order
 
-    result = binary.set_(*values,
-                         key=order)
+    result = binary.set_(*values, key=order)
 
     result_tree = result.tree
     assert len(result) <= len(values)
@@ -35,10 +38,12 @@ def test_properties(values_with_order: ValuesListWithOrder) -> None:
 
 
 @given(strategies.values_lists_with_orders)
-def test_base_case(values_with_order: ValuesListWithOrder) -> None:
+def test_base_case(
+    values_with_order: ValueSequenceWithOrder[ValueT, KeyT],
+) -> None:
     values, order = values_with_order
 
-    result = binary.set_(key=order)
+    result: BaseSet[ValueT] = binary.set_(key=order)
 
     assert len(result) == 0
     assert not result
@@ -46,20 +51,21 @@ def test_base_case(values_with_order: ValuesListWithOrder) -> None:
 
 
 @given(strategies.non_empty_values_lists_with_orders)
-def test_step(values_with_order: ValuesListWithOrder) -> None:
+def test_step(values_with_order: ValueSequenceWithOrder[ValueT, KeyT]) -> None:
     values, order = values_with_order
     *values, value = values
 
-    result = binary.set_(*values,
-                         key=order)
-    next_result = binary.set_(*values, value,
-                              key=order)
+    result = binary.set_(*values, key=order)
+    next_result = binary.set_(*values, value, key=order)
 
     assert next_result
-    assert len(next_result) == (len(result)
-                                + (value not in values
-                                   if order is None
-                                   else order(value) not in map(order,
-                                                                values)))
+    assert len(next_result) == (
+        len(result)
+        + (
+            value not in values
+            if order is None
+            else order(value) not in map(order, values)
+        )
+    )
     assert value in next_result
     assert all(value in next_result for value in result)

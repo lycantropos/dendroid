@@ -1,22 +1,16 @@
-import typing as _t
+from collections.abc import Callable
+from typing import Any, TypeAlias, TypeVar
 
-import typing_extensions as _te
-
-_T = _t.TypeVar('_T',
-                contravariant=True)
+from typing_extensions import Protocol, Self
 
 
-class Ordered(_te.Protocol):
-    def __lt__(self, other: _te.Self) -> bool:
-        ...
+class Ordered(Protocol):
+    def __le__(self, other: Self, /) -> bool: ...
+    def __lt__(self, other: Self, /) -> bool: ...
 
 
-Key = _t.TypeVar('Key',
-                 bound=Ordered)
-Key_co = _t.TypeVar('Key_co',
-                    bound=Ordered,
-                    covariant=True)
-Value = _t.TypeVar('Value',
-                   bound=_t.Any)
-Order = _t.Callable[[Value], Key]
-Item = _t.Tuple[Key, Value]
+KeyT = TypeVar('KeyT', bound=Ordered)
+KeyT_co = TypeVar('KeyT_co', bound=Ordered, covariant=True)
+ValueT = TypeVar('ValueT', bound=Any)
+Order: TypeAlias = Callable[[ValueT], KeyT]
+Item: TypeAlias = tuple[KeyT, ValueT]

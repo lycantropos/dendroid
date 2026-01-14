@@ -1,34 +1,38 @@
 from copy import copy
-from typing import Tuple
 
 import pytest
 from hypothesis import given
 
-from dendroid.hints import (Item,
-                            Key)
-from tests.utils import (Map,
-                         is_left_subtree_less_than_right_subtree,
-                         to_height,
-                         to_max_binary_tree_height,
-                         to_min_binary_tree_height)
+from dendroid.hints import Item
+from tests.hints import KeyT, ValueT
+from tests.utils import (
+    Map,
+    is_left_subtree_less_than_right_subtree,
+    to_height,
+    to_max_binary_tree_height,
+    to_min_binary_tree_height,
+)
+
 from . import strategies
 
 
 @given(strategies.non_empty_maps_with_their_keys)
-def test_properties(map_with_key: Tuple[Map, Key]) -> None:
+def test_properties(map_with_key: tuple[Map[KeyT, ValueT], KeyT]) -> None:
     map_, key = map_with_key
 
     map_.pop(key)
 
     tree = map_.tree
-    assert (to_min_binary_tree_height(tree)
-            <= to_height(tree)
-            <= to_max_binary_tree_height(tree))
+    assert (
+        to_min_binary_tree_height(tree)
+        <= to_height(tree)
+        <= to_max_binary_tree_height(tree)
+    )
     assert is_left_subtree_less_than_right_subtree(tree)
 
 
 @given(strategies.empty_maps_with_keys)
-def test_base_case(map_with_key: Tuple[Map, Key]) -> None:
+def test_base_case(map_with_key: tuple[Map[KeyT, ValueT], KeyT]) -> None:
     map_, key = map_with_key
 
     with pytest.raises(KeyError):
@@ -36,7 +40,7 @@ def test_base_case(map_with_key: Tuple[Map, Key]) -> None:
 
 
 @given(strategies.non_empty_maps_with_their_keys)
-def test_step(map_with_key: Tuple[Map, Key]) -> None:
+def test_step(map_with_key: tuple[Map[KeyT, ValueT], KeyT]) -> None:
     map_, key = map_with_key
     original = copy(map_)
 
@@ -49,7 +53,9 @@ def test_step(map_with_key: Tuple[Map, Key]) -> None:
 
 
 @given(strategies.empty_maps_with_items)
-def test_base_case_with_default(map_with_item: Tuple[Map, Item]) -> None:
+def test_base_case_with_default(
+    map_with_item: tuple[Map[KeyT, ValueT], Item[KeyT, ValueT]],
+) -> None:
     map_, (key, default) = map_with_item
 
     result = map_.pop(key, default)
@@ -58,7 +64,9 @@ def test_base_case_with_default(map_with_item: Tuple[Map, Item]) -> None:
 
 
 @given(strategies.non_empty_maps_with_items)
-def test_step_with_default(map_with_item: Tuple[Map, Item]) -> None:
+def test_step_with_default(
+    map_with_item: tuple[Map[KeyT, ValueT], Item[KeyT, ValueT]],
+) -> None:
     map_, (key, default) = map_with_item
     original = copy(map_)
 
@@ -66,7 +74,7 @@ def test_step_with_default(map_with_item: Tuple[Map, Item]) -> None:
 
     assert key not in map_
     assert result not in map_.values()
-    assert (result in original.values()
-            if key in original
-            else result is default)
+    assert (
+        result in original.values() if key in original else result is default
+    )
     assert len(map_) == len(original) - (key in original)

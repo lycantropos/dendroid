@@ -1,18 +1,19 @@
-from typing import Tuple
-
 from hypothesis import given
 
-from tests.utils import (NIL,
-                         Node,
-                         Tree)
+from tests.hints import KeyT, ValueT
+from tests.utils import NIL, Node, Tree
+
 from . import strategies
 
 
 @given(strategies.non_empty_trees_with_their_nodes)
-def test_properties(tree_with_node: Tuple[Tree, Node]) -> None:
+def test_properties(
+    tree_with_node: tuple[Tree[KeyT, ValueT], Node[KeyT, ValueT]],
+) -> None:
     tree, node = tree_with_node
 
     result = tree.predecessor(node)
 
-    assert (result is NIL and (not tree or node is tree.min())
-            or result.key < node.key)
+    assert (result is NIL and (not tree or node is tree.min())) or (
+        result is not NIL and result.key < node.key
+    )
