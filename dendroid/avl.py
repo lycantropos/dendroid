@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from reprlib import recursive_repr as _recursive_repr
-from typing import cast, overload
+from typing import Generic as _Generic, cast as _cast, overload as _overload
 
 from reprit.base import generate_repr as _generate_repr
 from typing_extensions import Self, override
@@ -28,7 +28,7 @@ from ._core.utils import (
 NIL = _NIL
 
 
-class Node(abcs.Node[_KeyT, _ValueT]):
+class Node(_Generic[_KeyT, _ValueT]):
     @property
     def balance_factor(self, /) -> int:
         return _to_height(self.left) - _to_height(self.right)
@@ -179,13 +179,13 @@ class Tree(abcs.Tree[_KeyT, _ValueT]):
                 result = result.left
         return result
 
-    @overload
+    @_overload
     @classmethod
     def from_components(
         cls, keys: Iterable[_KeyT], values: None = ..., /
     ) -> Tree[_KeyT, _KeyT]: ...
 
-    @overload
+    @_overload
     @classmethod
     def from_components(
         cls, keys: Iterable[_KeyT], values: Iterable[_ValueT], /
@@ -224,7 +224,7 @@ class Tree(abcs.Tree[_KeyT, _ValueT]):
                     ),
                 )
 
-            return cast(type[Tree[_KeyT, _KeyT]], cls)(
+            return _cast(type[Tree[_KeyT, _KeyT]], cls)(
                 to_simple_node(0, len(keys))
             )
         items = _to_unique_sorted_items(keys, list(values))
@@ -249,7 +249,7 @@ class Tree(abcs.Tree[_KeyT, _ValueT]):
                 ),
             )
 
-        return cast(type[Tree[_KeyT, _ValueT]], cls)(
+        return _cast(type[Tree[_KeyT, _ValueT]], cls)(
             to_complex_node(0, len(items))
         )
 
@@ -356,11 +356,11 @@ def map_(*items: _Item[_KeyT, _ValueT]) -> _Map[_KeyT, _ValueT]:
     return _Map(Tree.from_components(*_split_items(items)))
 
 
-@overload
+@_overload
 def set_(*values: _ValueT, key: None = ...) -> _Set[_ValueT]: ...
 
 
-@overload
+@_overload
 def set_(
     *values: _ValueT, key: _Order[_ValueT, _KeyT]
 ) -> _KeyedSet[_KeyT, _ValueT]: ...

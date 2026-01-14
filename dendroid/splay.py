@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from collections.abc import Iterable, Iterator
-from typing import cast, overload
+from collections.abc import Iterable as _Iterable, Iterator as _Iterator
+from typing import cast as _cast, overload as _overload
 
-from typing_extensions import Self, override
+from typing_extensions import Self as _Self, override as _override
 
+from . import binary as _binary
 from ._core import abcs as _abcs, nil as _nil
 from ._core.hints import (
     Item as _Item,
@@ -19,32 +20,32 @@ from ._core.utils import (
     to_unique_sorted_items as _to_unique_sorted_items,
     to_unique_sorted_values as _to_unique_sorted_values,
 )
-from .binary import Node as Node
 
 NIL = _nil.NIL
 Nil = _nil.Nil
+Node = _binary.Node
 
 
 class Tree(_abcs.Tree[_KeyT, _ValueT]):
-    @overload
+    @_overload
     @classmethod
     def from_components(
         cls: type[Tree[_KeyT, _KeyT]],
-        _keys: Iterable[_KeyT],
+        _keys: _Iterable[_KeyT],
         _values: None = ...,
     ) -> Tree[_KeyT, _KeyT]: ...
 
-    @overload
+    @_overload
     @classmethod
     def from_components(
-        cls, _keys: Iterable[_KeyT], _values: Iterable[_ValueT]
-    ) -> Self: ...
+        cls, _keys: _Iterable[_KeyT], _values: _Iterable[_ValueT]
+    ) -> _Self: ...
 
     @classmethod
     def from_components(
         cls: type[Tree[_KeyT, _KeyT]] | type[Tree[_KeyT, _ValueT]],
-        _keys: Iterable[_KeyT],
-        _values: Iterable[_ValueT] | None = None,
+        _keys: _Iterable[_KeyT],
+        _values: _Iterable[_ValueT] | None = None,
     ) -> Tree[_KeyT, _KeyT] | Tree[_KeyT, _ValueT]:
         keys = list(_keys)
         if not keys:
@@ -72,7 +73,7 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
                     ),
                 )
 
-            return cast(type[Tree[_KeyT, _KeyT]], cls)(
+            return _cast(type[Tree[_KeyT, _KeyT]], cls)(
                 to_simple_node(0, len(keys))
             )
         items = _to_unique_sorted_items(keys, tuple(_values))
@@ -97,16 +98,16 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
                 ),
             )
 
-        return cast(type[Tree[_KeyT, _ValueT]], cls)(
+        return _cast(type[Tree[_KeyT, _ValueT]], cls)(
             to_complex_node(0, len(items))
         )
 
     @property
-    @override
+    @_override
     def root(self, /) -> Node[_KeyT, _ValueT] | Nil:
         return self._root
 
-    @override
+    @_override
     def find(self, key: _KeyT, /) -> Node[_KeyT, _ValueT] | Nil:
         if self._root is NIL:
             return NIL
@@ -114,7 +115,7 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
         root = self._root
         return NIL if key < root.key or root.key < key else root
 
-    @override
+    @_override
     def insert(self, key: _KeyT, value: _ValueT, /) -> Node[_KeyT, _ValueT]:
         if self._root is NIL:
             node = self._root = Node(key, value)
@@ -132,7 +133,7 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
             )
         return self._root
 
-    @override
+    @_override
     def max(self, /) -> Node[_KeyT, _ValueT] | Nil:
         node = self._root
         if node is not NIL:
@@ -141,7 +142,7 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
             self._splay(node.key)
         return node
 
-    @override
+    @_override
     def min(self, /) -> Node[_KeyT, _ValueT] | Nil:
         node = self._root
         if node is not NIL:
@@ -150,7 +151,7 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
             self._splay(node.key)
         return node
 
-    @override
+    @_override
     def popmax(self, /) -> Node[_KeyT, _ValueT] | Nil:
         if self._root is NIL:
             return self._root
@@ -158,7 +159,7 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
         self._remove_root()
         return result
 
-    @override
+    @_override
     def popmin(self, /) -> Node[_KeyT, _ValueT] | Nil:
         if self._root is NIL:
             return self._root
@@ -166,7 +167,7 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
         self._remove_root()
         return result
 
-    @override
+    @_override
     def predecessor(
         self, node: _abcs.Node[_KeyT, _ValueT], /
     ) -> Node[_KeyT, _ValueT] | Nil:
@@ -188,13 +189,13 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
             self._splay(result.key)
         return result
 
-    @override
+    @_override
     def remove(self, node: _abcs.Node[_KeyT, _ValueT], /) -> None:
         assert isinstance(node, Node), node
         self._splay(node.key)
         self._remove_root()
 
-    @override
+    @_override
     def successor(
         self, node: _abcs.Node[_KeyT, _ValueT], /
     ) -> Node[_KeyT, _ValueT] | Nil:
@@ -282,22 +283,22 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
         self._root = root
         self._header = Node(NotImplemented, NotImplemented)
 
-    def __iter__(self, /) -> Iterator[Node[_KeyT, _ValueT]]:
+    def __iter__(self, /) -> _Iterator[Node[_KeyT, _ValueT]]:
         # we are collecting all values at once
         # because tree can be implicitly changed during iteration
         # (e.g. by simple lookup)
         # and cause infinite loops
-        return cast(
-            Iterator[Node[_KeyT, _ValueT]], iter(list(super().__iter__()))
+        return _cast(
+            _Iterator[Node[_KeyT, _ValueT]], iter(list(super().__iter__()))
         )
 
-    def __reversed__(self, /) -> Iterator[Node[_KeyT, _ValueT]]:
+    def __reversed__(self, /) -> _Iterator[Node[_KeyT, _ValueT]]:
         # we are collecting all values at once
         # because tree can be implicitly changed during iteration
         # (e.g. by simple lookup)
         # and cause infinite loops
-        return cast(
-            Iterator[Node[_KeyT, _ValueT]], iter(list(super().__reversed__()))
+        return _cast(
+            _Iterator[Node[_KeyT, _ValueT]], iter(list(super().__reversed__()))
         )
 
 
@@ -305,11 +306,11 @@ def map_(*items: _Item[_KeyT, _ValueT]) -> _Map[_KeyT, _ValueT]:
     return _Map(Tree.from_components(*_split_items(items)))
 
 
-@overload
+@_overload
 def set_(*values: _ValueT, key: None = ...) -> _Set[_ValueT]: ...
 
 
-@overload
+@_overload
 def set_(
     *values: _ValueT, key: _Order[_ValueT, _KeyT]
 ) -> _KeyedSet[_KeyT, _ValueT]: ...

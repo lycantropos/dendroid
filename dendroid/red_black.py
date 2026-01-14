@@ -3,7 +3,12 @@ from __future__ import annotations
 import weakref as _weakref
 from collections.abc import Iterable as _Iterable
 from reprlib import recursive_repr as _recursive_repr
-from typing import Any, Generic, cast, overload
+from typing import (
+    Any as _Any,
+    Generic as _Generic,
+    cast as _cast,
+    overload as _overload,
+)
 
 from reprit.base import generate_repr as _generate_repr
 from typing_extensions import Self as _Self, override as _override
@@ -30,7 +35,7 @@ NIL = _nil.NIL
 Nil = _nil.Nil
 
 
-class Node(Generic[_KeyT, _ValueT]):
+class Node(_Generic[_KeyT, _ValueT]):
     @property
     def item(self, /) -> _Item[_KeyT, _ValueT]:
         return self.key, self.value
@@ -103,7 +108,7 @@ class Node(Generic[_KeyT, _ValueT]):
 
     __repr__ = _recursive_repr()(_generate_repr(__init__))
 
-    def __getstate__(self, /) -> tuple[Any, ...]:
+    def __getstate__(self, /) -> tuple[_Any, ...]:
         return (
             self._key,
             self.value,
@@ -113,7 +118,7 @@ class Node(Generic[_KeyT, _ValueT]):
             self.right,
         )
 
-    def __setstate__(self, state: tuple[Any, ...]) -> None:
+    def __setstate__(self, state: tuple[_Any, ...]) -> None:
         (
             self._key,
             self._value,
@@ -178,13 +183,13 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
                 result = result.left
         return result
 
-    @overload
+    @_overload
     @classmethod
     def from_components(
         cls, _keys: _Iterable[_KeyT], _values: None = ...
     ) -> Tree[_KeyT, _KeyT]: ...
 
-    @overload
+    @_overload
     @classmethod
     def from_components(
         cls, _keys: _Iterable[_KeyT], _values: _Iterable[_ValueT]
@@ -228,7 +233,7 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
 
             simple_root = to_simple_node(0, len(keys), 0)
             simple_root.is_black = True
-            return cast(type[Tree[_KeyT, _KeyT]], cls)(simple_root)
+            return _cast(type[Tree[_KeyT, _KeyT]], cls)(simple_root)
         items = _to_unique_sorted_items(keys, tuple(_values))
 
         def to_complex_node(
@@ -258,7 +263,7 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
 
         complex_root = to_complex_node(0, len(items), 0)
         complex_root.is_black = True
-        return cast(type[Tree[_KeyT, _ValueT]], cls)(complex_root)
+        return _cast(type[Tree[_KeyT, _ValueT]], cls)(complex_root)
 
     def insert(self, key: _KeyT, value: _ValueT, /) -> Node[_KeyT, _ValueT]:
         parent = self.root
@@ -457,11 +462,11 @@ def map_(*items: _Item[_KeyT, _ValueT]) -> _Map[_KeyT, _ValueT]:
     return _Map(Tree.from_components(*_split_items(items)))
 
 
-@overload
+@_overload
 def set_(*values: _ValueT, key: None = ...) -> _Set[_ValueT]: ...
 
 
-@overload
+@_overload
 def set_(
     *values: _ValueT, key: _Order[_ValueT, _KeyT]
 ) -> _KeyedSet[_KeyT, _ValueT]: ...

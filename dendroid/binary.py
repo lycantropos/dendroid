@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from collections.abc import Iterable
-from typing import Generic, cast, overload
+from collections.abc import Iterable as _Iterable
+from typing import Generic as _Generic, cast as _cast, overload as _overload
 
 from reprit.base import generate_repr as _generate_repr
-from typing_extensions import Self, override
+from typing_extensions import Self as _Self, override as _override
 
-from ._core import abcs, nil as _nil
+from ._core import abcs as _abcs, nil as _nil
 from ._core.hints import (
     Item as _Item,
     KeyT as _KeyT,
@@ -26,7 +26,7 @@ NIL = _nil.NIL
 Nil = _nil.Nil
 
 
-class Node(Generic[_KeyT, _ValueT]):
+class Node(_Generic[_KeyT, _ValueT]):
     @property
     def item(self, /) -> _Item[_KeyT, _ValueT]:
         return self.key, self.value
@@ -36,19 +36,19 @@ class Node(Generic[_KeyT, _ValueT]):
         return self._key
 
     @property
-    def left(self, /) -> Self | Nil:
+    def left(self, /) -> _Self | Nil:
         return self._left
 
     @left.setter
-    def left(self, value: Self | Nil, /) -> None:
+    def left(self, value: _Self | Nil, /) -> None:
         self._left = value
 
     @property
-    def right(self, /) -> Self | Nil:
+    def right(self, /) -> _Self | Nil:
         return self._right
 
     @right.setter
-    def right(self, value: Self | Nil) -> None:
+    def right(self, value: _Self | Nil) -> None:
         self._right = value
 
     @property
@@ -59,8 +59,8 @@ class Node(Generic[_KeyT, _ValueT]):
     def value(self, value: _ValueT) -> None:
         self._value = value
 
-    _left: Self | Nil
-    _right: Self | Nil
+    _left: _Self | Nil
+    _right: _Self | Nil
 
     __slots__ = '_key', '_left', '_right', '_value'
 
@@ -70,8 +70,8 @@ class Node(Generic[_KeyT, _ValueT]):
         value: _ValueT,
         /,
         *,
-        left: Self | Nil = NIL,
-        right: Self | Nil = NIL,
+        left: _Self | Nil = NIL,
+        right: _Self | Nil = NIL,
     ) -> None:
         self._key, self._value, self._left, self._right = (
             key,
@@ -83,28 +83,28 @@ class Node(Generic[_KeyT, _ValueT]):
     __repr__ = _generate_repr(__init__)
 
 
-class Tree(abcs.Tree[_KeyT, _ValueT]):
+class Tree(_abcs.Tree[_KeyT, _ValueT]):
     @property
     def root(self, /) -> Node[_KeyT, _ValueT] | Nil:
         return self._root
 
-    @overload
+    @_overload
     @classmethod
     def from_components(
-        cls, _keys: Iterable[_KeyT], _values: None = ...
+        cls, _keys: _Iterable[_KeyT], _values: None = ...
     ) -> Tree[_KeyT, _KeyT]: ...
 
-    @overload
+    @_overload
     @classmethod
     def from_components(
-        cls, _keys: Iterable[_KeyT], _values: Iterable[_ValueT]
-    ) -> Self: ...
+        cls, _keys: _Iterable[_KeyT], _values: _Iterable[_ValueT]
+    ) -> _Self: ...
 
     @classmethod
     def from_components(
         cls: type[Tree[_KeyT, _KeyT]] | type[Tree[_KeyT, _ValueT]],
-        _keys: Iterable[_KeyT],
-        _values: Iterable[_ValueT] | None = None,
+        _keys: _Iterable[_KeyT],
+        _values: _Iterable[_ValueT] | None = None,
     ) -> Tree[_KeyT, _KeyT] | Tree[_KeyT, _ValueT]:
         keys = list(_keys)
         if not keys:
@@ -132,7 +132,7 @@ class Tree(abcs.Tree[_KeyT, _ValueT]):
                     ),
                 )
 
-            return cast(type[Tree[_KeyT, _KeyT]], cls)(
+            return _cast(type[Tree[_KeyT, _KeyT]], cls)(
                 to_simple_node(0, len(keys))
             )
         items = _to_unique_sorted_items(keys, tuple(_values))
@@ -157,11 +157,11 @@ class Tree(abcs.Tree[_KeyT, _ValueT]):
                 ),
             )
 
-        return cast(type[Tree[_KeyT, _ValueT]], cls)(
+        return _cast(type[Tree[_KeyT, _ValueT]], cls)(
             to_complex_node(0, len(items))
         )
 
-    @override
+    @_override
     def insert(self, key: _KeyT, value: _ValueT, /) -> Node[_KeyT, _ValueT]:
         parent = self._root
         if parent is NIL:
@@ -181,7 +181,7 @@ class Tree(abcs.Tree[_KeyT, _ValueT]):
             else:
                 return parent
 
-    @override
+    @_override
     def popmax(self, /) -> Node[_KeyT, _ValueT] | Nil:
         node = self._root
         if node is NIL:
@@ -195,7 +195,7 @@ class Tree(abcs.Tree[_KeyT, _ValueT]):
         result, node.right = node.right, node.right.left
         return result
 
-    @override
+    @_override
     def popmin(self, /) -> Node[_KeyT, _ValueT] | Nil:
         node = self._root
         if node is NIL:
@@ -209,9 +209,9 @@ class Tree(abcs.Tree[_KeyT, _ValueT]):
         result, node.left = node.left, node.left.right
         return result
 
-    @override
+    @_override
     def predecessor(
-        self, node: abcs.Node[_KeyT, _ValueT], /
+        self, node: _abcs.Node[_KeyT, _ValueT], /
     ) -> Node[_KeyT, _ValueT] | Nil:
         result: Node[_KeyT, _ValueT] | Nil
         assert isinstance(node, Node), node
@@ -229,8 +229,8 @@ class Tree(abcs.Tree[_KeyT, _ValueT]):
                     cursor = cursor.left
         return result
 
-    @override
-    def remove(self, node: abcs.Node[_KeyT, _ValueT], /) -> None:
+    @_override
+    def remove(self, node: _abcs.Node[_KeyT, _ValueT], /) -> None:
         assert isinstance(node, Node), node
         assert self._root is not NIL
         parent, key = self._root, node.key
@@ -315,9 +315,9 @@ class Tree(abcs.Tree[_KeyT, _ValueT]):
                     return
                 parent = parent.right
 
-    @override
+    @_override
     def successor(
-        self, node: abcs.Node[_KeyT, _ValueT], /
+        self, node: _abcs.Node[_KeyT, _ValueT], /
     ) -> Node[_KeyT, _ValueT] | Nil:
         result: Node[_KeyT, _ValueT] | Nil
         assert isinstance(node, Node), node
@@ -347,11 +347,11 @@ def map_(*items: _Item[_KeyT, _ValueT]) -> _Map[_KeyT, _ValueT]:
     return _Map(Tree.from_components(*_split_items(items)))
 
 
-@overload
+@_overload
 def set_(*values: _ValueT, key: None = ...) -> _Set[_ValueT]: ...
 
 
-@overload
+@_overload
 def set_(
     *values: _ValueT, key: _Order[_ValueT, _KeyT]
 ) -> _KeyedSet[_KeyT, _ValueT]: ...
