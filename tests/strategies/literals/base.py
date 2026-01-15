@@ -17,9 +17,9 @@ from tests.utils import (
 )
 
 from .factories import (
-    to_values_lists_with_orders,
+    to_value_sequence_with_order_strategy,
+    to_value_with_order_strategy,
     to_values_tuples_with_orders,
-    to_values_with_orders,
 )
 
 maybe_infinite_numbers_orders = st.sampled_from([identity, abs])
@@ -51,13 +51,13 @@ base_values_with_orders_strategies: st.SearchStrategy[
         (st.text(), strings_orders),
     ]
 )
-values_with_orders_strategies = st.recursive(
+value_with_order_strategy_strategy = st.recursive(
     base_values_with_orders_strategies,
     to_values_tuples_with_orders,
     max_leaves=10,
 )
-values_with_orders = values_with_orders_strategies.flatmap(
-    to_values_with_orders
+value_with_order_strategy = value_with_order_strategy_strategy.flatmap(
+    to_value_with_order_strategy
 )
 
 
@@ -83,27 +83,31 @@ def to_different_values_orders(
     )
 
 
-values_lists_with_orders = to_different_values_orders(
-    values_with_orders_strategies.flatmap(
-        partial(to_values_lists_with_orders, sizes=[(0, None)])
+value_sequence_with_order_strategy = to_different_values_orders(
+    value_with_order_strategy_strategy.flatmap(
+        partial(to_value_sequence_with_order_strategy, min_size=0)
     )
 )
-values_lists_with_none_orders = values_lists_with_orders.map(
-    compose(tuple, combine(identity, to_constant(None)))
-)
-empty_values_lists_with_orders = values_with_orders_strategies.flatmap(
-    partial(to_values_lists_with_orders, sizes=[(0, 0)])
-)
-non_empty_values_lists_with_orders = to_different_values_orders(
-    values_with_orders_strategies.flatmap(
-        partial(to_values_lists_with_orders, sizes=[(1, None)])
+value_sequence_with_none_order_strategy = (
+    value_sequence_with_order_strategy.map(
+        compose(tuple, combine(identity, to_constant(None)))
     )
 )
-single_values_with_orders = values_with_orders_strategies.flatmap(
-    partial(to_values_lists_with_orders, sizes=[(1, 1)])
+empty_value_sequence_with_order_strategy = (
+    value_with_order_strategy_strategy.flatmap(
+        partial(to_value_sequence_with_order_strategy, min_size=0, max_size=0)
+    )
 )
-two_or_more_values_with_orders = to_different_values_orders(
-    values_with_orders_strategies.flatmap(
-        partial(to_values_lists_with_orders, sizes=[(2, None)])
+non_empty_value_sequence_with_order_strategy = to_different_values_orders(
+    value_with_order_strategy_strategy.flatmap(
+        partial(to_value_sequence_with_order_strategy, min_size=1)
+    )
+)
+single_value_with_order_strategy = value_with_order_strategy_strategy.flatmap(
+    partial(to_value_sequence_with_order_strategy, min_size=1, max_size=1)
+)
+two_or_more_values_with_order_strategy = to_different_values_orders(
+    value_with_order_strategy_strategy.flatmap(
+        partial(to_value_sequence_with_order_strategy, min_size=2)
     )
 )

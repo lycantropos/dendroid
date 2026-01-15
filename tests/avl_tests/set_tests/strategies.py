@@ -5,10 +5,10 @@ from hypothesis import strategies as st
 from dendroid import avl
 from tests.hints import KeyT, ValueT
 from tests.strategies import (
-    non_empty_values_lists_with_orders,
-    to_values_lists_with_orders,
-    values_lists_with_orders,
-    values_with_orders_strategies,
+    non_empty_value_sequence_with_order_strategy,
+    to_value_sequences_with_order_strategy,
+    value_sequence_with_order_strategy,
+    value_with_order_strategy_strategy,
 )
 from tests.utils import (
     BaseSet,
@@ -24,8 +24,10 @@ def to_set(
     return avl.set_(*values_list, key=order)
 
 
-sets = st.builds(to_set, values_lists_with_orders)
-non_empty_sets = st.builds(to_set, non_empty_values_lists_with_orders)
+set_strategy = st.builds(to_set, value_sequence_with_order_strategy)
+non_empty_set_strategy = st.builds(
+    to_set, non_empty_value_sequence_with_order_strategy
+)
 
 
 def to_set_with_value(
@@ -36,27 +38,28 @@ def to_set_with_value(
     return (avl.set_(*rest_values_list, key=order), value)
 
 
-sets_with_values = st.builds(
-    to_set_with_value, non_empty_values_lists_with_orders
+set_with_value_strategy = st.builds(
+    to_set_with_value, non_empty_value_sequence_with_order_strategy
 )
 
 
-def to_non_empty_sets_with_their_values(
+def to_non_empty_set_with_their_value_strategy(
     set_: BaseSet[ValueT], /
 ) -> st.SearchStrategy[tuple[BaseSet[ValueT], ValueT]]:
     return st.tuples(st.just(set_), st.sampled_from(list(set_)))
 
 
-non_empty_sets_with_their_values = non_empty_sets.flatmap(
-    to_non_empty_sets_with_their_values
+non_empty_set_with_their_value_strategy = non_empty_set_strategy.flatmap(
+    to_non_empty_set_with_their_value_strategy
 )
 
 
-def to_sets_pair(
-    values_lists_pair_with_order: ValueSequencePairWithOrder[ValueT, KeyT], /
+def to_set_pair(
+    value_sequences_pair_with_order: ValueSequencePairWithOrder[ValueT, KeyT],
+    /,
 ) -> tuple[BaseSet[ValueT], BaseSet[ValueT]]:
     (first_values_list, second_values_list), order = (
-        values_lists_pair_with_order
+        value_sequences_pair_with_order
     )
     return (
         avl.set_(*first_values_list, key=order),
@@ -64,9 +67,9 @@ def to_sets_pair(
     )
 
 
-sets_pairs = st.builds(
-    to_sets_pair,
-    values_with_orders_strategies.flatmap(
-        partial(to_values_lists_with_orders, sizes=[(0, None)] * 2)
+set_pair_strategy = st.builds(
+    to_set_pair,
+    value_with_order_strategy_strategy.flatmap(
+        partial(to_value_sequences_with_order_strategy, sizes=[(0, None)] * 2)
     ),
 )

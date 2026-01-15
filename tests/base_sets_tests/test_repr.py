@@ -25,6 +25,8 @@ def test_evaluation(set_: BaseSet[ValueT]) -> None:
     type_ = type(set_)
     # `math` module is required for `inf` object
     assert (
-        eval(result, sys.modules, {**vars(math), type_.__qualname__: type_})
+        eval(
+            result, {**sys.modules}, {**vars(math), type_.__qualname__: type_}
+        )
         == set_
     )

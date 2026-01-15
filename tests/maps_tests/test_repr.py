@@ -16,6 +16,8 @@ def test_evaluation(map_: Map[KeyT, ValueT]) -> None:
     type_ = type(map_)
     # `math` module is required for `inf` object
     assert (
-        eval(result, sys.modules, {**vars(math), type_.__qualname__: type_})
+        eval(
+            result, {**sys.modules}, {**vars(math), type_.__qualname__: type_}
+        )
         == map_
     )

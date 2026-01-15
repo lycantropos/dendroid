@@ -12,7 +12,7 @@ from tests.utils import (
 from . import strategies
 
 
-@given(strategies.non_empty_sets)
+@given(strategies.non_empty_set_strategy)
 def test_properties(set_: BaseSet[ValueT]) -> None:
     set_.pop()
 

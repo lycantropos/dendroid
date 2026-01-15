@@ -16,6 +16,8 @@ def test_evaluation(keys_view: KeysView[KeyT]) -> None:
     type_ = type(keys_view)
     # `math` module is required for `inf` object
     assert (
-        eval(result, sys.modules, {**vars(math), type_.__qualname__: type_})
+        eval(
+            result, {**sys.modules}, {**vars(math), type_.__qualname__: type_}
+        )
         == keys_view
     )

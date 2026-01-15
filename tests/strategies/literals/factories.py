@@ -5,7 +5,11 @@ from hypothesis import strategies as st
 
 from dendroid.hints import Order
 from tests.hints import KeyT, ValueT
-from tests.utils import BaseSet, ValueSequencesWithOrder
+from tests.utils import (
+    BaseSet,
+    ValueSequenceWithOrder,
+    ValueSequencesWithOrder,
+)
 
 
 def to_values_tuples_with_orders(
@@ -66,7 +70,7 @@ def combine(
     )
 
 
-def to_values_with_orders(
+def to_value_with_order_strategy(
     values_with_orders: tuple[
         st.SearchStrategy[Sequence[ValueT]],
         st.SearchStrategy[Order[Sequence[ValueT], tuple[KeyT, ...]]],
@@ -79,7 +83,23 @@ def to_values_with_orders(
     return st.tuples(values, st.none() | orders)
 
 
-def to_values_lists_with_orders(
+def to_value_sequence_with_order_strategy(
+    values_with_orders: tuple[
+        st.SearchStrategy[ValueT], st.SearchStrategy[Order[ValueT, KeyT]]
+    ],
+    /,
+    *,
+    min_size: int,
+    max_size: int | None = None,
+) -> st.SearchStrategy[ValueSequenceWithOrder[ValueT, KeyT]]:
+    values, orders = values_with_orders
+    return st.tuples(
+        st.lists(values, min_size=min_size, max_size=max_size),
+        st.none() | orders,
+    )
+
+
+def to_value_sequences_with_order_strategy(
     values_with_orders: tuple[
         st.SearchStrategy[ValueT], st.SearchStrategy[Order[ValueT, KeyT]]
     ],
@@ -87,6 +107,7 @@ def to_values_lists_with_orders(
     *,
     sizes: Sequence[tuple[int, int | None]],
 ) -> st.SearchStrategy[ValueSequencesWithOrder[ValueT, KeyT]]:
+    assert len(sizes) > 1, sizes
     values, orders = values_with_orders
     lists_strategies = [
         st.lists(values, min_size=min_size, max_size=max_size)
@@ -95,7 +116,7 @@ def to_values_lists_with_orders(
     return st.tuples(st.tuples(*lists_strategies), st.none() | orders)
 
 
-def to_non_empty_sets_with_their_values(
+def to_non_empty_set_with_their_value_strategy(
     set_: BaseSet[ValueT], /
 ) -> st.SearchStrategy[tuple[BaseSet[ValueT], ValueT]]:
     return st.tuples(st.just(set_), st.sampled_from(list(set_)))

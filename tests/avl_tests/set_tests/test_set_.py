@@ -15,7 +15,7 @@ from tests.utils import (
 )
 
 
-@given(strategies.values_lists_with_orders)
+@given(strategies.value_sequence_with_order_strategy)
 def test_type(values_with_order: ValueSequenceWithOrder[ValueT, KeyT]) -> None:
     values, order = values_with_order
 
@@ -24,7 +24,7 @@ def test_type(values_with_order: ValueSequenceWithOrder[ValueT, KeyT]) -> None:
     assert isinstance(result, BaseSet)
 
 
-@given(strategies.values_lists_with_orders)
+@given(strategies.value_sequence_with_order_strategy)
 def test_properties(
     values_with_order: ValueSequenceWithOrder[ValueT, KeyT],
 ) -> None:
@@ -44,7 +44,7 @@ def test_properties(
     assert are_balance_factors_normalized(result_tree)
 
 
-@given(strategies.values_lists_with_orders)
+@given(strategies.value_sequence_with_order_strategy)
 def test_base_case(
     values_with_order: ValueSequenceWithOrder[ValueT, KeyT],
 ) -> None:
@@ -57,7 +57,7 @@ def test_base_case(
     assert all(value not in result for value in values)
 
 
-@given(strategies.non_empty_values_lists_with_orders)
+@given(strategies.non_empty_value_sequence_with_order_strategy)
 def test_step(values_with_order: ValueSequenceWithOrder[ValueT, KeyT]) -> None:
     values, order = values_with_order
     *values, value = values

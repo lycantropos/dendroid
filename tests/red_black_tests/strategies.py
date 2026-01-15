@@ -5,10 +5,10 @@ from hypothesis import strategies as st
 from dendroid import red_black
 from tests.hints import KeyT, ValueT
 from tests.strategies import (
-    non_empty_values_lists_with_orders,
-    to_values_lists_with_orders,
-    values_lists_with_orders,
-    values_with_orders_strategies,
+    non_empty_value_sequence_with_order_strategy,
+    to_value_sequences_with_order_strategy,
+    value_sequence_with_order_strategy,
+    value_with_order_strategy_strategy,
 )
 from tests.utils import (
     BaseSet,
@@ -18,18 +18,20 @@ from tests.utils import (
 
 
 def to_set(
-    values_list_with_order: ValueSequenceWithOrder[ValueT, KeyT],
+    values_list_with_order: ValueSequenceWithOrder[ValueT, KeyT], /
 ) -> BaseSet[ValueT]:
     values_list, key = values_list_with_order
     return red_black.set_(*values_list, key=key)
 
 
-sets = st.builds(to_set, values_lists_with_orders)
-non_empty_sets = st.builds(to_set, non_empty_values_lists_with_orders)
+sets = st.builds(to_set, value_sequence_with_order_strategy)
+non_empty_sets = st.builds(
+    to_set, non_empty_value_sequence_with_order_strategy
+)
 
 
 def to_set_with_value(
-    values_list_with_order: ValueSequenceWithOrder[ValueT, KeyT],
+    values_list_with_order: ValueSequenceWithOrder[ValueT, KeyT], /
 ) -> tuple[BaseSet[ValueT], ValueT]:
     values_list, order = values_list_with_order
     *rest_values_list, value = values_list
@@ -38,7 +40,7 @@ def to_set_with_value(
 
 
 sets_with_values = st.builds(
-    to_set_with_value, non_empty_values_lists_with_orders
+    to_set_with_value, non_empty_value_sequence_with_order_strategy
 )
 
 
@@ -54,10 +56,11 @@ non_empty_sets_with_their_values = non_empty_sets.flatmap(
 
 
 def to_sets_pair(
-    values_lists_pair_with_order: ValueSequencePairWithOrder[ValueT, KeyT], /
+    value_sequences_pair_with_order: ValueSequencePairWithOrder[ValueT, KeyT],
+    /,
 ) -> tuple[BaseSet[ValueT], BaseSet[ValueT]]:
     (first_values_list, second_values_list), order = (
-        values_lists_pair_with_order
+        value_sequences_pair_with_order
     )
     return (
         red_black.set_(*first_values_list, key=order),
@@ -67,7 +70,7 @@ def to_sets_pair(
 
 sets_pairs = st.builds(
     to_sets_pair,
-    values_with_orders_strategies.flatmap(
-        partial(to_values_lists_with_orders, sizes=[(0, None)] * 2)
+    value_with_order_strategy_strategy.flatmap(
+        partial(to_value_sequences_with_order_strategy, sizes=[(0, None)] * 2)
     ),
 )

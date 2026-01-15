@@ -18,7 +18,9 @@ def test_evaluation(values_view: ValuesView[ValueT]) -> None:
     assert (
         repr(
             eval(
-                result, sys.modules, {**vars(math), type_.__qualname__: type_}
+                result,
+                {**sys.modules},
+                {**vars(math), type_.__qualname__: type_},
             )
         )
         == result

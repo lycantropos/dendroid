@@ -8,12 +8,12 @@ from dendroid import avl, binary, red_black, splay
 from dendroid.hints import Item
 from tests.hints import KeyT, ValueT
 from tests.strategies import (
-    non_empty_values_lists_with_orders,
-    single_values_with_orders,
-    to_values_lists_with_orders,
-    two_or_more_values_with_orders,
-    values_lists_with_orders,
-    values_with_orders_strategies,
+    non_empty_value_sequence_with_order_strategy,
+    single_value_with_order_strategy,
+    to_value_sequences_with_order_strategy,
+    two_or_more_values_with_order_strategy,
+    value_sequence_with_order_strategy,
+    value_with_order_strategy_strategy,
 )
 from tests.utils import (
     Map,
@@ -54,16 +54,16 @@ def values_list_with_order_to_items_list(
     )
 
 
-items_lists = values_lists_with_orders.map(
+items_lists = value_sequence_with_order_strategy.map(
     values_list_with_order_to_items_list
 )
-single_items = single_values_with_orders.map(
+single_items = single_value_with_order_strategy.map(
     values_list_with_order_to_items_list
 )
-non_empty_items_lists = non_empty_values_lists_with_orders.map(
+non_empty_items_lists = non_empty_value_sequence_with_order_strategy.map(
     values_list_with_order_to_items_list
 )
-two_or_more_items = two_or_more_values_with_orders.map(
+two_or_more_items = two_or_more_values_with_order_strategy.map(
     values_list_with_order_to_items_list
 )
 
@@ -147,19 +147,19 @@ non_empty_maps_with_external_keys = non_empty_maps_with_keys.filter(
 )
 
 
-def values_lists_with_order_to_items_lists(
-    values_lists_with_order: ValueSequencesWithOrder[ValueT, KeyT], /
+def value_sequences_with_order_to_items_lists(
+    value_sequences_with_order: ValueSequencesWithOrder[ValueT, KeyT], /
 ) -> tuple[Sequence[Item[Any, ValueT]], ...]:
-    values_lists, order = values_lists_with_order
+    value_sequences, order = value_sequences_with_order
     return (
         tuple(
             [(value, value) for value in values_list]
-            for values_list in values_lists
+            for values_list in value_sequences
         )
         if order is None
         else tuple(
             [(order(value), value) for value in values_list]
-            for values_list in values_lists
+            for values_list in value_sequences
         )
     )
 
@@ -169,6 +169,7 @@ def to_map_with_items_list(
     items_lists_pair: tuple[
         list[Item[KeyT, ValueT]], list[Item[KeyT, ValueT]]
     ],
+    /,
 ) -> tuple[Map[KeyT, ValueT], list[Item[KeyT, ValueT]]]:
     first_items_list, second_items_list = items_lists_pair
     return factory(*first_items_list), second_items_list
@@ -178,9 +179,11 @@ maps_with_items_lists = st.builds(
     to_map_with_items_list,
     factories,
     (
-        values_with_orders_strategies.flatmap(
-            partial(to_values_lists_with_orders, sizes=[(0, None)] * 2)
-        ).map(values_lists_with_order_to_items_lists)
+        value_with_order_strategy_strategy.flatmap(
+            partial(
+                to_value_sequences_with_order_strategy, sizes=[(0, None)] * 2
+            )
+        ).map(value_sequences_with_order_to_items_lists)
     ),
 )
 
@@ -190,6 +193,7 @@ def to_maps_pair(
     items_lists_pair: tuple[
         list[Item[KeyT, ValueT]], list[Item[KeyT, ValueT]]
     ],
+    /,
 ) -> MapsPair[KeyT, ValueT]:
     first_items_list, second_items_list = items_lists_pair
     return factory(*first_items_list), factory(*second_items_list)
@@ -198,8 +202,8 @@ def to_maps_pair(
 maps_pairs = st.builds(
     to_maps_pair,
     factories,
-    values_with_orders_strategies.flatmap(
-        partial(to_values_lists_with_orders, sizes=[(0, None)] * 2)
-    ).map(values_lists_with_order_to_items_lists),
+    value_with_order_strategy_strategy.flatmap(
+        partial(to_value_sequences_with_order_strategy, sizes=[(0, None)] * 2)
+    ).map(value_sequences_with_order_to_items_lists),
 )
 maps_with_items_lists_or_maps = maps_with_items_lists | maps_pairs
