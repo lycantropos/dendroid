@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy as _copy
 from collections.abc import Iterable as _Iterable, Iterator as _Iterator
 from typing import cast as _cast, overload as _overload
 
@@ -31,26 +32,28 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
     @classmethod
     def from_components(
         cls: type[Tree[_KeyT, _KeyT]],
-        _keys: _Iterable[_KeyT],
-        _values: None = ...,
+        keys: _Iterable[_KeyT],
+        values: None = ...,
+        /,
     ) -> Tree[_KeyT, _KeyT]: ...
 
     @_overload
     @classmethod
     def from_components(
-        cls, _keys: _Iterable[_KeyT], _values: _Iterable[_ValueT]
+        cls, keys: _Iterable[_KeyT], values: _Iterable[_ValueT], /
     ) -> _Self: ...
 
     @classmethod
     def from_components(
         cls: type[Tree[_KeyT, _KeyT]] | type[Tree[_KeyT, _ValueT]],
-        _keys: _Iterable[_KeyT],
-        _values: _Iterable[_ValueT] | None = None,
+        keys: _Iterable[_KeyT],
+        values: _Iterable[_ValueT] | None = None,
+        /,
     ) -> Tree[_KeyT, _KeyT] | Tree[_KeyT, _ValueT]:
-        keys = list(_keys)
+        keys = list(keys)
         if not keys:
             return cls(NIL)
-        if _values is None:
+        if values is None:
             keys = _to_unique_sorted_values(keys)
 
             def to_simple_node(
@@ -76,7 +79,7 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
             return _cast(type[Tree[_KeyT, _KeyT]], cls)(
                 to_simple_node(0, len(keys))
             )
-        items = _to_unique_sorted_items(keys, tuple(_values))
+        items = _to_unique_sorted_items(keys, tuple(values))
 
         def to_complex_node(
             start_index: int, end_index: int, /
@@ -106,6 +109,10 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
     @_override
     def root(self, /) -> Node[_KeyT, _ValueT] | Nil:
         return self._root
+
+    @_override
+    def clear(self, /) -> None:
+        self._root = NIL
 
     @_override
     def find(self, key: _KeyT, /) -> Node[_KeyT, _ValueT] | Nil:
@@ -277,9 +284,13 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
     _header: Node[_KeyT, _ValueT]
     _root: Node[_KeyT, _ValueT] | Nil
 
-    __slots__ = '_header', 'root'
+    __slots__ = '_header', '_root'
 
-    def __init__(self, root: Node[_KeyT, _ValueT] | Nil) -> None:
+    @_override
+    def __copy__(self, /) -> _Self:
+        return type(self)(_copy.deepcopy(self._root))
+
+    def __init__(self, root: Node[_KeyT, _ValueT] | Nil, /) -> None:
         self._root = root
         self._header = Node(NotImplemented, NotImplemented)
 

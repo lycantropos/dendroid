@@ -231,6 +231,7 @@ def map_constructor(
     tree_constructor: Callable[
         [Iterable[KeyT], Iterable[ValueT]], Tree[KeyT, ValueT]
     ],
+    /,
     *items: Item[KeyT, ValueT],
 ) -> Map[KeyT, ValueT]:
     return Map(tree_constructor(*split_items(items)))

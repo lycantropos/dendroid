@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from collections.abc import Iterable
+import copy as _copy
+from collections.abc import Iterable as _Iterable
 from reprlib import recursive_repr as _recursive_repr
 from typing import Generic as _Generic, cast as _cast, overload as _overload
 
 from reprit.base import generate_repr as _generate_repr
-from typing_extensions import Self, override
+from typing_extensions import Self as _Self, override as _override
 
 from ._core import abcs
 from ._core.hints import (
@@ -42,28 +43,28 @@ class Node(_Generic[_KeyT, _ValueT]):
         return self._key
 
     @property
-    def left(self, /) -> Self | _Nil:
+    def left(self, /) -> _Self | _Nil:
         return self._left
 
     @left.setter
-    def left(self, node: Self | _Nil) -> None:
+    def left(self, node: _Self | _Nil) -> None:
         self._left = node
         _set_parent(node, self)
 
     @property
-    def parent(self, /) -> Self | _Nil:
+    def parent(self, /) -> _Self | _Nil:
         return _dereference_maybe(self._parent)
 
     @parent.setter
-    def parent(self, value: Self | _Nil, /) -> None:
+    def parent(self, value: _Self | _Nil, /) -> None:
         self._parent = _maybe_weakref(value)
 
     @property
-    def right(self, /) -> Self | _Nil:
+    def right(self, /) -> _Self | _Nil:
         return self._right
 
     @right.setter
-    def right(self, node: Self | _Nil) -> None:
+    def right(self, node: _Self | _Nil) -> None:
         self._right = node
         _set_parent(node, self)
 
@@ -91,9 +92,9 @@ class Node(_Generic[_KeyT, _ValueT]):
         value: _ValueT,
         /,
         *,
-        left: Self | _Nil = NIL,
-        right: Self | _Nil = NIL,
-        parent: Self | _Nil = NIL,
+        left: _Self | _Nil = NIL,
+        right: _Self | _Nil = NIL,
+        parent: _Self | _Nil = NIL,
     ) -> None:
         self._key, self._value = key, value
         self.left, self.right, self.parent = left, right, parent
@@ -102,8 +103,8 @@ class Node(_Generic[_KeyT, _ValueT]):
     __repr__ = _recursive_repr()(_generate_repr(__init__))
 
     def __getstate__(
-        self,
-    ) -> tuple[_KeyT, _ValueT, int, Self | _Nil, Self | _Nil, Self | _Nil]:
+        self, /
+    ) -> tuple[_KeyT, _ValueT, int, _Self | _Nil, _Self | _Nil, _Self | _Nil]:
         return (
             self._key,
             self._value,
@@ -116,8 +117,9 @@ class Node(_Generic[_KeyT, _ValueT]):
     def __setstate__(
         self,
         state: tuple[
-            _KeyT, _ValueT, int, Self | _Nil, Self | _Nil, Self | _Nil
+            _KeyT, _ValueT, int, _Self | _Nil, _Self | _Nil, _Self | _Nil
         ],
+        /,
     ) -> None:
         (
             self._key,
@@ -149,7 +151,7 @@ class Tree(abcs.Tree[_KeyT, _ValueT]):
     def root(self, /) -> Node[_KeyT, _ValueT] | _Nil:
         return self._root
 
-    @override
+    @_override
     def predecessor(
         self, node: abcs.Node[_KeyT, _ValueT], /
     ) -> Node[_KeyT, _ValueT] | _Nil:
@@ -164,7 +166,7 @@ class Tree(abcs.Tree[_KeyT, _ValueT]):
                 result = result.right
         return result
 
-    @override
+    @_override
     def successor(
         self, node: abcs.Node[_KeyT, _ValueT], /
     ) -> Node[_KeyT, _ValueT] | _Nil:
@@ -182,20 +184,20 @@ class Tree(abcs.Tree[_KeyT, _ValueT]):
     @_overload
     @classmethod
     def from_components(
-        cls, keys: Iterable[_KeyT], values: None = ..., /
+        cls, keys: _Iterable[_KeyT], values: None = ..., /
     ) -> Tree[_KeyT, _KeyT]: ...
 
     @_overload
     @classmethod
     def from_components(
-        cls, keys: Iterable[_KeyT], values: Iterable[_ValueT], /
+        cls, keys: _Iterable[_KeyT], values: _Iterable[_ValueT], /
     ) -> Tree[_KeyT, _ValueT]: ...
 
     @classmethod
     def from_components(
         cls: type[Tree[_KeyT, _KeyT]] | type[Tree[_KeyT, _ValueT]],
-        keys: Iterable[_KeyT],
-        values: Iterable[_ValueT] | None = None,
+        keys: _Iterable[_KeyT],
+        values: _Iterable[_ValueT] | None = None,
         /,
     ) -> Tree[_KeyT, _KeyT] | Tree[_KeyT, _ValueT]:
         keys = list(keys)
@@ -253,6 +255,11 @@ class Tree(abcs.Tree[_KeyT, _ValueT]):
             to_complex_node(0, len(items))
         )
 
+    @_override
+    def clear(self, /) -> None:
+        self._root = NIL
+
+    @_override
     def insert(self, key: _KeyT, value: _ValueT, /) -> Node[_KeyT, _ValueT]:
         parent = self.root
         if parent is NIL:
@@ -276,6 +283,7 @@ class Tree(abcs.Tree[_KeyT, _ValueT]):
         self._rebalance(node.parent)
         return node
 
+    @_override
     def remove(self, node: abcs.Node[_KeyT, _ValueT], /) -> None:
         assert isinstance(node, Node), node
         if node.left is NIL:
@@ -347,6 +355,10 @@ class Tree(abcs.Tree[_KeyT, _ValueT]):
     _root: Node[_KeyT, _ValueT] | _Nil
 
     __slots__ = ('_root',)
+
+    @_override
+    def __copy__(self, /) -> _Self:
+        return type(self)(_copy.deepcopy(self._root))
 
     def __init__(self, root: Node[_KeyT, _ValueT] | _Nil, /) -> None:
         self._root = root

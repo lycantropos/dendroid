@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy as _copy
 import weakref as _weakref
 from collections.abc import Iterable as _Iterable
 from reprlib import recursive_repr as _recursive_repr
@@ -151,7 +152,98 @@ def _is_node_black(node: Node[_KeyT, _ValueT] | Nil, /) -> bool:
 
 
 class Tree(_abcs.Tree[_KeyT, _ValueT]):
-    root: Node[_KeyT, _ValueT] | Nil
+    @_overload
+    @classmethod
+    def from_components(
+        cls, keys: _Iterable[_KeyT], values: None = ..., /
+    ) -> Tree[_KeyT, _KeyT]: ...
+
+    @_overload
+    @classmethod
+    def from_components(
+        cls, keys: _Iterable[_KeyT], values: _Iterable[_ValueT], /
+    ) -> _Self: ...
+
+    @classmethod
+    def from_components(
+        cls: type[Tree[_KeyT, _KeyT]] | type[Tree[_KeyT, _ValueT]],
+        _keys: _Iterable[_KeyT],
+        values: _Iterable[_ValueT] | None = None,
+        /,
+    ) -> Tree[_KeyT, _KeyT] | Tree[_KeyT, _ValueT]:
+        keys = list(_keys)
+        if not keys:
+            return cls(NIL)
+        if values is None:
+            keys = _to_unique_sorted_values(keys)
+
+            def to_simple_node(
+                start_index: int,
+                end_index: int,
+                depth: int,
+                height: int = _to_balanced_tree_height(len(keys)),
+                /,
+            ) -> Node[_KeyT, _KeyT]:
+                middle_index = (start_index + end_index) // 2
+                key = keys[middle_index]
+                return Node(
+                    key,
+                    key,
+                    is_black=depth != height,
+                    left=(
+                        to_simple_node(start_index, middle_index, depth + 1)
+                        if middle_index > start_index
+                        else NIL
+                    ),
+                    right=(
+                        to_simple_node(middle_index + 1, end_index, depth + 1)
+                        if middle_index < end_index - 1
+                        else NIL
+                    ),
+                )
+
+            simple_root = to_simple_node(0, len(keys), 0)
+            simple_root.is_black = True
+            return _cast(type[Tree[_KeyT, _KeyT]], cls)(simple_root)
+        items = _to_unique_sorted_items(keys, tuple(values))
+
+        def to_complex_node(
+            start_index: int,
+            end_index: int,
+            depth: int,
+            height: int = _to_balanced_tree_height(len(items)),
+            /,
+        ) -> Node[_KeyT, _ValueT]:
+            middle_index = (start_index + end_index) // 2
+            key, value = items[middle_index]
+            return Node(
+                key,
+                value,
+                is_black=depth != height,
+                left=(
+                    to_complex_node(start_index, middle_index, depth + 1)
+                    if middle_index > start_index
+                    else NIL
+                ),
+                right=(
+                    to_complex_node(middle_index + 1, end_index, depth + 1)
+                    if middle_index < end_index - 1
+                    else NIL
+                ),
+            )
+
+        complex_root = to_complex_node(0, len(items), 0)
+        complex_root.is_black = True
+        return _cast(type[Tree[_KeyT, _ValueT]], cls)(complex_root)
+
+    @property
+    @_override
+    def root(self, /) -> Node[_KeyT, _ValueT] | Nil:
+        return self._root
+
+    @_override
+    def clear(self, /) -> None:
+        self._root = NIL
 
     @_override
     def predecessor(
@@ -183,92 +275,11 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
                 result = result.left
         return result
 
-    @_overload
-    @classmethod
-    def from_components(
-        cls, _keys: _Iterable[_KeyT], _values: None = ...
-    ) -> Tree[_KeyT, _KeyT]: ...
-
-    @_overload
-    @classmethod
-    def from_components(
-        cls, _keys: _Iterable[_KeyT], _values: _Iterable[_ValueT]
-    ) -> _Self: ...
-
-    @classmethod
-    def from_components(
-        cls: type[Tree[_KeyT, _KeyT]] | type[Tree[_KeyT, _ValueT]],
-        _keys: _Iterable[_KeyT],
-        _values: _Iterable[_ValueT] | None = None,
-    ) -> Tree[_KeyT, _KeyT] | Tree[_KeyT, _ValueT]:
-        keys = list(_keys)
-        if not keys:
-            return cls(NIL)
-        if _values is None:
-            keys = _to_unique_sorted_values(keys)
-
-            def to_simple_node(
-                start_index: int,
-                end_index: int,
-                depth: int,
-                height: int = _to_balanced_tree_height(len(keys)),
-            ) -> Node[_KeyT, _KeyT]:
-                middle_index = (start_index + end_index) // 2
-                key = keys[middle_index]
-                return Node(
-                    key,
-                    key,
-                    is_black=depth != height,
-                    left=(
-                        to_simple_node(start_index, middle_index, depth + 1)
-                        if middle_index > start_index
-                        else NIL
-                    ),
-                    right=(
-                        to_simple_node(middle_index + 1, end_index, depth + 1)
-                        if middle_index < end_index - 1
-                        else NIL
-                    ),
-                )
-
-            simple_root = to_simple_node(0, len(keys), 0)
-            simple_root.is_black = True
-            return _cast(type[Tree[_KeyT, _KeyT]], cls)(simple_root)
-        items = _to_unique_sorted_items(keys, tuple(_values))
-
-        def to_complex_node(
-            start_index: int,
-            end_index: int,
-            depth: int,
-            height: int = _to_balanced_tree_height(len(items)),
-            /,
-        ) -> Node[_KeyT, _ValueT]:
-            middle_index = (start_index + end_index) // 2
-            key, value = items[middle_index]
-            return Node(
-                key,
-                value,
-                is_black=depth != height,
-                left=(
-                    to_complex_node(start_index, middle_index, depth + 1)
-                    if middle_index > start_index
-                    else NIL
-                ),
-                right=(
-                    to_complex_node(middle_index + 1, end_index, depth + 1)
-                    if middle_index < end_index - 1
-                    else NIL
-                ),
-            )
-
-        complex_root = to_complex_node(0, len(items), 0)
-        complex_root.is_black = True
-        return _cast(type[Tree[_KeyT, _ValueT]], cls)(complex_root)
-
+    @_override
     def insert(self, key: _KeyT, value: _ValueT, /) -> Node[_KeyT, _ValueT]:
-        parent = self.root
+        parent = self._root
         if parent is NIL:
-            node = self.root = Node(key, value, is_black=True)
+            node = self._root = Node(key, value, is_black=True)
             return node
         while True:
             if key < parent.key:
@@ -288,8 +299,9 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
         self._restore(node)
         return node
 
-    def remove(self, node: _abcs.Node[_KeyT, _ValueT]) -> None:
-        assert isinstance(node, Node)
+    @_override
+    def remove(self, node: _abcs.Node[_KeyT, _ValueT], /) -> None:
+        assert isinstance(node, Node), node
         successor, is_node_black = node, node.is_black
         if successor.left is NIL:
             (
@@ -330,7 +342,7 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
                 is_successor_child_left,
             )
 
-    def _restore(self, node: Node[_KeyT, _ValueT]) -> None:
+    def _restore(self, node: Node[_KeyT, _ValueT], /) -> None:
         while not _is_node_black(node.parent):
             parent = node.parent
             assert parent is not NIL
@@ -362,8 +374,8 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
                     parent.is_black = uncle.is_black = True
                     grandparent.is_black = False
                     node = grandparent
-        assert self.root is not NIL
-        self.root.is_black = True
+        assert self._root is not NIL
+        self._root.is_black = True
 
     def _remove_node_fixup(
         self,
@@ -372,7 +384,7 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
         is_left_child: bool,  # noqa: FBT001
         /,
     ) -> None:
-        while node is not self.root and _is_node_black(node):
+        while node is not self._root and _is_node_black(node):
             assert parent is not NIL
             if is_left_child:
                 sibling = parent.right
@@ -398,7 +410,7 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
                     sibling.is_black, parent.is_black = parent.is_black, True
                     _set_black(sibling.right)
                     self._rotate_left(parent)
-                    node = self.root
+                    node = self._root
             else:
                 sibling = parent.left
                 if not _is_node_black(sibling):
@@ -423,7 +435,7 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
                     sibling.is_black, parent.is_black = parent.is_black, True
                     _set_black(sibling.left)
                     self._rotate_right(parent)
-                    node = self.root
+                    node = self._root
         _set_black(node)
 
     def _rotate_left(self, node: Node[_KeyT, _ValueT]) -> None:
@@ -442,20 +454,27 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
         self,
         origin: Node[_KeyT, _ValueT],
         replacement: Node[_KeyT, _ValueT] | Nil,
+        /,
     ) -> None:
         parent = origin.parent
         if parent is NIL:
-            self.root = replacement
+            self._root = replacement
             _set_parent(replacement, NIL)
         elif origin is parent.left:
             parent.left = replacement
         else:
             parent.right = replacement
 
-    __slots__ = ('root',)
+    _root: Node[_KeyT, _ValueT] | Nil
+
+    __slots__ = ('_root',)
+
+    @_override
+    def __copy__(self, /) -> _Self:
+        return type(self)(_copy.deepcopy(self._root))
 
     def __init__(self, root: Node[_KeyT, _ValueT] | Nil) -> None:
-        self.root = root
+        self._root = root
 
 
 def map_(*items: _Item[_KeyT, _ValueT]) -> _Map[_KeyT, _ValueT]:
