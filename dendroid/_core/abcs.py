@@ -55,8 +55,12 @@ class Node(Protocol[_KeyT_co, ValueT]):
     def value(self, value: ValueT, /) -> None:
         """Sets underlying value."""
 
+    __slots__ = ()
+
 
 class HasRepr(Protocol):
+    __slots__ = ()
+
     @abstractmethod
     def __repr__(self, /) -> str:
         raise NotImplementedError
@@ -201,6 +205,8 @@ class Tree(ABC, HasRepr, Generic[KeyT, ValueT]):
                 break
         return result
 
+    __slots__ = ()
+
     def __bool__(self, /) -> bool:
         """Checks if the tree has nodes."""
         return self.root is not NIL
@@ -245,6 +251,20 @@ class Tree(ABC, HasRepr, Generic[KeyT, ValueT]):
 
 
 class AbstractSet(ABC, Generic[ValueT]):
+    @abstractmethod
+    def from_iterable(self, value: Iterable[ValueT], /) -> Self:
+        """Constructs set from given values."""
+
+    def isdisjoint(self, other: Self, /) -> bool:
+        """Checks if the tree has no intersection with given one."""
+        return (
+            all(value not in other for value in self)
+            if len(self) < len(other)
+            else all(value not in self for value in other)
+        )
+
+    __slots__ = ()
+
     def __and__(self, other: AbstractSet[ValueT], /) -> Self:
         """Returns intersection of the set with given one."""
         return (
@@ -359,20 +379,26 @@ class AbstractSet(ABC, Generic[ValueT]):
             else NotImplemented
         )
 
-    @abstractmethod
-    def from_iterable(self, value: Iterable[ValueT], /) -> Self:
-        """Constructs set from given values."""
-
-    def isdisjoint(self, other: Self, /) -> bool:
-        """Checks if the tree has no intersection with given one."""
-        return (
-            all(value not in other for value in self)
-            if len(self) < len(other)
-            else all(value not in self for value in other)
-        )
-
 
 class MutableSet(AbstractSet[ValueT]):
+    @abstractmethod
+    def add(self, value: ValueT, /) -> None:
+        """Adds given value to the set."""
+
+    @abstractmethod
+    def clear(self, /) -> None:
+        """Adds given value to the set."""
+
+    @abstractmethod
+    def discard(self, value: ValueT, /) -> None:
+        """Removes given value from the set if it is present."""
+
+    @abstractmethod
+    def remove(self, value: ValueT, /) -> None:
+        """Removes given value that is present in the set."""
+
+    __slots__ = ()
+
     def __iand__(self, other: AbstractSet[ValueT], /) -> Self:
         """Intersects the set with given one in-place."""
         if not isinstance(other, AbstractSet):
@@ -414,25 +440,11 @@ class MutableSet(AbstractSet[ValueT]):
                     self.add(value)
         return self
 
-    @abstractmethod
-    def add(self, value: ValueT, /) -> None:
-        """Adds given value to the set."""
-
-    @abstractmethod
-    def clear(self, /) -> None:
-        """Adds given value to the set."""
-
-    @abstractmethod
-    def discard(self, value: ValueT, /) -> None:
-        """Removes given value from the set if it is present."""
-
-    @abstractmethod
-    def remove(self, value: ValueT, /) -> None:
-        """Removes given value that is present in the set."""
-
 
 class TreeWrapper(Protocol[KeyT, ValueT]):
     @property
     @abstractmethod
     def tree(self, /) -> Tree[KeyT, ValueT]:
         raise NotImplementedError
+
+    __slots__ = ()
