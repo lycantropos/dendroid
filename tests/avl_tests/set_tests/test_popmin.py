@@ -16,7 +16,7 @@ from . import strategies
 def test_properties(set_: BaseSet[ValueT]) -> None:
     set_.popmin()
 
-    tree = set_.tree
+    tree = set_._tree
     assert isinstance(tree, avl.Tree)
     assert are_nodes_parents_to_children(tree)
     assert are_nodes_heights_correct(tree)

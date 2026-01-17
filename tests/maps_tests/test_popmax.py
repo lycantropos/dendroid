@@ -20,7 +20,7 @@ from . import strategies
 def test_properties(map_: Map[KeyT, ValueT]) -> None:
     map_.popmax()
 
-    tree = map_.tree
+    tree = map_._tree
     assert (
         to_min_binary_tree_height(tree)
         <= to_height(tree)
@@ -43,6 +43,6 @@ def test_step(map_: Map[KeyT, ValueT]) -> None:
 
     assert result not in map_.values()
     assert result in original.values()
-    assert (original_maximum_node := original.tree.max()) is not NIL
+    assert (original_maximum_node := original._tree.max()) is not NIL
     assert result == original_maximum_node.value
     assert len(map_) == len(original) - 1

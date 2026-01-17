@@ -21,7 +21,7 @@ def test_properties(set_with_value: tuple[BaseSet[ValueT], ValueT]) -> None:
     assert implication(
         value in set_,
         (
-            (root_node := set_.tree.root) is not NIL
+            (root_node := set_._tree.root) is not NIL
             and are_keys_equal(set_value_to_key(set_, value), root_node.key)
         ),
     )
@@ -32,5 +32,5 @@ def test_accessing_in_order(set_: BaseSet[ValueT]) -> None:
     for value in set_:
         _ = value in set_
 
-    tree = set_.tree
+    tree = set_._tree
     assert to_height(tree) == to_max_binary_tree_height(tree)

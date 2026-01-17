@@ -18,20 +18,20 @@ class BaseSet(TreeWrapper[Any, ValueT], MutableSet[ValueT]):
         """Returns first value not less than the given one."""
 
     def clear(self, /) -> None:
-        self.tree.clear()
+        self._tree.clear()
 
     @abstractmethod
     def floor(self, value: ValueT, /) -> ValueT:
         """Returns first value not greater than the given one."""
 
     def max(self, /) -> ValueT:
-        node = self.tree.max()
+        node = self._tree.max()
         if node is NIL:
             raise ValueError('Set is empty')
         return node.value
 
     def min(self, /) -> ValueT:
-        node = self.tree.min()
+        node = self._tree.min()
         if node is NIL:
             raise ValueError('Set is empty')
         return node.value
@@ -39,15 +39,16 @@ class BaseSet(TreeWrapper[Any, ValueT], MutableSet[ValueT]):
     @abstractmethod
     def next(self, value: ValueT, /) -> ValueT:
         """Returns first value greater than the given one."""
+        raise NotImplementedError
 
     def popmax(self, /) -> ValueT:
-        node = self.tree.popmax()
+        node = self._tree.popmax()
         if node is NIL:
             raise ValueError('Set is empty')
         return node.value
 
     def popmin(self, /) -> ValueT:
-        node = self.tree.popmin()
+        node = self._tree.popmin()
         if node is NIL:
             raise ValueError('Set is empty')
         return node.value
@@ -57,34 +58,35 @@ class BaseSet(TreeWrapper[Any, ValueT], MutableSet[ValueT]):
     @abstractmethod
     def prev(self, value: ValueT, /) -> ValueT:
         """Returns last value lesser than the given one."""
+        raise NotImplementedError
 
     __slots__ = ()
 
     def __iter__(self, /) -> Iterator[ValueT]:
-        for node in self.tree:
+        for node in self._tree:
             yield node.value
 
     def __len__(self, /) -> int:
-        return len(self.tree)
+        return len(self._tree)
 
     def __reversed__(self, /) -> Iterator[ValueT]:
-        for node in reversed(self.tree):
+        for node in reversed(self._tree):
             yield node.value
 
 
 class Set(HasRepr, BaseSet[ValueT]):
     @property
     @override
-    def tree(self, /) -> Tree[Any, ValueT]:
-        return self._tree
+    def _tree(self, /) -> Tree[Any, ValueT]:
+        return self.__tree
 
     @override
     def add(self, value: ValueT, /) -> None:
-        self._tree.insert(value, value)
+        self.__tree.insert(value, value)
 
     @override
     def ceil(self, value: ValueT, /) -> ValueT:
-        node = self._tree.supremum(value)
+        node = self.__tree.supremum(value)
         if node is NIL:
             raise ValueError(
                 f'No value found greater than or equal to {value!r}'
@@ -93,58 +95,58 @@ class Set(HasRepr, BaseSet[ValueT]):
 
     @override
     def discard(self, value: ValueT, /) -> None:
-        node = self._tree.find(value)
+        node = self.__tree.find(value)
         if node is NIL:
             return
-        self._tree.remove(node)
+        self.__tree.remove(node)
 
     @override
     def floor(self, value: ValueT, /) -> ValueT:
-        node = self._tree.infimum(value)
+        node = self.__tree.infimum(value)
         if node is NIL:
             raise ValueError(f'No value found less than or equal to {value!r}')
         return node.value
 
     @override
     def from_iterable(self, value: Iterable[KeyT], /) -> Set[KeyT]:
-        return Set(self._tree.from_components(value))
+        return Set(self.__tree.from_components(value))
 
     @override
     def next(self, value: ValueT, /) -> ValueT:
-        node = self._tree.find(value)
+        node = self.__tree.find(value)
         if node is NIL:
             raise ValueError(f'{value!r} is not in set')
-        node = self._tree.successor(node)
+        node = self.__tree.successor(node)
         if node is NIL:
             raise ValueError('Corresponds to maximum')
         return node.value
 
     @override
     def prev(self, value: ValueT, /) -> ValueT:
-        node = self._tree.find(value)
+        node = self.__tree.find(value)
         if node is NIL:
             raise ValueError(f'{value!r} is not in set')
-        node = self._tree.predecessor(node)
+        node = self.__tree.predecessor(node)
         if node is NIL:
             raise ValueError('Corresponds to minimum')
         return node.value
 
     @override
     def remove(self, value: ValueT, /) -> None:
-        node = self._tree.pop(value)
+        node = self.__tree.pop(value)
         if node is NIL:
             raise ValueError(f'{value!r} is not in set')
 
-    __slots__ = ('_tree',)
+    __slots__ = ('__tree',)
 
     def __contains__(self, value: ValueT, /) -> bool:
-        return self._tree.find(value) is not NIL
+        return self.__tree.find(value) is not NIL
 
     def __copy__(self, /) -> Self:
-        return type(self)(self._tree.__copy__())
+        return type(self)(self.__tree.__copy__())
 
-    def __init__(self, tree: Tree[Any, ValueT], /) -> None:
-        self._tree = tree
+    def __init__(self, _tree: Tree[Any, ValueT], /) -> None:
+        self.__tree = _tree
 
     __repr__ = generate_repr(__init__)
 
@@ -156,14 +158,14 @@ class KeyedSet(HasRepr, Generic[KeyT, ValueT], BaseSet[ValueT]):
 
     @property
     @override
-    def tree(self, /) -> Tree[KeyT, ValueT]:
-        return self._tree
+    def _tree(self, /) -> Tree[KeyT, ValueT]:
+        return self.__tree
 
     def add(self, value: ValueT, /) -> None:
-        self._tree.insert(self._key(value), value)
+        self.__tree.insert(self._key(value), value)
 
     def ceil(self, value: ValueT, /) -> ValueT:
-        node = self._tree.supremum(self._key(value))
+        node = self.__tree.supremum(self._key(value))
         if node is NIL:
             raise ValueError(
                 f'No value found greater than or equal to {value!r}'
@@ -171,13 +173,13 @@ class KeyedSet(HasRepr, Generic[KeyT, ValueT], BaseSet[ValueT]):
         return node.value
 
     def discard(self, value: ValueT, /) -> None:
-        node = self._tree.find(self._key(value))
+        node = self.__tree.find(self._key(value))
         if node is NIL:
             return
-        self._tree.remove(node)
+        self.__tree.remove(node)
 
     def floor(self, value: ValueT, /) -> ValueT:
-        node = self._tree.infimum(self._key(value))
+        node = self.__tree.infimum(self._key(value))
         if node is NIL:
             raise ValueError(f'No value found less than or equal to {value!r}')
         return node.value
@@ -187,48 +189,48 @@ class KeyedSet(HasRepr, Generic[KeyT, ValueT], BaseSet[ValueT]):
     ) -> KeyedSet[KeyT, ValueT]:
         values = list(_value)
         return KeyedSet(
-            self._tree.from_components(map(self._key, values), values),
+            self.__tree.from_components(map(self._key, values), values),
             self._key,
         )
 
     def next(self, value: ValueT, /) -> ValueT:
         key = self._key(value)
-        node = self._tree.find(key)
+        node = self.__tree.find(key)
         if node is NIL:
             raise ValueError(f'{value!r} is not in set')
-        node = self._tree.successor(node)
+        node = self.__tree.successor(node)
         if node is NIL:
             raise ValueError('Corresponds to maximum')
         return node.value
 
     def prev(self, value: ValueT, /) -> ValueT:
         key = self._key(value)
-        node = self._tree.find(key)
+        node = self.__tree.find(key)
         if node is NIL:
             raise ValueError(f'{value!r} is not in set')
-        node = self._tree.predecessor(node)
+        node = self.__tree.predecessor(node)
         if node is NIL:
             raise ValueError('Corresponds to minimum')
         return node.value
 
     def remove(self, value: ValueT, /) -> None:
-        node = self._tree.pop(self._key(value))
+        node = self.__tree.pop(self._key(value))
         if node is NIL:
             raise ValueError(f'{value!r} is not in set')
 
-    __slots__ = '_key', '_tree'
+    __slots__ = '__tree', '_key'
 
     def __contains__(self, value: ValueT, /) -> bool:
         return (
-            bool(self._tree) and self._tree.find(self._key(value)) is not NIL
+            bool(self.__tree) and self.__tree.find(self._key(value)) is not NIL
         )
 
     def __copy__(self, /) -> Self:
-        return type(self)(self._tree.__copy__(), self._key)
+        return type(self)(self.__tree.__copy__(), self._key)
 
     def __init__(
-        self, tree: Tree[KeyT, ValueT], key: Order[ValueT, KeyT], /
+        self, _tree: Tree[KeyT, ValueT], key: Order[ValueT, KeyT], /
     ) -> None:
-        self._key, self._tree = key, tree
+        self._key, self.__tree = key, _tree
 
     __repr__ = generate_repr(__init__)

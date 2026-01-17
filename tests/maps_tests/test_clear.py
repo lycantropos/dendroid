@@ -22,7 +22,7 @@ def test_type(map_: Map[KeyT, ValueT]) -> None:
 def test_properties(map_: Map[KeyT, ValueT]) -> None:
     map_.clear()
 
-    tree = map_.tree
+    tree = map_._tree
     assert len(map_) == 0
     assert to_height(tree) == to_balanced_tree_height(len(tree)) == -1
     assert is_left_subtree_less_than_right_subtree(tree)

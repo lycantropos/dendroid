@@ -29,7 +29,7 @@ def test_properties(
 
     result = splay.set_(*values, key=order)
 
-    result_tree = result.tree
+    result_tree = result._tree
     assert len(result) <= len(values)
     assert to_height(result_tree) == to_balanced_tree_height(len(result_tree))
     assert all(value in result for value in values)

@@ -23,7 +23,7 @@ def test_properties(
 
     map_.get(key, default)
 
-    tree = map_.tree
+    tree = map_._tree
     assert (
         to_min_binary_tree_height(tree)
         <= to_height(tree)

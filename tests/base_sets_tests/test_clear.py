@@ -22,7 +22,7 @@ def test_type(set_: BaseSet[ValueT]) -> None:
 def test_properties(set_: BaseSet[ValueT]) -> None:
     set_.clear()
 
-    tree = set_.tree
+    tree = set_._tree
     assert len(set_) == 0
     assert to_height(tree) == to_balanced_tree_height(len(tree)) == -1
     assert is_left_subtree_less_than_right_subtree(tree)

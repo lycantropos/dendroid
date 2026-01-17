@@ -30,7 +30,7 @@ def test_properties(keys_views_pair: KeysViewsPair[KeyT]) -> None:
 
     result = left_keys_view - right_keys_view
 
-    result_tree = result.tree
+    result_tree = result._tree
     assert len(result) <= len(left_keys_view)
     assert (
         to_min_binary_tree_height(result_tree)

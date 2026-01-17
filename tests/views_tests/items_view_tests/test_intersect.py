@@ -29,14 +29,14 @@ def test_properties(items_views_pair: ItemsViewsPair[KeyT, ValueT]) -> None:
 
     result = left_items_view & right_items_view
 
-    result_tree = result.tree
+    result_tree = result._tree
     assert len(result) <= min(len(left_items_view), len(right_items_view))
     assert (
         to_min_binary_tree_height(result_tree)
         <= to_height(result_tree)
         <= min(
-            to_height(left_items_view.tree),
-            to_height(right_items_view.tree),
+            to_height(left_items_view._tree),
+            to_height(right_items_view._tree),
             to_max_binary_tree_height(result_tree),
         )
     )

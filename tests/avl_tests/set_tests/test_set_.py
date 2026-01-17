@@ -32,7 +32,7 @@ def test_properties(
 
     result = avl.set_(*values, key=order)
 
-    result_tree = result.tree
+    result_tree = result._tree
     assert isinstance(result_tree, avl.Tree)
     assert len(result) <= len(values)
     assert to_height(result_tree) == to_balanced_tree_height(len(result))

@@ -17,7 +17,7 @@ from . import strategies
 def test_properties(set_: BaseSet[ValueT]) -> None:
     set_.pop()
 
-    tree = set_.tree
+    tree = set_._tree
     assert isinstance(tree, red_black.Tree)
     assert are_nodes_parents_to_children(tree)
     assert is_root_black(tree)

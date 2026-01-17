@@ -68,11 +68,11 @@ sets_with_two_or_more_values = strategies.builds(
 ).filter(has_size_two_or_more)
 
 
-def to_empty_set_with_set(set_: BaseSet[ValueT]) -> BaseSetsPair[ValueT]:
+def to_empty_set_with_set(set_: BaseSet[ValueT], /) -> BaseSetsPair[ValueT]:
     return to_empty_copy(set_), set_
 
 
-def to_empty_copy(set_: BaseSet[ValueT]) -> BaseSet[ValueT]:
+def to_empty_copy(set_: BaseSet[ValueT], /) -> BaseSet[ValueT]:
     return set_.from_iterable(())
 
 
@@ -104,7 +104,9 @@ non_empty_sets_with_values = strategies.builds(
 )
 
 
-def is_value_external(set_with_value: tuple[BaseSet[ValueT], ValueT]) -> bool:
+def is_value_external(
+    set_with_value: tuple[BaseSet[ValueT], ValueT], /
+) -> bool:
     set_, value = set_with_value
     return value not in set_
 

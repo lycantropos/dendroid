@@ -10,5 +10,5 @@ from . import strategies
 def test_properties(set_: BaseSet[ValueT]) -> None:
     _ = set_ <= set_
 
-    tree = set_.tree
+    tree = set_._tree
     assert to_height(tree) == to_max_binary_tree_height(tree)

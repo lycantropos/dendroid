@@ -23,7 +23,7 @@ def test_properties(
 
     map_[key] = value
 
-    tree = map_.tree
+    tree = map_._tree
     assert len(map_) > 0
     assert (
         max(0, to_min_binary_tree_height(tree))

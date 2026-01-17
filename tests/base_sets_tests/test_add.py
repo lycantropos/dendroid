@@ -29,7 +29,7 @@ def test_properties(set_with_value: tuple[BaseSet[ValueT], ValueT]) -> None:
 
     set_.add(value)
 
-    tree = set_.tree
+    tree = set_._tree
     assert len(set_) > 0
     assert set_
     assert (

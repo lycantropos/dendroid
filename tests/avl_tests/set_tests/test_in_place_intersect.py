@@ -20,7 +20,7 @@ def test_properties(
 
     left_set &= right_set
 
-    left_tree = left_set.tree
+    left_tree = left_set._tree
     assert isinstance(left_tree, avl.Tree)
     assert are_nodes_parents_to_children(left_tree)
     assert are_nodes_heights_correct(left_tree)

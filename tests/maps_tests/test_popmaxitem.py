@@ -19,7 +19,7 @@ from . import strategies
 def test_properties(map_: Map[KeyT, ValueT]) -> None:
     map_.popmaxitem()
 
-    tree = map_.tree
+    tree = map_._tree
     assert (
         to_min_binary_tree_height(tree)
         <= to_height(tree)

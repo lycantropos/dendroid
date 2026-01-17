@@ -29,7 +29,7 @@ def test_properties(set_with_value: tuple[BaseSet[ValueT], ValueT]) -> None:
 
     set_.discard(value)
 
-    tree = set_.tree
+    tree = set_._tree
     assert (
         to_min_binary_tree_height(tree)
         <= to_height(tree)

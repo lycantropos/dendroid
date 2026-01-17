@@ -250,18 +250,33 @@ class Tree(ABC, HasRepr, Generic[KeyT, ValueT]):
             node = node.left
 
 
-class AbstractSet(ABC, Generic[ValueT]):
+class Collection(ABC, Generic[ValueT]):
+    __slots__ = ()
+
+    @abstractmethod
+    def __contains__(self, value: ValueT, /) -> bool:
+        """Checks if given value is presented in the set."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def __iter__(self, /) -> Iterator[ValueT]:
+        """Returns iterator over the set values."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def __len__(self, /) -> int:
+        """Returns size of the set."""
+        raise NotImplementedError
+
+
+class AbstractSet(Collection[ValueT]):
     @abstractmethod
     def from_iterable(self, value: Iterable[ValueT], /) -> Self:
         """Constructs set from given values."""
 
-    def isdisjoint(self, other: Self, /) -> bool:
-        """Checks if the tree has no intersection with given one."""
-        return (
-            all(value not in other for value in self)
-            if len(self) < len(other)
-            else all(value not in self for value in other)
-        )
+    def isdisjoint(self, other: Iterable[ValueT], /) -> bool:
+        """Checks if the tree share no values with given iterable."""
+        return all(value not in self for value in other)
 
     __slots__ = ()
 
@@ -272,10 +287,6 @@ class AbstractSet(ABC, Generic[ValueT]):
             if isinstance(other, AbstractSet)
             else NotImplemented
         )
-
-    @abstractmethod
-    def __contains__(self, value: ValueT, /) -> bool:
-        """Checks if given value is presented in the set."""
 
     @overload
     def __eq__(self, other: Self, /) -> bool: ...
@@ -319,10 +330,6 @@ class AbstractSet(ABC, Generic[ValueT]):
             else NotImplemented
         )
 
-    @abstractmethod
-    def __iter__(self, /) -> Iterator[ValueT]:
-        """Returns iterator over the set values."""
-
     @overload
     def __le__(self, other: Self, /) -> bool: ...
 
@@ -336,10 +343,6 @@ class AbstractSet(ABC, Generic[ValueT]):
             if isinstance(other, AbstractSet)
             else NotImplemented
         )
-
-    @abstractmethod
-    def __len__(self, /) -> int:
-        """Returns size of the set."""
 
     @overload
     def __lt__(self, other: Self, /) -> bool: ...
@@ -384,18 +387,22 @@ class MutableSet(AbstractSet[ValueT]):
     @abstractmethod
     def add(self, value: ValueT, /) -> None:
         """Adds given value to the set."""
+        raise NotImplementedError
 
     @abstractmethod
     def clear(self, /) -> None:
         """Adds given value to the set."""
+        raise NotImplementedError
 
     @abstractmethod
     def discard(self, value: ValueT, /) -> None:
         """Removes given value from the set if it is present."""
+        raise NotImplementedError
 
     @abstractmethod
     def remove(self, value: ValueT, /) -> None:
         """Removes given value that is present in the set."""
+        raise NotImplementedError
 
     __slots__ = ()
 
@@ -444,7 +451,7 @@ class MutableSet(AbstractSet[ValueT]):
 class TreeWrapper(Protocol[KeyT, ValueT]):
     @property
     @abstractmethod
-    def tree(self, /) -> Tree[KeyT, ValueT]:
+    def _tree(self, /) -> Tree[KeyT, ValueT]:
         raise NotImplementedError
 
     __slots__ = ()

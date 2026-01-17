@@ -28,7 +28,7 @@ from tests.utils import (
 
 factories = st.sampled_from(
     [binary.map_, avl.map_, red_black.map_, splay.map_]
-).map(partial(compose, attrgetter('tree')))
+).map(partial(compose, attrgetter('_tree')))
 
 
 def values_list_with_order_to_items_list(

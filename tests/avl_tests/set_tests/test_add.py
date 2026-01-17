@@ -18,7 +18,7 @@ def test_properties(set_with_value: tuple[BaseSet[ValueT], ValueT]) -> None:
 
     set_.add(value)
 
-    tree = set_.tree
+    tree = set_._tree
     assert isinstance(tree, avl.Tree)
     assert are_nodes_parents_to_children(tree)
     assert are_nodes_heights_correct(tree)

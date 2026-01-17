@@ -18,7 +18,7 @@ from . import strategies
 def test_properties(set_: BaseSet[ValueT]) -> None:
     set_.popmax()
 
-    tree = set_.tree
+    tree = set_._tree
     assert (
         to_min_binary_tree_height(tree)
         <= to_height(tree)

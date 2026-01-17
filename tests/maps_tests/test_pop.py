@@ -22,7 +22,7 @@ def test_properties(map_with_key: tuple[Map[KeyT, ValueT], KeyT]) -> None:
 
     map_.pop(key)
 
-    tree = map_.tree
+    tree = map_._tree
     assert (
         to_min_binary_tree_height(tree)
         <= to_height(tree)

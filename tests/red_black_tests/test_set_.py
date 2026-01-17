@@ -33,7 +33,7 @@ def test_properties(
 
     result = red_black.set_(*values, key=key)
 
-    result_tree = result.tree
+    result_tree = result._tree
     assert isinstance(result_tree, red_black.Tree)
     assert len(result) <= len(values)
     assert to_height(result_tree) == to_balanced_tree_height(len(result))

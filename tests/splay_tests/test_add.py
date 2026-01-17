@@ -12,5 +12,5 @@ def test_properties(set_with_value: tuple[BaseSet[ValueT], ValueT]) -> None:
 
     set_.add(value)
 
-    assert (root_node := set_.tree.root) is not NIL
+    assert (root_node := set_._tree.root) is not NIL
     assert are_keys_equal(set_value_to_key(set_, value), root_node.key)

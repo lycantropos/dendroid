@@ -13,21 +13,21 @@ from .views import ItemsView, KeysView, ValuesView
 
 
 class Map(HasRepr, Generic[KeyT, ValueT]):
-    __slots__ = ('tree',)
+    __slots__ = ('_tree',)
 
-    def __init__(self, tree: Tree[KeyT, ValueT], /) -> None:
-        self.tree = tree
+    def __init__(self, _tree: Tree[KeyT, ValueT], /) -> None:
+        self._tree = _tree
 
     __repr__ = generate_repr(__init__)
 
     def __contains__(self, key: KeyT, /) -> bool:
-        return self.tree.find(key) is not NIL
+        return self._tree.find(key) is not NIL
 
     def __copy__(self, /) -> Map[KeyT, ValueT]:
-        return Map(self.tree.__copy__())
+        return Map(self._tree.__copy__())
 
     def __delitem__(self, key: KeyT, /) -> None:
-        node = self.tree.pop(key)
+        node = self._tree.pop(key)
         if node is NIL:
             raise KeyError(key)
 
@@ -49,18 +49,18 @@ class Map(HasRepr, Generic[KeyT, ValueT]):
         return self._find_node(key).value
 
     def __iter__(self, /) -> Iterator[KeyT]:
-        for node in self.tree:
+        for node in self._tree:
             yield node.key
 
     def __len__(self, /) -> int:
-        return len(self.tree)
+        return len(self._tree)
 
     def __reversed__(self, /) -> Iterator[KeyT]:
-        for node in reversed(self.tree):
+        for node in reversed(self._tree):
             yield node.key
 
     def __setitem__(self, key: KeyT, value: ValueT, /) -> None:
-        self.tree.insert(key, value).value = value
+        self._tree.insert(key, value).value = value
 
     def ceil(self, key: KeyT, /) -> ValueT:
         return self._ceil_node(key).value
@@ -69,7 +69,7 @@ class Map(HasRepr, Generic[KeyT, ValueT]):
         return self._ceil_node(key).item
 
     def clear(self, /) -> None:
-        self.tree.clear()
+        self._tree.clear()
 
     def floor(self, key: KeyT, /) -> ValueT:
         return self._floor_node(key).value
@@ -81,14 +81,16 @@ class Map(HasRepr, Generic[KeyT, ValueT]):
         self, key: KeyT, default: ValueT | None = None, /
     ) -> ValueT | None:
         return (
-            node.value if (node := self.tree.find(key)) is not NIL else default
+            node.value
+            if (node := self._tree.find(key)) is not NIL
+            else default
         )
 
     def items(self, /) -> ItemsView[KeyT, ValueT]:
-        return ItemsView(self.tree)
+        return ItemsView(self._tree)
 
     def keys(self, /) -> KeysView[KeyT]:
-        return KeysView(self.tree)
+        return KeysView(self._tree)
 
     def max(self, /) -> ValueT:
         return self._max_node().value
@@ -117,7 +119,7 @@ class Map(HasRepr, Generic[KeyT, ValueT]):
     def pop(self, key: KeyT, /, default: ValueT = ...) -> ValueT: ...
 
     def pop(self, key: KeyT, /, default: ValueT = __sentinel) -> ValueT:
-        node = self.tree.pop(key)
+        node = self._tree.pop(key)
         if node is NIL:
             if default is self.__sentinel:
                 raise KeyError(key)
@@ -158,8 +160,8 @@ class Map(HasRepr, Generic[KeyT, ValueT]):
         default: ValueT | None = None,
         /,
     ) -> ValueT | None:
-        node = self.tree.find(key)
-        return (self.tree.insert(key, default) if node is NIL else node).value
+        node = self._tree.find(key)
+        return (self._tree.insert(key, default) if node is NIL else node).value
 
     def update(
         self, other: Self | Iterable[Item[KeyT, ValueT]] = (), /
@@ -172,58 +174,58 @@ class Map(HasRepr, Generic[KeyT, ValueT]):
             self[key] = value
 
     def values(self, /) -> ValuesView[ValueT]:
-        return ValuesView(self.tree)
+        return ValuesView(self._tree)
 
     def _ceil_node(self, key: KeyT, /) -> Node[KeyT, ValueT]:
-        node = self.tree.supremum(key)
+        node = self._tree.supremum(key)
         if node is NIL:
             raise KeyError(f'No key found greater than or equal to {key!r}')
         return node
 
     def _find_node(self, key: KeyT, /) -> Node[KeyT, ValueT]:
-        result = self.tree.find(key)
+        result = self._tree.find(key)
         if result is NIL:
             raise KeyError(key)
         return result
 
     def _floor_node(self, key: KeyT, /) -> Node[KeyT, ValueT]:
-        result = self.tree.infimum(key)
+        result = self._tree.infimum(key)
         if result is NIL:
             raise KeyError(f'No key found less than or equal to {key!r}')
         return result
 
     def _max_node(self, /) -> Node[KeyT, ValueT]:
-        result = self.tree.max()
+        result = self._tree.max()
         if result is NIL:
             raise KeyError('Map is empty')
         return result
 
     def _min_node(self, /) -> Node[KeyT, ValueT]:
-        result = self.tree.min()
+        result = self._tree.min()
         if result is NIL:
             raise KeyError('Map is empty')
         return result
 
     def _next_node(self, key: KeyT, /) -> Node[KeyT, ValueT]:
-        result = self.tree.successor(self._find_node(key))
+        result = self._tree.successor(self._find_node(key))
         if result is NIL:
             raise KeyError('Corresponds to maximum')
         return result
 
     def _popmax_node(self, /) -> Node[KeyT, ValueT]:
-        result = self.tree.popmax()
+        result = self._tree.popmax()
         if result is NIL:
             raise KeyError('Map is empty')
         return result
 
     def _popmin_node(self, /) -> Node[KeyT, ValueT]:
-        result = self.tree.popmin()
+        result = self._tree.popmin()
         if result is NIL:
             raise KeyError('Map is empty')
         return result
 
     def _prev_node(self, key: KeyT, /) -> Node[KeyT, ValueT]:
-        result = self.tree.predecessor(self._find_node(key))
+        result = self._tree.predecessor(self._find_node(key))
         if result is NIL:
             raise KeyError('Corresponds to minimum')
         return result

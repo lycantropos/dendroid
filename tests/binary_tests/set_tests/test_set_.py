@@ -29,7 +29,7 @@ def test_properties(
 
     result = binary.set_(*values, key=order)
 
-    result_tree = result.tree
+    result_tree = result._tree
     assert len(result) <= len(values)
     assert to_height(result_tree) == to_balanced_tree_height(len(result))
     assert all(value in result for value in values)

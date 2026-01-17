@@ -1,31 +1,28 @@
 from __future__ import annotations
 
-from collections.abc import Iterable, Iterator
-from typing import Any, Generic
+from collections import abc
+from typing import Any
 
 from reprit.base import generate_repr
-from typing_extensions import override
+from typing_extensions import Self, override
 
-from .abcs import AbstractSet, HasRepr, Tree, TreeWrapper
+from .abcs import AbstractSet, Collection, HasRepr, Tree
 from .hints import Item, KeyT, ValueT
 from .nil import NIL
 from .utils import split_items
 
 
-class ItemsView(
-    HasRepr, TreeWrapper[KeyT, ValueT], AbstractSet[Item[KeyT, ValueT]]
-):
-    @property
+class ItemsView(HasRepr, AbstractSet[Item[KeyT, ValueT]]):
     @override
-    def tree(self, /) -> Tree[KeyT, ValueT]:
-        return self._tree
-
     def from_iterable(
-        self, value: Iterable[Item[KeyT, ValueT]], /
-    ) -> ItemsView[KeyT, ValueT]:
+        self, value: abc.Iterable[Item[KeyT, ValueT]], /
+    ) -> Self:
         keys, values = split_items(list(value))
-        return ItemsView(self._tree.from_components(keys, values))
+        return type(self)(self._tree.from_components(keys, values))
 
+    __slots__ = ('_tree',)
+
+    @override
     def __contains__(self, item: Item[KeyT, ValueT], /) -> bool:
         key, value = item
         node = self._tree.find(key)
@@ -34,65 +31,82 @@ class ItemsView(
     def __init__(self, _tree: Tree[KeyT, ValueT], /) -> None:
         self._tree = _tree
 
-    def __iter__(self, /) -> Iterator[Item[KeyT, ValueT]]:
+    @override
+    def __iter__(self, /) -> abc.Iterator[Item[KeyT, ValueT]]:
         for node in self._tree:
             yield node.item
 
+    @override
     def __len__(self, /) -> int:
         return len(self._tree)
 
     __repr__ = generate_repr(__init__)
 
-    def __reversed__(self, /) -> Iterator[Item[KeyT, ValueT]]:
+    def __reversed__(self, /) -> abc.Iterator[Item[KeyT, ValueT]]:
         for node in reversed(self._tree):
             yield node.item
 
 
-class KeysView(HasRepr, TreeWrapper[KeyT, Any], AbstractSet[KeyT]):
-    @property
+class KeysView(HasRepr, AbstractSet[KeyT]):
     @override
-    def tree(self, /) -> Tree[KeyT, Any]:
-        return self._tree
+    def from_iterable(self, _value: abc.Iterable[KeyT], /) -> KeysView[KeyT]:
+        return KeysView(self._tree.from_components(_value))
 
+    __slots__ = ('_tree',)
+
+    @override
     def __contains__(self, key: KeyT, /) -> bool:
         return self._tree.find(key) is not NIL
 
-    def __init__(self, tree: Tree[KeyT, Any], /) -> None:
-        self._tree = tree
+    def __init__(self, _tree: Tree[KeyT, Any], /) -> None:
+        self._tree = _tree
 
-    def __iter__(self, /) -> Iterator[KeyT]:
+    @override
+    def __iter__(self, /) -> abc.Iterator[KeyT]:
         for node in self._tree:
             yield node.key
 
+    @override
     def __len__(self, /) -> int:
         return len(self._tree)
 
     __repr__ = generate_repr(__init__)
 
-    def __reversed__(self, /) -> Iterator[KeyT]:
+    def __reversed__(self, /) -> abc.Iterator[KeyT]:
         for node in reversed(self._tree):
             yield node.key
 
-    def from_iterable(self, _value: Iterable[KeyT], /) -> KeysView[KeyT]:
-        return KeysView(self._tree.from_components(_value))
+
+abc.Set.register(ItemsView)  # pyright: ignore[reportAttributeAccessIssue]
+abc.Set.register(KeysView)  # pyright: ignore[reportAttributeAccessIssue]
 
 
-class ValuesView(HasRepr, Generic[ValueT]):
+class ValuesView(HasRepr, Collection[ValueT]):
+    __slots__ = ('_tree',)
+
+    @override
     def __contains__(self, value: ValueT, /) -> bool:
         return any(candidate == value for candidate in self)
 
-    def __init__(self, tree: Tree[KeyT, ValueT], /) -> None:
-        self._tree = tree
+    def __init__(self, _tree: Tree[KeyT, ValueT], /) -> None:
+        self._tree = _tree
 
-    def __iter__(self, /) -> Iterator[ValueT]:
+    @override
+    def __iter__(self, /) -> abc.Iterator[ValueT]:
         for node in self._tree:
             yield node.value
 
+    @override
     def __len__(self, /) -> int:
         return len(self._tree)
 
     __repr__ = generate_repr(__init__)
 
-    def __reversed__(self, /) -> Iterator[ValueT]:
+    def __reversed__(self, /) -> abc.Iterator[ValueT]:
         for node in reversed(self._tree):
             yield node.value
+
+
+abc.Collection.register(  # pyright: ignore[reportAttributeAccessIssue]
+    ItemsView
+)

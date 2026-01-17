@@ -30,7 +30,7 @@ def test_properties(sets_pair: BaseSetsPair[ValueT]) -> None:
 
     left_set -= right_set
 
-    left_tree = left_set.tree
+    left_tree = left_set._tree
     assert (
         to_min_binary_tree_height(left_tree)
         <= to_height(left_tree)
