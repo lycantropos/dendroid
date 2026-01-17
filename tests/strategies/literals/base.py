@@ -1,4 +1,5 @@
 import math
+from collections.abc import Sequence
 from functools import partial
 from operator import not_
 from typing import Any
@@ -6,7 +7,7 @@ from typing import Any
 from hypothesis import strategies as st
 
 from dendroid.hints import Order
-from tests.hints import KeyT, ValueT
+from tests.hints import KeyT, OrderedValueT
 from tests.utils import (
     ValueSequenceWithOrder,
     combine,
@@ -17,8 +18,8 @@ from tests.utils import (
 )
 
 from .factories import (
+    to_optional_strategy,
     to_value_sequence_with_order_strategy,
-    to_value_with_order_strategy,
     to_values_tuples_with_orders,
 )
 
@@ -57,35 +58,42 @@ value_with_order_strategy_strategy = st.recursive(
     max_leaves=10,
 )
 value_with_order_strategy = value_with_order_strategy_strategy.flatmap(
-    to_value_with_order_strategy
+    compose(
+        lambda coordinates: st.tuples(*coordinates),
+        combine(identity, to_optional_strategy),
+    )
 )
 
 
 def to_different_values_orders(
-    lists_with_orders: st.SearchStrategy[ValueSequenceWithOrder[ValueT, KeyT]],
+    sequences_with_order_strategy: st.SearchStrategy[
+        ValueSequenceWithOrder[OrderedValueT, KeyT]
+    ],
     /,
-) -> st.SearchStrategy[ValueSequenceWithOrder[ValueT, KeyT]]:
+) -> st.SearchStrategy[ValueSequenceWithOrder[OrderedValueT, KeyT]]:
     return (
-        lists_with_orders
+        sequences_with_order_strategy
         | (
-            lists_with_orders.map(
-                compose(
-                    tuple, combine(partial(sorted, reverse=True), identity)
-                )
+            sequences_with_order_strategy.map(
+                combine(partial(to_sorted_sequence, reverse=True), identity)
             )
         )
-        | lists_with_orders.map(compose(tuple, combine(sorted, identity)))
-        | (
-            lists_with_orders.map(
-                compose(tuple, combine(leap_traverse, identity))
-            )
+        | sequences_with_order_strategy.map(
+            combine(to_sorted_sequence, identity)
         )
+        | sequences_with_order_strategy.map(combine(leap_traverse, identity))
     )
+
+
+def to_sorted_sequence(
+    value: Sequence[OrderedValueT], /, *, reverse: bool = False
+) -> Sequence[OrderedValueT]:
+    return sorted(value, reverse=reverse)
 
 
 value_sequence_with_order_strategy = to_different_values_orders(
     value_with_order_strategy_strategy.flatmap(
-        partial(to_value_sequence_with_order_strategy, min_size=0)
+        to_value_sequence_with_order_strategy
     )
 )
 value_sequence_with_none_order_strategy = (
@@ -95,7 +103,7 @@ value_sequence_with_none_order_strategy = (
 )
 empty_value_sequence_with_order_strategy = (
     value_with_order_strategy_strategy.flatmap(
-        partial(to_value_sequence_with_order_strategy, min_size=0, max_size=0)
+        partial(to_value_sequence_with_order_strategy, max_size=0)
     )
 )
 non_empty_value_sequence_with_order_strategy = to_different_values_orders(

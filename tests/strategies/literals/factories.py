@@ -1,10 +1,11 @@
 from collections.abc import Sequence
 from functools import partial
+from typing import TypeVar
 
 from hypothesis import strategies as st
 
 from dendroid.hints import Order
-from tests.hints import KeyT, ValueT
+from tests.hints import KeyT, OrderedValueT, ValueT
 from tests.utils import (
     BaseSet,
     ValueSequenceWithOrder,
@@ -15,31 +16,32 @@ from tests.utils import (
 def to_values_tuples_with_orders(
     values_with_orders: st.SearchStrategy[
         tuple[
-            st.SearchStrategy[ValueT], st.SearchStrategy[Order[ValueT, KeyT]]
+            st.SearchStrategy[OrderedValueT],
+            st.SearchStrategy[Order[OrderedValueT, KeyT]],
         ]
     ],
     /,
 ) -> st.SearchStrategy[
     tuple[
-        st.SearchStrategy[Sequence[ValueT]],
-        st.SearchStrategy[Order[Sequence[ValueT], tuple[KeyT, ...]]],
+        st.SearchStrategy[tuple[OrderedValueT, ...]],
+        st.SearchStrategy[Order[tuple[OrderedValueT, ...], tuple[KeyT, ...]]],
     ]
 ]:
     def to_values_tuples_with_order(
         values_with_orders_list: Sequence[
             tuple[
-                st.SearchStrategy[ValueT],
-                st.SearchStrategy[Order[ValueT, KeyT]],
+                st.SearchStrategy[OrderedValueT],
+                st.SearchStrategy[Order[OrderedValueT, KeyT]],
             ]
         ],
         /,
     ) -> tuple[
-        st.SearchStrategy[Sequence[ValueT]],
-        st.SearchStrategy[Order[Sequence[ValueT], tuple[KeyT, ...]]],
+        st.SearchStrategy[tuple[OrderedValueT, ...]],
+        st.SearchStrategy[Order[tuple[OrderedValueT, ...], tuple[KeyT, ...]]],
     ]:
         def combine_orders(
-            orders: Sequence[Order[ValueT, KeyT]], /
-        ) -> Order[Sequence[ValueT], tuple[KeyT, ...]]:
+            orders: tuple[Order[OrderedValueT, KeyT], ...], /
+        ) -> Order[tuple[OrderedValueT, ...], tuple[KeyT, ...]]:
             return partial(combine, orders)
 
         return (
@@ -70,17 +72,13 @@ def combine(
     )
 
 
-def to_value_with_order_strategy(
-    values_with_orders: tuple[
-        st.SearchStrategy[Sequence[ValueT]],
-        st.SearchStrategy[Order[Sequence[ValueT], tuple[KeyT, ...]]],
-    ],
-    /,
-) -> st.SearchStrategy[
-    tuple[Sequence[ValueT], Order[Sequence[ValueT], tuple[KeyT, ...]] | None]
-]:
-    values, orders = values_with_orders
-    return st.tuples(values, st.none() | orders)
+_T = TypeVar('_T')
+
+
+def to_optional_strategy(
+    value: st.SearchStrategy[_T], /
+) -> st.SearchStrategy[_T | None]:
+    return st.none() | value
 
 
 def to_value_sequence_with_order_strategy(
@@ -89,7 +87,7 @@ def to_value_sequence_with_order_strategy(
     ],
     /,
     *,
-    min_size: int,
+    min_size: int = 0,
     max_size: int | None = None,
 ) -> st.SearchStrategy[ValueSequenceWithOrder[ValueT, KeyT]]:
     values, orders = values_with_orders

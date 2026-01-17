@@ -3,17 +3,19 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections.abc import Iterable, Iterator, Sequence
 from itertools import chain
-from typing import Any, Generic, overload
+from typing import Any, Generic, TypeVar, overload
 
 from reprit.base import generate_repr
 from typing_extensions import Protocol, Self
 
-from .hints import Item, KeyT, KeyT_co, ValueT
+from .hints import Item, KeyT, Ordered, ValueT
 from .nil import NIL, Nil
 from .utils import capacity
 
+_KeyT_co = TypeVar('_KeyT_co', bound=Ordered, covariant=True)
 
-class Node(Protocol[KeyT_co, ValueT]):
+
+class Node(Protocol[_KeyT_co, ValueT]):
     @property
     @abstractmethod
     def left(self, /) -> Self | Nil:
@@ -35,12 +37,12 @@ class Node(Protocol[KeyT_co, ValueT]):
         """Sets right child."""
 
     @property
-    def item(self, /) -> Item[KeyT_co, ValueT]:
+    def item(self, /) -> Item[_KeyT_co, ValueT]:
         return self.key, self.value
 
     @property
     @abstractmethod
-    def key(self, /) -> KeyT_co:
+    def key(self, /) -> _KeyT_co:
         """Comparisons key."""
 
     @property
@@ -54,51 +56,17 @@ class Node(Protocol[KeyT_co, ValueT]):
         """Sets underlying value."""
 
 
-class Tree(ABC, Generic[KeyT, ValueT]):
+class HasRepr(Protocol):
+    @abstractmethod
+    def __repr__(self, /) -> str:
+        raise NotImplementedError
+
+
+class Tree(ABC, HasRepr, Generic[KeyT, ValueT]):
     @property
     @abstractmethod
     def root(self, /) -> Node[KeyT, ValueT] | Nil:
         raise NotImplementedError
-
-    def __bool__(self, /) -> bool:
-        """Checks if the tree has nodes."""
-        return self.root is not NIL
-
-    @abstractmethod
-    def __copy__(self, /) -> Self:
-        raise NotImplementedError
-
-    def __iter__(self, /) -> Iterator[Node[KeyT, ValueT]]:
-        """Returns iterator over nodes in ascending keys order."""
-        node = self.root
-        queue = []
-        while True:
-            while node is not NIL:
-                queue.append(node)
-                node = node.left
-            if not queue:
-                return
-            node = queue.pop()
-            yield node
-            node = node.right
-
-    def __len__(self, /) -> int:
-        """Returns number of nodes."""
-        return capacity(self)
-
-    def __reversed__(self, /) -> Iterator[Node[KeyT, ValueT]]:
-        """Returns iterator over nodes in descending keys order."""
-        node = self.root
-        queue = []
-        while True:
-            while node is not NIL:
-                queue.append(node)
-                node = node.right
-            if not queue:
-                return
-            node = queue.pop()
-            yield node
-            node = node.left
 
     @overload
     @classmethod
@@ -121,8 +89,6 @@ class Tree(ABC, Generic[KeyT, ValueT]):
         /,
     ) -> Tree[KeyT, KeyT] | Tree[KeyT, ValueT]:
         """Constructs tree from given components."""
-
-    __repr__ = generate_repr(from_components, with_module_name=True)
 
     @property
     def keys(self, /) -> Sequence[KeyT]:
@@ -234,6 +200,48 @@ class Tree(ABC, Generic[KeyT, ValueT]):
                 result = node
                 break
         return result
+
+    def __bool__(self, /) -> bool:
+        """Checks if the tree has nodes."""
+        return self.root is not NIL
+
+    @abstractmethod
+    def __copy__(self, /) -> Self:
+        raise NotImplementedError
+
+    def __iter__(self, /) -> Iterator[Node[KeyT, ValueT]]:
+        """Returns iterator over nodes in ascending keys order."""
+        node = self.root
+        queue = []
+        while True:
+            while node is not NIL:
+                queue.append(node)
+                node = node.left
+            if not queue:
+                return
+            node = queue.pop()
+            yield node
+            node = node.right
+
+    def __len__(self, /) -> int:
+        """Returns number of nodes."""
+        return capacity(self)
+
+    __repr__ = generate_repr(from_components, with_module_name=True)
+
+    def __reversed__(self, /) -> Iterator[Node[KeyT, ValueT]]:
+        """Returns iterator over nodes in descending keys order."""
+        node = self.root
+        queue = []
+        while True:
+            while node is not NIL:
+                queue.append(node)
+                node = node.right
+            if not queue:
+                return
+            node = queue.pop()
+            yield node
+            node = node.left
 
 
 class AbstractSet(ABC, Generic[ValueT]):
@@ -421,3 +429,10 @@ class MutableSet(AbstractSet[ValueT]):
     @abstractmethod
     def remove(self, value: ValueT, /) -> None:
         """Removes given value that is present in the set."""
+
+
+class TreeWrapper(Protocol[KeyT, ValueT]):
+    @property
+    @abstractmethod
+    def tree(self, /) -> Tree[KeyT, ValueT]:
+        raise NotImplementedError

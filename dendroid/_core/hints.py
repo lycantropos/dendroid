@@ -1,7 +1,7 @@
 from collections.abc import Callable
-from typing import Any, TypeAlias, TypeVar
+from typing import Any, TypeAlias
 
-from typing_extensions import Protocol, Self
+from typing_extensions import Protocol, Self, TypeVar
 
 
 class Ordered(Protocol):
@@ -10,7 +10,6 @@ class Ordered(Protocol):
 
 
 KeyT = TypeVar('KeyT', bound=Ordered)
-KeyT_co = TypeVar('KeyT_co', bound=Ordered, covariant=True)
 ValueT = TypeVar('ValueT', bound=Any)
 Order: TypeAlias = Callable[[ValueT], KeyT]
 Item: TypeAlias = tuple[KeyT, ValueT]

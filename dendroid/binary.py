@@ -27,7 +27,7 @@ NIL = _nil.NIL
 Nil = _nil.Nil
 
 
-class Node(_Generic[_KeyT, _ValueT]):
+class Node(_abcs.HasRepr, _Generic[_KeyT, _ValueT]):
     @property
     def item(self, /) -> _Item[_KeyT, _ValueT]:
         return self.key, self.value
@@ -197,6 +197,7 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
             return node
         while node.right.right is not NIL:
             node = node.right
+            assert node.right is not NIL
         assert node.right is not NIL
         result, node.right = node.right, node.right.left
         return result
@@ -211,6 +212,7 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
             return node
         while node.left.left is not NIL:
             node = node.left
+            assert node.left is not NIL
         assert node.left is not NIL
         result, node.left = node.left, node.left.right
         return result
@@ -236,8 +238,9 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
         return result
 
     @_override
-    def remove(self, node: _abcs.Node[_KeyT, _ValueT], /) -> None:
-        assert isinstance(node, Node), node
+    def remove(self, _node: _abcs.Node[_KeyT, _ValueT], /) -> None:
+        assert isinstance(_node, Node), _node
+        node: Node[_KeyT, _ValueT] = _node
         assert self._root is not NIL
         parent, key = self._root, node.key
         if _are_keys_equal(key, parent.key):
@@ -250,6 +253,7 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
                 else:
                     while node.right.right is not NIL:
                         node = node.right
+                        assert node.right is not NIL
                     assert node.right is not NIL
                     (
                         self._root,
@@ -278,6 +282,7 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
                     else:
                         while cursor.right.right is not NIL:
                             cursor = cursor.right
+                            assert cursor.right is not NIL
                         assert cursor.right is not NIL
                         (
                             parent.left,
@@ -306,6 +311,7 @@ class Tree(_abcs.Tree[_KeyT, _ValueT]):
                     else:
                         while cursor.right.right is not NIL:
                             cursor = cursor.right
+                            assert cursor.right is not NIL
                         assert cursor.right is not NIL
                         (
                             parent.right,

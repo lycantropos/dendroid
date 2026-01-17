@@ -9,4 +9,4 @@ class Nil(Enum):
     _VALUE = auto()
 
 
-NIL: Final[Nil] = Nil._VALUE  # noqa: SLF001
+NIL: Final = Nil._VALUE  # noqa: SLF001

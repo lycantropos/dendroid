@@ -81,7 +81,7 @@ empty_values_views_with_values = strategies.builds(
 
 def value_sequences_with_order_to_items_lists(
     value_sequences_with_order: ValueSequencesWithOrder[ValueT, KeyT], /
-) -> tuple[list[Item[KeyT, ValueT]] | list[tuple[ValueT, ValueT]], ...]:
+) -> tuple[Sequence[Item[Any, ValueT]], ...]:
     value_sequences, order = value_sequences_with_order
     return (
         tuple(

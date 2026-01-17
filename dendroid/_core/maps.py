@@ -1,19 +1,18 @@
 from __future__ import annotations
 
-from collections.abc import Callable, Iterable, Iterator, MutableMapping
+from collections.abc import Iterable, Iterator
 from typing import Any, Generic, cast, overload
 
 from reprit.base import generate_repr
 from typing_extensions import Self
 
-from .abcs import Node, Tree
+from .abcs import HasRepr, Node, Tree
 from .hints import Item, KeyT, ValueT
 from .nil import NIL
-from .utils import split_items
 from .views import ItemsView, KeysView, ValuesView
 
 
-class Map(Generic[KeyT, ValueT]):
+class Map(HasRepr, Generic[KeyT, ValueT]):
     __slots__ = ('tree',)
 
     def __init__(self, tree: Tree[KeyT, ValueT], /) -> None:
@@ -110,6 +109,12 @@ class Map(Generic[KeyT, ValueT]):
         return self._next_node(key).item
 
     __sentinel = cast(ValueT, object())
+
+    @overload
+    def pop(self, key: KeyT, /, default: ValueT) -> ValueT: ...
+
+    @overload
+    def pop(self, key: KeyT, /, default: ValueT = ...) -> ValueT: ...
 
     def pop(self, key: KeyT, /, default: ValueT = __sentinel) -> ValueT:
         node = self.tree.pop(key)
@@ -222,16 +227,3 @@ class Map(Generic[KeyT, ValueT]):
         if result is NIL:
             raise KeyError('Corresponds to minimum')
         return result
-
-
-MutableMapping.register(Map)
-
-
-def map_constructor(
-    tree_constructor: Callable[
-        [Iterable[KeyT], Iterable[ValueT]], Tree[KeyT, ValueT]
-    ],
-    /,
-    *items: Item[KeyT, ValueT],
-) -> Map[KeyT, ValueT]:
-    return Map(tree_constructor(*split_items(items)))

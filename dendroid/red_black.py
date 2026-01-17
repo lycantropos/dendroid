@@ -36,7 +36,7 @@ NIL = _nil.NIL
 Nil = _nil.Nil
 
 
-class Node(_Generic[_KeyT, _ValueT]):
+class Node(_abcs.HasRepr, _Generic[_KeyT, _ValueT]):
     @property
     def item(self, /) -> _Item[_KeyT, _ValueT]:
         return self.key, self.value
@@ -50,26 +50,26 @@ class Node(_Generic[_KeyT, _ValueT]):
         return self._left
 
     @left.setter
-    def left(self, node: _Self | Nil) -> None:
-        self._left = node
-        _set_parent(node, self)
+    def left(self, value: _Self | Nil, /) -> None:
+        self._left = value
+        _set_parent(value, self)
 
     @property
     def parent(self, /) -> _Self | Nil:
         return _dereference_maybe(self._parent)
 
     @parent.setter
-    def parent(self, node: _Self | Nil) -> None:
-        self._parent = _maybe_weakref(node)
+    def parent(self, value: _Self | Nil, /) -> None:
+        self._parent = _maybe_weakref(value)
 
     @property
     def right(self, /) -> _Self | Nil:
         return self._right
 
     @right.setter
-    def right(self, node: _Self | Nil) -> None:
-        self._right = node
-        _set_parent(node, self)
+    def right(self, value: _Self | Nil, /) -> None:
+        self._right = value
+        _set_parent(value, self)
 
     @property
     def value(self, /) -> _ValueT:

@@ -109,14 +109,20 @@ def capacity(iterable: Iterable[Any], /) -> int:
     return next(counter)
 
 
+_T1 = TypeVar('_T1')
+_T2 = TypeVar('_T2')
+_U1 = TypeVar('_U1')
+_U2 = TypeVar('_U2')
+
+
 def combine(
-    *functions: Callable[[Domain], Range],
-) -> Callable[[tuple[Domain, ...]], tuple[Range, ...]]:
-    def combination(arguments: tuple[Domain, ...], /) -> tuple[Range, ...]:
-        return tuple(
-            function(argument)
-            for function, argument in zip(functions, arguments, strict=False)
-        )
+    first_function: Callable[[_T1], _U1],
+    second_function: Callable[[_T2], _U2],
+    /,
+) -> Callable[[tuple[_T1, _T2]], tuple[_U1, _U2]]:
+    def combination(arguments: tuple[_T1, _T2], /) -> tuple[_U1, _U2]:
+        first_argument, second_argument = arguments
+        return first_function(first_argument), second_function(second_argument)
 
     return combination
 
@@ -177,7 +183,7 @@ def has_size_two_or_more(sized: Sized) -> bool:
     return len(sized) >= 2
 
 
-def leap_traverse(values: list[ValueT]) -> list[ValueT]:
+def leap_traverse(values: Sequence[ValueT], /) -> Sequence[ValueT]:
     iterator, reversed_iterator = iter(values), reversed(values)
     result: list[ValueT] = []
     size_half, is_odd = divmod(len(values), 2)

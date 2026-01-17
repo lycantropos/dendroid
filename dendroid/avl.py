@@ -8,7 +8,7 @@ from typing import Generic as _Generic, cast as _cast, overload as _overload
 from reprit.base import generate_repr as _generate_repr
 from typing_extensions import Self as _Self, override as _override
 
-from ._core import abcs
+from ._core import abcs as _abcs
 from ._core.hints import (
     Item as _Item,
     KeyT as _KeyT,
@@ -29,7 +29,7 @@ from ._core.utils import (
 NIL = _NIL
 
 
-class Node(_Generic[_KeyT, _ValueT]):
+class Node(_abcs.HasRepr, _Generic[_KeyT, _ValueT]):
     @property
     def balance_factor(self, /) -> int:
         return _to_height(self.left) - _to_height(self.right)
@@ -146,14 +146,14 @@ def _set_parent(
         node.parent = parent
 
 
-class Tree(abcs.Tree[_KeyT, _ValueT]):
+class Tree(_abcs.Tree[_KeyT, _ValueT]):
     @property
     def root(self, /) -> Node[_KeyT, _ValueT] | _Nil:
         return self._root
 
     @_override
     def predecessor(
-        self, node: abcs.Node[_KeyT, _ValueT], /
+        self, node: _abcs.Node[_KeyT, _ValueT], /
     ) -> Node[_KeyT, _ValueT] | _Nil:
         assert isinstance(node, Node), node
         if node.left is NIL:
@@ -168,7 +168,7 @@ class Tree(abcs.Tree[_KeyT, _ValueT]):
 
     @_override
     def successor(
-        self, node: abcs.Node[_KeyT, _ValueT], /
+        self, node: _abcs.Node[_KeyT, _ValueT], /
     ) -> Node[_KeyT, _ValueT] | _Nil:
         assert isinstance(node, Node), node
         if node.right is NIL:
@@ -284,7 +284,7 @@ class Tree(abcs.Tree[_KeyT, _ValueT]):
         return node
 
     @_override
-    def remove(self, node: abcs.Node[_KeyT, _ValueT], /) -> None:
+    def remove(self, node: _abcs.Node[_KeyT, _ValueT], /) -> None:
         assert isinstance(node, Node), node
         if node.left is NIL:
             imbalanced_node = node.parent
