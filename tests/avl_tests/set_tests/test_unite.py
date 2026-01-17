@@ -1,8 +1,8 @@
 from hypothesis import given
 
-from dendroid import avl
 from tests.hints import ValueT
 from tests.utils import (
+    AvlTree,
     BaseSet,
     are_balance_factors_normalized,
     are_nodes_heights_correct,
@@ -21,7 +21,7 @@ def test_properties(
     result = left_set | right_set
 
     result_tree = result._tree
-    assert isinstance(result_tree, avl.Tree)
+    assert isinstance(result_tree, AvlTree)
     assert are_nodes_parents_to_children(result_tree)
     assert are_nodes_heights_correct(result_tree)
     assert are_balance_factors_normalized(result_tree)

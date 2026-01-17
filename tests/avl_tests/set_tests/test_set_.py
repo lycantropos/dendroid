@@ -4,6 +4,7 @@ from dendroid import avl
 from tests import strategies
 from tests.hints import KeyT, ValueT
 from tests.utils import (
+    AvlTree,
     BaseSet,
     ValueSequenceWithOrder,
     are_balance_factors_normalized,
@@ -33,7 +34,7 @@ def test_properties(
     result = avl.set_(*values, key=order)
 
     result_tree = result._tree
-    assert isinstance(result_tree, avl.Tree)
+    assert isinstance(result_tree, AvlTree)
     assert len(result) <= len(values)
     assert to_height(result_tree) == to_balanced_tree_height(len(result))
     assert all(value in result for value in values)

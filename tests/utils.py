@@ -9,12 +9,15 @@ from typing import Any, TypeAlias, TypeVar, overload
 
 from typing_extensions import TypeIs
 
-from dendroid import avl, binary, red_black, splay
 from dendroid._core import (
     abcs as _abcs,
+    avl,
+    binary,
     maps as _maps,
     nil as _nil,
+    red_black,
     sets as _sets,
+    splay,
     utils as _utils,
     views as _views,
 )
@@ -57,6 +60,8 @@ BaseSetsTriplet: TypeAlias = tuple[
     BaseSet[ValueT], BaseSet[ValueT], BaseSet[ValueT]
 ]
 Tree = _abcs.Tree
+AvlTree = avl.Tree
+RedBlackTree = red_black.Tree
 TreesPair: TypeAlias = tuple[Tree[KeyT, ValueT], Tree[KeyT, ValueT]]
 TreesTriplet: TypeAlias = tuple[
     Tree[KeyT, ValueT], Tree[KeyT, ValueT], Tree[KeyT, ValueT]
@@ -327,7 +332,7 @@ def are_nodes_heights_correct(tree: avl.Tree[KeyT, ValueT], /) -> bool:
     )
 
 
-is_red_black_tree_node_black = red_black._is_node_black  # noqa: SLF001
+is_red_black_tree_node_black = red_black._is_node_black
 
 
 def is_root_black(tree: red_black.Tree[KeyT, ValueT], /) -> bool:

@@ -1,9 +1,9 @@
 from hypothesis import given
 
-from dendroid import red_black
 from tests.hints import ValueT
 from tests.utils import (
     BaseSet,
+    RedBlackTree,
     are_nodes_parents_to_children,
     do_paths_to_leaves_have_same_black_nodes_count,
     do_red_nodes_have_black_children,
@@ -20,7 +20,7 @@ def test_properties(set_with_value: tuple[BaseSet[ValueT], ValueT]) -> None:
     set_.remove(value)
 
     tree = set_._tree
-    assert isinstance(tree, red_black.Tree)
+    assert isinstance(tree, RedBlackTree)
     assert are_nodes_parents_to_children(tree)
     assert is_root_black(tree)
     assert do_red_nodes_have_black_children(tree)

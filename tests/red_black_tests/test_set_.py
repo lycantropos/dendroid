@@ -5,6 +5,7 @@ from tests import strategies
 from tests.hints import KeyT, ValueT
 from tests.utils import (
     BaseSet,
+    RedBlackTree,
     ValueSequenceWithOrder,
     are_nodes_parents_to_children,
     do_paths_to_leaves_have_same_black_nodes_count,
@@ -34,7 +35,7 @@ def test_properties(
     result = red_black.set_(*values, key=key)
 
     result_tree = result._tree
-    assert isinstance(result_tree, red_black.Tree)
+    assert isinstance(result_tree, RedBlackTree)
     assert len(result) <= len(values)
     assert to_height(result_tree) == to_balanced_tree_height(len(result))
     assert all(value in result for value in values)
