@@ -27,7 +27,7 @@ NIL = _nil.NIL
 Nil = _nil.Nil
 
 
-class Node(_abcs.HasRepr, _Generic[_KeyT, _ValueT]):
+class Node(_abcs.HasCustomRepr, _Generic[_KeyT, _ValueT]):
     @property
     def item(self, /) -> _Item[_KeyT, _ValueT]:
         return self.key, self.value

@@ -7,7 +7,7 @@ from typing import Any, Generic
 from reprit.base import generate_repr
 from typing_extensions import Self, override
 
-from .abcs import HasRepr, MutableSet, Tree, TreeWrapper
+from .abcs import HasCustomRepr, MutableSet, Tree, TreeWrapper
 from .hints import KeyT, Order, ValueT
 from .nil import NIL
 
@@ -74,7 +74,7 @@ class BaseSet(TreeWrapper[Any, ValueT], MutableSet[ValueT]):
             yield node.value
 
 
-class Set(HasRepr, BaseSet[ValueT]):
+class Set(HasCustomRepr, BaseSet[ValueT]):
     @property
     @override
     def _tree(self, /) -> Tree[Any, ValueT]:
@@ -151,7 +151,7 @@ class Set(HasRepr, BaseSet[ValueT]):
     __repr__ = generate_repr(__init__)
 
 
-class KeyedSet(HasRepr, Generic[KeyT, ValueT], BaseSet[ValueT]):
+class KeyedSet(HasCustomRepr, Generic[KeyT, ValueT], BaseSet[ValueT]):
     @property
     def key(self, /) -> Order[ValueT, KeyT]:
         return self._key

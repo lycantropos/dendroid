@@ -58,7 +58,7 @@ class Node(Protocol[_KeyT_co, ValueT]):
     __slots__ = ()
 
 
-class HasRepr(Protocol):
+class HasCustomRepr(Protocol):
     __slots__ = ()
 
     @abstractmethod
@@ -66,7 +66,7 @@ class HasRepr(Protocol):
         raise NotImplementedError
 
 
-class Tree(ABC, HasRepr, Generic[KeyT, ValueT]):
+class Tree(ABC, HasCustomRepr, Generic[KeyT, ValueT]):
     @property
     @abstractmethod
     def root(self, /) -> Node[KeyT, ValueT] | Nil:

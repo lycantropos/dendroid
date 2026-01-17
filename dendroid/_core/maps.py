@@ -6,13 +6,13 @@ from typing import Any, Generic, cast, overload
 from reprit.base import generate_repr
 from typing_extensions import Self
 
-from .abcs import HasRepr, Node, Tree
+from .abcs import HasCustomRepr, Node, Tree
 from .hints import Item, KeyT, ValueT
 from .nil import NIL
 from .views import ItemsView, KeysView, ValuesView
 
 
-class Map(HasRepr, Generic[KeyT, ValueT]):
+class Map(HasCustomRepr, Generic[KeyT, ValueT]):
     __slots__ = ('_tree',)
 
     def __init__(self, _tree: Tree[KeyT, ValueT], /) -> None:

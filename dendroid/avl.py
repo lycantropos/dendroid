@@ -29,7 +29,7 @@ from ._core.utils import (
 NIL = _NIL
 
 
-class Node(_abcs.HasRepr, _Generic[_KeyT, _ValueT]):
+class Node(_abcs.HasCustomRepr, _Generic[_KeyT, _ValueT]):
     @property
     def balance_factor(self, /) -> int:
         return _to_height(self.left) - _to_height(self.right)
