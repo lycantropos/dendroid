@@ -237,12 +237,12 @@ def is_left_subtree_less_than_right_subtree(
     while queue:
         node, left_end, right_end = queue.pop()
         if node.left is not NIL:
-            if left_end <= node.left.key < right_end:
+            if not (node.left.key < left_end) and node.left.key < right_end:
                 queue.append((node.left, left_end, node.key))
             else:
                 return False
         if node.right is not NIL:
-            if node.key < node.right.key <= right_end:
+            if node.key < node.right.key and not (right_end < node.right.key):
                 queue.append((node.right, node.key, right_end))
             else:
                 return False

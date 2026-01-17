@@ -5,7 +5,6 @@ from typing_extensions import Protocol, Self, TypeVar
 
 
 class Ordered(Protocol):
-    def __le__(self, other: Self, /) -> bool: ...
     def __lt__(self, other: Self, /) -> bool: ...
 
 
