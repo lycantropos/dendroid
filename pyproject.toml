@@ -27,8 +27,8 @@ docs = [
     "sphinx-rtd-theme>=2.0.0,<4.0"
 ]
 tests = [
-    "hypothesis>=6.148.2,<7.0",
-    "pytest>=9.0.1,<10.0",
+    "hypothesis>=6.161.2,<7.0",
+    "pytest>=9.1.1,<10.0",
 ]
 
 [build-system]
