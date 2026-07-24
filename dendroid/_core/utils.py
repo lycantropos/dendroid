@@ -2,9 +2,7 @@ import weakref
 from collections import deque
 from collections.abc import Iterable, Sequence
 from itertools import count, groupby
-from typing import Any, overload
-
-from typing_extensions import Self
+from typing import Any, Self, overload
 
 from .hints import Item, KeyT, ValueT
 from .nil import NIL, Nil

@@ -1,7 +1,5 @@
 from collections.abc import Callable
-from typing import Any, TypeAlias
-
-from typing_extensions import Protocol, Self, TypeVar
+from typing import Any, Protocol, Self, TypeAlias, TypeVar
 
 
 class Ordered(Protocol):

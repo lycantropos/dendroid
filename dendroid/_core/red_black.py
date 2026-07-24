@@ -4,10 +4,10 @@ import copy
 import weakref
 from collections.abc import Iterable
 from reprlib import recursive_repr
-from typing import Any, Generic, cast, overload
+from typing import Any, Generic, Self, cast, overload
 
 from reprit.base import generate_repr
-from typing_extensions import Self, override
+from typing_extensions import override
 
 from . import abcs
 from .hints import Item, KeyT, ValueT
@@ -366,7 +366,7 @@ class Tree(abcs.Tree[KeyT, ValueT]):
         self,
         node: Node[KeyT, ValueT] | Nil,
         parent: Node[KeyT, ValueT] | Nil,
-        is_left_child: bool,  # noqa: FBT001
+        is_left_child: bool,  # ruff: ignore[boolean-type-hint-positional-argument]
         /,
     ) -> None:
         while node is not self._root and _is_node_black(node):

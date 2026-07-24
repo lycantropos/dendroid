@@ -88,7 +88,7 @@ Nil = _nil.Nil
 equivalence = is_
 
 
-def implication(antecedent: bool, consequent: bool, /) -> bool:  # noqa: FBT001
+def implication(antecedent: bool, consequent: bool, /) -> bool:
     return not antecedent or consequent
 
 
@@ -394,10 +394,10 @@ def to_paths_to_leaves(
         ended = True
         if last_node.left is not NIL:
             ended = False
-            queue.append(path + (last_node.left,))  # noqa: RUF005
+            queue.append(path + (last_node.left,))  # ruff: ignore[collection-literal-concatenation]
         if last_node.right is not NIL:
             ended = False
-            queue.append(path + (last_node.right,))  # noqa: RUF005
+            queue.append(path + (last_node.right,))  # ruff: ignore[collection-literal-concatenation]
         if ended:
             yield path
 

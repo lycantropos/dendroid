@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import copy
 from collections.abc import Iterable, Iterator
-from typing import cast, overload
+from typing import Self, cast, overload
 
-from typing_extensions import Self, override
+from typing_extensions import override
 
 from . import abcs, binary
 from .hints import KeyT, ValueT

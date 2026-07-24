@@ -3,10 +3,9 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections.abc import Iterable, Iterator, Sequence
 from itertools import chain
-from typing import Any, Generic, TypeVar, overload
+from typing import Any, Generic, Protocol, Self, TypeVar, overload
 
 from reprit.base import generate_repr
-from typing_extensions import Protocol, Self
 
 from .hints import Item, KeyT, Ordered, ValueT
 from .nil import NIL, Nil

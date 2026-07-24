@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from collections.abc import Iterable, Iterator
-from typing import Any, Generic
+from typing import Any, Generic, Self
 
 from reprit.base import generate_repr
-from typing_extensions import Self, override
+from typing_extensions import override
 
 from .abcs import HasCustomRepr, MutableSet, Tree, TreeWrapper
 from .hints import KeyT, Order, ValueT

@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Iterator
-from typing import Any, Generic, cast, overload
+from typing import Any, Generic, Self, cast, overload
 
 from reprit.base import generate_repr
-from typing_extensions import Self
 
 from .abcs import HasCustomRepr, Node, Tree
 from .hints import Item, KeyT, ValueT
@@ -39,8 +38,10 @@ class Map(HasCustomRepr, Generic[KeyT, ValueT]):
 
     def __eq__(self, other: Any, /) -> Any:
         return (
-            self.keys() == other.keys()
-            and all(other[key] == value for key, value in self.items())
+            (
+                self.keys() == other.keys()
+                and all(other[key] == value for key, value in self.items())
+            )
             if isinstance(other, Map)
             else NotImplemented
         )
