@@ -4,10 +4,10 @@ import copy
 import weakref
 from collections.abc import Iterable
 from reprlib import recursive_repr
-from typing import Any, Generic, Self, cast, overload
+from typing import Any, Generic, cast, overload
 
 from reprit.base import generate_repr
-from typing_extensions import override
+from typing_extensions import Self, override
 
 from . import abcs
 from .hints import Item, KeyT, ValueT

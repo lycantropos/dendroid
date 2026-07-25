@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import copy
 from collections.abc import Iterable
-from typing import Generic, Self, cast, overload
+from typing import Generic, cast, overload
 
 from reprit.base import generate_repr
-from typing_extensions import override
+from typing_extensions import Self, override
 
 from . import abcs
 from .hints import Item, KeyT, ValueT
